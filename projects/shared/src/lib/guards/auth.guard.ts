@@ -5,12 +5,16 @@ import {
 import { catchError, map, of, take } from 'rxjs';
 import { AuthService, LoggerService } from "../services";
 
-export const AuthGuard: CanActivateFn = (_, state) => {
+export const AuthGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
 
   const router = inject(Router);
 
   const logger = inject(LoggerService);
+
+  const notAuthenticatedRoute = route.data['notAuthenticatedRoute'];
+
+  const errorRoute = route.data['errorRoute'];
 
   return auth.authState$().pipe(
     take(1),
@@ -19,8 +23,7 @@ export const AuthGuard: CanActivateFn = (_, state) => {
 
       if (!isAuthenticated) {
         router.navigate(
-          /* todo: create parameter for notAuthenticatedRoute */
-          ['/sign-in'],
+          [notAuthenticatedRoute || '/sign-in'],
           { queryParams: { redirectURL: state.url } },
         );
       }
@@ -30,8 +33,7 @@ export const AuthGuard: CanActivateFn = (_, state) => {
     catchError((error: unknown) => {
       logger.error('Error in AuthGuard:', error);
 
-      /* todo: create parameter for errorRoute */
-      router.navigate(['/error']);
+      router.navigate([errorRoute || '/error']);
 
       return of(false);
     }),

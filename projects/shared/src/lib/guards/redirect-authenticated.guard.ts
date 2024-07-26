@@ -3,12 +3,16 @@ import { inject } from "@angular/core";
 import { catchError, map, of, take } from "rxjs";
 import { AuthService, LoggerService } from "../services";
 
-export const RedirectAuthenticatedGuard: CanActivateFn = () => {
+export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
 
   const router = inject(Router);
 
   const logger = inject(LoggerService);
+
+  const authenticatedRoute = route.data['authenticatedRoute'];
+
+  const errorRoute = route.data['errorRoute'];
 
   return auth.authState$().pipe(
     take(1),
@@ -16,8 +20,7 @@ export const RedirectAuthenticatedGuard: CanActivateFn = () => {
       const isAuthenticated = !!user;
 
       if (isAuthenticated) {
-        /* todo: create parameter for authenticatedRoute */
-        router.navigate(['/']);
+        router.navigate(authenticatedRoute || ['/']);
       }
 
       return !isAuthenticated;
@@ -25,8 +28,7 @@ export const RedirectAuthenticatedGuard: CanActivateFn = () => {
     catchError((error: unknown) => {
       logger.error('Error in RedirectAuthenticatedGuard:', error);
 
-      /* todo: create parameter for errorRoute */
-      router.navigate(['/error']);
+      router.navigate(errorRoute || ['/error']);
 
       return of(false);
     }),
