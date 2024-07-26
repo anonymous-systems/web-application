@@ -121,7 +121,7 @@
       "projectType": "library",
       "root": "projects/shared",
       "sourceRoot": "projects/shared/src",
-      "prefix": "lib",
+      "prefix": "anon-shared",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
