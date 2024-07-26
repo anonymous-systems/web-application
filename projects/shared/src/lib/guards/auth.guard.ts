@@ -12,9 +12,9 @@ export const AuthGuard: CanActivateFn = (route, state) => {
 
   const logger = inject(LoggerService);
 
-  const notAuthenticatedRoute = route.data['notAuthenticatedRoute'];
+  const notAuthenticatedRoute = route.data['notAuthenticatedRoute'] || ['/sign-in'];
 
-  const errorRoute = route.data['errorRoute'];
+  const errorRoute = route.data['errorRoute'] || ['/error'];
 
   return auth.authState$().pipe(
     take(1),
@@ -23,7 +23,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
 
       if (!isAuthenticated) {
         router.navigate(
-          [notAuthenticatedRoute || '/sign-in'],
+          notAuthenticatedRoute,
           { queryParams: { redirectURL: state.url } },
         );
       }
@@ -33,7 +33,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
     catchError((error: unknown) => {
       logger.error('Error in AuthGuard:', error);
 
-      router.navigate([errorRoute || '/error']);
+      router.navigate(errorRoute);
 
       return of(false);
     }),

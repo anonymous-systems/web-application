@@ -10,9 +10,9 @@ export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
 
   const logger = inject(LoggerService);
 
-  const authenticatedRoute = route.data['authenticatedRoute'];
+  const authenticatedRoute = route.data['authenticatedRoute'] || ['/'];
 
-  const errorRoute = route.data['errorRoute'];
+  const errorRoute = route.data['errorRoute'] || ['/error'];
 
   return auth.authState$().pipe(
     take(1),
@@ -20,7 +20,7 @@ export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
       const isAuthenticated = !!user;
 
       if (isAuthenticated) {
-        router.navigate(authenticatedRoute || ['/']);
+        router.navigate(authenticatedRoute);
       }
 
       return !isAuthenticated;
@@ -28,7 +28,7 @@ export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
     catchError((error: unknown) => {
       logger.error('Error in RedirectAuthenticatedGuard:', error);
 
-      router.navigate(errorRoute || ['/error']);
+      router.navigate(errorRoute);
 
       return of(false);
     }),
