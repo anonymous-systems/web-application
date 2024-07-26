@@ -15,7 +15,6 @@
     "frontend:test": "ng test frontend",
     "frontend:test:headless": "ng test frontend --no-watch --no-progress --browsers=ChromeHeadless",
     "frontend:lint": "ng lint frontend",
-    "frontend:ci": "npm run test:headless frontend && npm run lint --fix",
     "frontend:dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
     "start:emulators": "firebase emulators:start --import=./seed --export-on-exit"
   },
