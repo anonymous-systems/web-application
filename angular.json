@@ -30,7 +30,9 @@
                 "glob": "**/*",
                 "input": "projects/frontend/src/assets",
                 "output": "assets"
-              }
+              },
+              "projects/frontend/src/robots.txt",
+              "projects/frontend/src/sitemap.xml"
             ],
             "styles": [
               "projects/frontend/src/styles.scss"
