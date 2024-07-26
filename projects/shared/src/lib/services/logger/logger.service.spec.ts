@@ -7,7 +7,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBarHarness } from '@angular/material/snack-bar/testing';
 
 @Component({
-  selector: 'anon-test-logger',
+  selector: 'anon-shared-test-logger',
   template: undefined,
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
