@@ -35,7 +35,7 @@ import { MatDivider } from "@angular/material/divider";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'Angular Template';
+  title = 'Anonymous Systems';
 
   menuItems: GenericItem[] = [
     {

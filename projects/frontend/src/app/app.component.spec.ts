@@ -33,8 +33,8 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`should have the 'Angular Template' title`, () => {
-    expect(component.title).toEqual('Angular Template');
+  it(`should have the 'Anonymous Systems' title`, () => {
+    expect(component.title).toEqual('Anonymous Systems');
   });
 
   it('should render toolbar with title', async () => {
@@ -42,7 +42,7 @@ describe('AppComponent', () => {
     const toolbarRowsAsText = await toolbar.getRowsAsText();
     const title = toolbarRowsAsText[0];
 
-    expect(title).toBe('Angular Template');
+    expect(title).toBe('Anonymous Systems');
   });
 
   it('should have a menu button that opens a menu', async () => {
