@@ -8,6 +8,7 @@
   "version": "1.0.0-alpha.0",
   "scripts": {
     "ng": "ng",
+
     "frontend:start:development": "ng serve frontend",
     "frontend:start:production": "ng serve frontend --configuration production",
     "frontend:build:development": "ng build frontend --configuration development",
@@ -16,7 +17,15 @@
     "frontend:test:headless": "ng test frontend --no-watch --no-progress --browsers=ChromeHeadless",
     "frontend:lint": "ng lint frontend --fix",
     "frontend:dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
-    "start:emulators": "firebase emulators:start --import=./seed --export-on-exit"
+    "start:emulators": "firebase emulators:start --import=./seed --export-on-exit",
+
+    "shared:build:development": "ng build shared --configuration development",
+    "shared:build:production": "ng build shared --configuration production",
+    "shared:watch:development": "ng build shared --watch --configuration development",
+    "shared:watch:production": "ng build shared --watch --configuration production",
+    "shared:test": "ng test shared",
+    "shared:test:headless": "ng test shared --no-watch --no-progress --browsers=ChromeHeadless",
+    "shared:lint": "ng lint shared --fix"
   },
   "private": true,
   "dependencies": {
