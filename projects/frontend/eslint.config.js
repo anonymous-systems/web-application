@@ -1,7 +1,7 @@
 // @ts-check
 const tsEslint = require("typescript-eslint");
-const workspaceEslint = require("../../eslint.config");
+const rootConfig = require("../../eslint.config.js");
 
 module.exports = tsEslint.config(
-    ...workspaceEslint,
+    ...rootConfig,
 );
