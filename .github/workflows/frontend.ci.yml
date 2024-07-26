@@ -23,6 +23,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Create keys.ts
+        run: |
+          echo "export const FIREBASE_API_KEY = ''; export const RECAPTCHA3_SITE_KEY = ''" > src/environments/keys.ts
+
       - name: Install packages
         run: npm ci
 
