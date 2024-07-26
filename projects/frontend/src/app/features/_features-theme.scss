@@ -3,13 +3,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './shared/shared-theme' as shared;
-@use './features/features-theme' as features;
-
-@mixin componentThemeMixins($theme) {
-  @include shared.theme($theme);
-  @include features.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
