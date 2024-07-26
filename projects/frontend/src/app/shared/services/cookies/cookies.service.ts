@@ -5,8 +5,8 @@ import {
   Injectable,
   signal
 } from "@angular/core";
-import { SSRSafeService } from "./ssr-safe.service";
-import { CookiesConsentValue } from "../types/cookies-consent";
+import { CookiesConsentValue } from "../../types/cookies-consent";
+import { SSRSafeService } from "../ssr-safe/ssr-safe.service";
 
 @Injectable({ providedIn: 'root' })
 export class CookiesService {
