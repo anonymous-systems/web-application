@@ -7,7 +7,7 @@ import { MatAnchor, MatButton } from "@angular/material/button";
 import { CookiesService } from "../../services/cookies/cookies.service";
 
 @Component({
-  selector: 'app-cookies-popup',
+  selector: 'anon-cookies-popup',
   templateUrl: './cookies-popup.component.html',
   styleUrl: './cookies-popup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

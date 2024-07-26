@@ -12,7 +12,7 @@
       },
       "root": "projects/frontend",
       "sourceRoot": "projects/frontend/src",
-      "prefix": "anonsys",
+      "prefix": "anon",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",

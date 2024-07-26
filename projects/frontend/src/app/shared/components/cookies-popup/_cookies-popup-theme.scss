@@ -12,7 +12,7 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  app-cookies-popup {
+  anon-cookies-popup {
     .popup {
       @include mat.elevation(6);
       background: mat.get-theme-color($theme, surface);

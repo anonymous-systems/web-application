@@ -20,7 +20,7 @@ import {
 import { MatDivider } from "@angular/material/divider";
 
 @Component({
-  selector: 'app-root',
+  selector: 'anon-root',
   standalone: true,
   imports: [
     MatToolbar, MatIconButton, MatIcon,
