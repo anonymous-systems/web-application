@@ -1,0 +1,18 @@
+:root {
+  --scrollbar-track-width: 0.3125rem;
+  --scrollbar-track-height: var(--scrollbar-track-width, 0.3125rem);
+  --scrollbar-track-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb-background-color: #192038;
+  --scrollbar-thumb-outline: #101426;
+  --scrollbar-thumb-border-radius: 1rem;
+
+  --gap: 1rem;
+  --border-radius: 1rem;
+  --padding: 1rem;
+  --margin: 1rem;
+
+  --header-height: 56px;
+  --navigation-bar-height: 100px;
+  --navigation-rail-width: 72px;
+  --navigation-drawer-width: 360px;
+}

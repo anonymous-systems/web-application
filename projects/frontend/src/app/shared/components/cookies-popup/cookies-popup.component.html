@@ -1,0 +1,15 @@
+@if (!hideCookiesConsent()) {
+  <div class="popup">
+    This site uses cookies from Google to deliver its services and to analyze traffic.
+
+    <div class="buttons">
+      <a mat-button class="secondary-btn uppercase" aria-disabled="false"
+         rel="noopener" target="_blank" tabindex="0"
+         [href]="moreDetailsLink">More Details</a>
+
+      <button mat-button tabindex="0" type="button"
+              class="uppercase"
+              (click)="acceptCookies()">Ok, Got it</button>
+    </div>
+  </div>
+}
