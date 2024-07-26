@@ -16,7 +16,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "paths": {
-      "shared": [
+      "@shared": [
         "./dist/shared"
       ]
     },
