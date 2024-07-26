@@ -10,7 +10,7 @@ on:
 # Intentionally left blank -- run on PRs against all branches.
 
 jobs:
-  build-test-lint:
+  frontend-ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
