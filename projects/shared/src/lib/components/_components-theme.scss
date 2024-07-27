@@ -3,11 +3,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './error/error-theme' as error;
-
-@mixin componentThemeMixins($theme) {
-  @include error.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
