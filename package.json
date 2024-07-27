@@ -9,6 +9,10 @@
   "scripts": {
     "ng": "ng",
 
+    "test": "ng test",
+    "test:headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
+    "lint": "ng lint --fix",
+
     "frontend:start:development": "ng serve frontend",
     "frontend:start:production": "ng serve frontend --configuration production",
     "frontend:build:development": "ng build frontend --configuration development",
