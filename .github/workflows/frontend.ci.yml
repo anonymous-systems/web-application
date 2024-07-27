@@ -10,6 +10,30 @@ on:
 # Intentionally left blank -- run on PRs against all branches.
 
 jobs:
+  shared-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 20.x ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Lint
+        run: npm run shared:lint
+
+      - name: Test
+        run: npm run shared:test:headless
+
+      - name: Build
+        run: npm run shared:build:production
   frontend-ci:
     runs-on: ubuntu-latest
     strategy:
