@@ -3,13 +3,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './error/error-theme' as error;
-@use './welcome/welcome-theme' as welcome;
-
-@mixin componentThemeMixins($theme) {
-  @include error.theme($theme);
-  @include welcome.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -17,9 +11,25 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  anon-welcome {
+    .card {
+      border-color: mat.get-theme-color($theme, outline-variant);
+    }
+    .description {
+      color: mat.get-theme-color($theme, on-surface-variant);
+    }
+  }
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+  anon-welcome {
+    h1.title {
+      font: mat.get-theme-typography($theme, headline-large);
+      margin: 0;
+    }
+  }
+}
 
 @mixin theme($theme) {
   @if mat.theme-has($theme, color) { @include color($theme); }
@@ -28,3 +38,4 @@
 
   @include componentThemeMixins($theme);
 }
+

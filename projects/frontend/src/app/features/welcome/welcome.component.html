@@ -1,0 +1,26 @@
+<div class="card">
+    <picture>
+        <img ngSrc="assets/svgs/logo.svg"
+             alt="Anonymous Systems Logo"
+             width="125" height="125" />
+    </picture>
+
+    <h1 class="title">{{title}}</h1>
+
+    <p class="description">{{description}}</p>
+
+    <button mat-flat-button type="button" color="primary"
+            class="get-started-btn" [routerLink]="[appRoutes.signUp]">
+        Get started
+    </button>
+
+    <p class="sign-in-container">
+        <span>You already have an account?</span>
+
+        <a mat-button type="button" color="primary"
+           class="sign-in-btn"
+           [routerLink]="[appRoutes.signIn]">
+          Sign in
+        </a>
+    </p>
+</div>
