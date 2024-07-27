@@ -4,7 +4,7 @@
 @use '@angular/material' as mat;
 
 @use '../../app/app-theme' as app;
-@use '../../../dist/shared/shared-material-theme' as shared;
+@use '../../../../../dist/shared/shared-material-theme' as shared;
 
 @import "./partials/colors";
 
