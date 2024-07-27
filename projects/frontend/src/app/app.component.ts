@@ -7,9 +7,12 @@ import {
 @Component({
   standalone: true,
   selector: 'anon-root',
-  styleUrl: './app.component.scss',
-  templateUrl: './app.component.html',
   imports: [RouterOutlet, CookiesPopupComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <router-outlet />
+
+    <anon-cookies-popup />
+  `,
 })
 export class AppComponent {}
