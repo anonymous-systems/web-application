@@ -13,4 +13,4 @@
  * containsDigitRegExp.test(string2); // false
  * containsDigitRegExp.test(string3); // true
  */
-const containsDigitRegExp = /(?=.*\d)/;
+export const containsDigitRegExp = /(?=.*\d)/;
