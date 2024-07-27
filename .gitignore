@@ -5,6 +5,7 @@ keys.ts
 
 # Compiled output
 /dist
+!/dist/shared
 /tmp
 /out-tsc
 /bazel-out
