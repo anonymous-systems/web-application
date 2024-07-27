@@ -2,6 +2,8 @@
  * Public API Surface of shared library
  */
 
-export * from './lib/services/index';
+export * from './lib/services';
 
-export * from './lib/guards/index';
+export * from './lib/guards';
+
+export * from './lib/information';

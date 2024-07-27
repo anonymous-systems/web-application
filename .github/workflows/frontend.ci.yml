@@ -33,6 +33,9 @@ jobs:
       - name: Lint
         run: npm run frontend:lint
 
+      - name: Build shared library
+        run: npm run shared:build:production
+
       - name: Test
         run: npm run frontend:test:headless
 
