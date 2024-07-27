@@ -9,7 +9,7 @@ import { appRoutes } from "../../app.routes";
   standalone: true,
   selector: 'anon-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.scss'],
+  styleUrl: './welcome.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgOptimizedImage, MatButtonModule, RouterLink],
 })
