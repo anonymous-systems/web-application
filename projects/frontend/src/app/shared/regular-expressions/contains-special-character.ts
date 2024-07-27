@@ -15,4 +15,4 @@
  * containsSpecialCharacterRegExp.test(string2); // false
  * containsSpecialCharacterRegExp.test(string3); // true
  */
-const containsSpecialCharacterRegExp = /(?=.*[\W])/;
+export const containsSpecialCharacterRegExp = /(?=.*[\W])/;
