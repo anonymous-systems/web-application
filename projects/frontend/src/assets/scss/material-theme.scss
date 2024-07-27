@@ -4,6 +4,7 @@
 @use '@angular/material' as mat;
 
 @use '../../app/app-theme' as app;
+@use '../../../../../projects/shared/src/lib/shared-material-theme' as shared;
 
 @import "./partials/colors";
 
@@ -32,6 +33,7 @@ $angular-template-theme: mat.define-theme((
   @include mat.all-component-themes($angular-template-theme);
 
   @include app.theme($angular-template-theme);
+  @include shared.theme($angular-template-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

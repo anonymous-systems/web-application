@@ -3,5 +3,12 @@
   "dest": "../../dist/shared",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": [
+    {
+      "input": "src/lib/",
+      "glob": "**/*.scss",
+      "output": "./"
+    }
+  ]
 }

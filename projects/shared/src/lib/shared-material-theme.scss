@@ -3,10 +3,10 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './error/error-theme' as error;
+@use './components/components-theme' as components;
 
 @mixin componentThemeMixins($theme) {
-  @include error.theme($theme);
+  @include components.theme($theme);
 }
 
 @mixin color($theme) {
