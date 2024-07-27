@@ -1,6 +1,11 @@
 {
   "name": "shared",
   "version": "0.0.0-alpha.0",
+  "exports": {
+    ".": {
+      "sass": "./shared-material-theme.scss"
+    }
+  },
   "dependencies": {
     "tslib": "^2.6.3"
   },
