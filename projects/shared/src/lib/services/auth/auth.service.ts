@@ -20,6 +20,14 @@ export class AuthService {
   private router = inject(Router);
 
   /**
+   * Retrieves the currently authenticated Firebase user, or
+   * null if not signed in.
+   *
+   * @returns {User | null} The currently authenticated user.
+   */
+  currentUser = (): User | null => this.auth.currentUser;
+
+  /**
    * Creates an Observable of authentication state changes.
    * It emits only on sign-in or sign-out events.
    *
