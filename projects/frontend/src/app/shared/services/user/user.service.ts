@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { FirestoreService } from "@shared-library";
+import { FirestoreUser } from "@shared-library";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -17,5 +18,10 @@ export class UserService {
     const { username, firstName, lastName } = userSnap.data();
 
     return !!username && !!firstName && !!lastName;
+  }
+
+  async getUserById(id: string) {
+    return this.firestore.docSnap<FirestoreUser>(`${this.USER_COLLECTION}/${id}`)
+      .then((userSnap) => userSnap.exists() ? userSnap.data() : null);
   }
 }
