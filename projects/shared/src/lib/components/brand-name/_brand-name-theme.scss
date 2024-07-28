@@ -3,11 +3,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './brand-name/brand-name-theme' as brandName;
-
-@mixin componentThemeMixins($theme) {
-  @include brandName.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -15,9 +11,17 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  anon-shared-brand-name {
+    color: mat.get-theme-color($theme, on-surface-variant);
+  }
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+  anon-shared-brand-name {
+    font: mat.get-theme-typography($theme, title-medium);
+  }
+}
 
 @mixin theme($theme) {
   @if mat.theme-has($theme, color) { @include color($theme); }
@@ -26,3 +30,4 @@
 
   @include componentThemeMixins($theme);
 }
+
