@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { CompanyInformation } from "@shared-library";
+import { CompanyInformation, LogoComponent } from "@shared-library";
 import { appRoutes } from "../../app.routes";
 
 @Component({
@@ -11,7 +11,7 @@ import { appRoutes } from "../../app.routes";
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage, MatButtonModule, RouterLink],
+  imports: [NgOptimizedImage, MatButtonModule, RouterLink, LogoComponent],
 })
 export class WelcomeComponent {
   protected readonly appRoutes = appRoutes;
