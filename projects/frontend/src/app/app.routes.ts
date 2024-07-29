@@ -13,7 +13,8 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'welcome',
+    loadComponent: () => import('./features/home/home.component')
+      .then((c) => c.HomeComponent),
   },
   {
     path: 'error',

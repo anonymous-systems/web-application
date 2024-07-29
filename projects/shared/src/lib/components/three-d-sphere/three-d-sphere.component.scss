@@ -13,6 +13,7 @@
   perspective: var(--sphere-perspective);
   transform-style: preserve-3d;
   will-change: transform;
+  transform: transale3d(0,0,0);
 
   &.rotate {
     animation: spin var(--animation-duration) linear infinite;
