@@ -1,18 +1,17 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  model,
-  output
+  ChangeDetectionStrategy, SimpleChanges,
+  OnChanges, OnDestroy, Component,
+  computed, inject, output, effect, model,
 } from '@angular/core';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { CdkStep, CdkStepper, CdkStepperModule } from "@angular/cdk/stepper";
+import { CdkStepper, CdkStepperModule } from "@angular/cdk/stepper";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { SIGNUP_STEP } from "../../enums/signup-step";
-import { LoggerService } from "../../../../../../shared/src/lib/services";
 import { appRoutes } from "../../../app.routes";
-import { BrandNameComponent } from "@shared-library";
+import { BrandNameComponent, LoggerService } from "@shared-library";
+import { Subscription } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'anon-sign-up-stepper',
@@ -32,10 +31,12 @@ import { BrandNameComponent } from "@shared-library";
     NgClass,
   ],
 })
-export class SignUpStepperComponent extends CdkStepper {
+export class SignUpStepperComponent extends CdkStepper implements OnChanges, OnDestroy {
   private logger = inject(LoggerService);
 
   protected readonly appRoutes = appRoutes;
+
+  protected readonly SIGNUP_STEP = SIGNUP_STEP;
 
   loading = model(false);
 
@@ -43,12 +44,50 @@ export class SignUpStepperComponent extends CdkStepper {
 
   readonly profileCompleted = output();
 
-  selectStepByIndex(index: number): void {
-    this.selectedIndex = index;
+  subscriptions = new Subscription();
+
+  stepIndexChange = toSignal(this.selectedIndexChange);
+
+  stepFormControl = computed(() => {
+    const stepIndex = this.stepIndexChange();
+
+    const step = this.steps.toArray()[stepIndex || 0];
+
+    return step ? step.stepControl : null;
+  });
+
+  stepChangeEffect = effect(() => {
+    const control = this.stepFormControl();
+
+    this.logger.debug('step form control changed', control);
+
+    if (control) {
+      this.subscriptions.add(
+        control.valueChanges.subscribe(() => this._stateChanged()),
+      );
+    }
+
+    this._stateChanged();
+  });
+
+  ngOnChanges(changes: SimpleChanges) {
+    const selectedIndexChange = changes['selectedIndex'];
+
+    if (selectedIndexChange && !selectedIndexChange.isFirstChange()) {
+      this.linear = false;
+
+      this.selectedIndex = selectedIndexChange.currentValue;
+
+      this.linear = true;
+
+      this._stateChanged();
+    }
   }
 
-  identitySteps(index: number, step: CdkStep) {
-    return step.label;
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+
+    this.subscriptions.unsubscribe();
   }
 
   nextStep() {
