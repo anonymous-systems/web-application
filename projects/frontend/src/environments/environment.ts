@@ -1,14 +1,16 @@
-import { FIREBASE_API_KEY, RECAPTCHA3_SITE_KEY } from "./keys";
+import { PROD_FIREBASE_API_KEY, PROD_RECAPTCHA3_SITE_KEY } from "./keys";
 
 export const environment = {
   firebaseConfig: {
-    apiKey: FIREBASE_API_KEY,
-    authDomain: "firebase-project-id.firebaseapp.com",
-    projectId: "firebase-project-id",
-    storageBucket: "firebase-project-id.appspot.com",
-    messagingSenderId: "firebase-messaging-sender-id",
-    appId: "firebase-app-id",
-    measurementId: "firebase-analytics-measurement-id",
+    apiKey: PROD_FIREBASE_API_KEY,
+    authDomain: "anonymous-systems.firebaseapp.com",
+    databaseURL: "https://anonymous-systems-default-rtdb.firebaseio.com",
+    projectId: "anonymous-systems",
+    storageBucket: "anonymous-systems.appspot.com",
+    messagingSenderId: "64613558725",
+    appId: "1:64613558725:web:e6dd82824d65de7e6cc3ac",
+    measurementId: "G-TYGJF3S5RG"
   },
-  recaptcha3SiteKey: RECAPTCHA3_SITE_KEY,
+  recaptcha3SiteKey: PROD_RECAPTCHA3_SITE_KEY,
+  domain: 'anonsys.tech',
 };
