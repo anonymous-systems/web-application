@@ -1,0 +1,103 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--gap) * 2);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--gap) / 2);
+}
+
+/* Hero Section */
+
+/* Topics Section */
+section.topics .chips-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap);
+}
+
+/* Projects Section */
+
+/* Smart Solutions Section */
+
+/* Cost Effective Solutions Section */
+section.smart-solutions,
+section.cost-effective-solutions {
+  h4 { width: 100%; }
+
+  picture {
+    width: 100%;
+    height: 300px;
+    border-radius: var(--border-radius);
+  }
+}
+
+/* Services Section */
+section.services {
+  padding: calc(var(--padding) / 2);
+  border-radius: var(--border-radius);
+
+  h4 { width: 100%; }
+
+  picture {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--border-radius);
+  }
+}
+
+/* Steps Section */
+section.steps {
+  padding: calc(var(--padding) / 2);
+  border-radius: var(--border-radius);
+
+  picture {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--border-radius);
+  }
+
+  .step { width: 100%; }
+
+  .step:not(:last-of-type) {
+    padding-bottom: calc(var(--padding) / 2);
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+  }
+}
+
+/* Testimonials Section */
+section.testimonials {
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--padding);
+    border-radius: var(--border-radius);
+
+    h4 {
+      text-align: center;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Get Started Section */
+section.get-started {
+  padding: calc(var(--padding) / 2);
+  border-radius: var(--border-radius);
+
+  h2 { text-align: center; }
+
+  picture {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--border-radius);
+  }
+}
