@@ -12,10 +12,8 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  anon-select-avatar-dialog {
-    .avatars .avatar.selected {
-      outline-color: mat.get-theme-color($theme, secondary);
-    }
+  anon-select-avatar-dialog .avatars .avatar.selected {
+    outline-color: mat.get-theme-color($theme, secondary, 80);
   }
 }
 

@@ -3,7 +3,7 @@
 <mat-dialog-content class="avatars">
   @for (avatar of avatars; track avatar) {
     <picture tabindex="0" class="avatar"
-             [ngClass]="{'selected': selectedAvatar()===avatar}"
+             [ngClass]="{'selected': selectedAvatar() === avatar}"
              (click)="selectedAvatar.set(avatar)"
              (keypress)="selectedAvatar.set(avatar)">
       <img alt="Avatar" width="100" height="100"

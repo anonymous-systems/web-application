@@ -7,7 +7,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--gap);
-  padding-top: calc(var(--padding)  / 4);
+  padding: calc(var(--padding)  / 2) 0 !important;
 
   .avatar {
     display: grid;
@@ -18,6 +18,8 @@
     &.selected {
       outline-width: calc(var(--border-radius) / 4);
       outline-style: solid;
+      transition: transform var(--emphasized-accelerate);
+      transform: scale(1.1);
     }
   }
 }

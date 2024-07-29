@@ -3,13 +3,9 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './components/components-theme' as components;
-@use './dialogs/dialogs-theme' as dialogs;
+@use './select-avatar-dialog/select-avatar-dialog-theme' as selectAvatarDialog;
 
-@mixin componentThemeMixins($theme) {
-  @include components.theme($theme);
-  @include dialogs.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -17,6 +13,8 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  @include selectAvatarDialog.theme($theme);
 }
 
 @mixin typography($theme) {}
