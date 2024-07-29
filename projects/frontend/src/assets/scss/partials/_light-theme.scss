@@ -1,0 +1,26 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@import "./colors";
+
+$_rest: (
+        secondary: map.get($anonymous-systems-palette, secondary),
+        neutral: map.get($anonymous-systems-palette, neutral),
+        neutral-variant: map.get($anonymous-systems-palette,  neutral-variant),
+        error: map.get($anonymous-systems-palette, error),
+);
+
+$_primary: map.merge(map.get($anonymous-systems-palette, primary), $_rest);
+
+$_tertiary: map.merge(map.get($anonymous-systems-palette, tertiary), $_rest);
+
+$light-theme: mat.define-theme((
+        color: (
+                theme-type: light,
+                primary: $_primary,
+                tertiary: $_tertiary,
+        ),
+        density: (
+                scale: 0,
+        ),
+));

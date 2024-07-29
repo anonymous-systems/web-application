@@ -8,16 +8,19 @@ describe('SignUpStepperComponent', () => {
   let component: SignUpStepperComponent;
   let fixture: ComponentFixture<SignUpStepperComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [SignUpStepperComponent],
       providers: [
         { provide: LoggerService, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
       ],
-    });
+    }).compileComponents();
+
     fixture = TestBed.createComponent(SignUpStepperComponent);
+
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 

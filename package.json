@@ -20,7 +20,7 @@
     "frontend:test": "ng test frontend",
     "frontend:test:headless": "ng test frontend --no-watch --no-progress --browsers=ChromeHeadless",
     "frontend:lint": "ng lint frontend --fix",
-    "frontend:dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
+    "frontend:dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run frontend:start:development\"",
     "start:emulators": "firebase emulators:start --import=./seed --export-on-exit",
 
     "shared:build:development": "ng build shared --configuration development",

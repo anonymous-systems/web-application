@@ -25,7 +25,7 @@ jobs:
 
       - name: Create keys.ts
         run: |
-          echo "export const FIREBASE_API_KEY = ''; export const RECAPTCHA3_SITE_KEY = ''" > projects/frontend/src/environments/keys.ts
+          echo "export const FIREBASE_API_KEY = ''; export const RECAPTCHA3_SITE_KEY = ''; export const PROD_FIREBASE_API_KEY = ''; export const PROD_RECAPTCHA3_SITE_KEY = ''" > projects/frontend/src/environments/keys.ts
 
       - name: Install packages
         run: npm ci

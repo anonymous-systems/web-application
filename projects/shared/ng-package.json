@@ -7,8 +7,13 @@
   "assets": [
     {
       "input": "src/lib/",
+      "glob": "shared-material-theme.scss",
+      "output": "/"
+    },
+    {
+      "input": "src/lib/",
       "glob": "**/*.scss",
-      "output": "./"
+      "output": "lib"
     }
   ]
 }

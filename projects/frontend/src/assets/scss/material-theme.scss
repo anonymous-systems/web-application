@@ -6,37 +6,29 @@
 @use '../../app/app-theme' as app;
 @use '../../../../../projects/shared/src/lib/shared-material-theme' as shared;
 
-@import "./partials/colors";
+@import "./partials/light-theme";
 
 // Plus imports for other components in your app.
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
+// Include the common styles for Angular Material. We include this here
+// so that you only have to load a single css file for Angular Material
+// in your app.
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-// Define the theme object.
-$angular-template-theme: mat.define-theme((
-        color: (
-                theme-type: light,
-                primary: mat.$azure-palette,
-                tertiary: mat.$blue-palette,
-        ),
-        density: (
-                scale: 0,
-        )
-));
+$theme: $light-theme;
 
 // Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
+// Alternatively, you can import and @include the theme mixins for each
+// component that you are using.
 :root {
-  @include mat.all-component-themes($angular-template-theme);
+  @include mat.all-component-themes($theme);
 
-  @include app.theme($angular-template-theme);
-  @include shared.theme($angular-template-theme);
+  @include app.theme($theme);
+  @include shared.theme($theme);
 }
 
-// Comment out the line below if you want to use the pre-defined typography utility classes.
+// Comment out the line below if you want to use the pre-defined
+// typography utility classes.
 // For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
 // @include mat.typography-hierarchy($angular-template-theme);
 
@@ -47,3 +39,16 @@ $angular-template-theme: mat.define-theme((
 .material-icons-outlined {}
 .material-icons-rounded {}
 .material-icons-round {}
+
+.primary-icon {
+  @include mat.icon-color($theme, $color-variant: primary);
+}
+.secondary-icon {
+  @include mat.icon-color($theme, $color-variant: secondary);
+}
+.tertiary-icon {
+  @include mat.icon-color($theme, $color-variant: tertiary);
+}
+.error-icon {
+  @include mat.icon-color($theme, $color-variant: error);
+}

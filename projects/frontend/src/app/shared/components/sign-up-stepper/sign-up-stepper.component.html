@@ -1,39 +1,38 @@
 <header>
-    <a class="name" [routerLink]="[appRoutes.home]">
-      <anon-shared-brand-name />
-    </a>
+  <a class="name" [routerLink]="[appRoutes.home]">
+    <anon-shared-brand-name />
+  </a>
 
-    <div class="steps-container">
-      @for (step of steps; track step.label; let i=$index) {
-        <span class="step" [ngClass]="{'active': i <= selectedIndex}"></span>
-      }
-    </div>
+  <div class="steps-container">
+    @for (step of steps; track step.label; let i = $index) {
+      <span class="step" [ngClass]="{'active': i <= selectedIndex}"></span>
+    }
+  </div>
 </header>
 
 <ng-container [ngTemplateOutlet]="selected ? selected.content : null" />
 
 <footer>
-    <div class="buttons-container">
-      <!-- todo: check to see if this should use steps.length instead of 4 -->
-      @if (selectedIndex > 0 && selectedIndex < 4) {
-        <button cdkStepperPrevious mat-stroked-button
-                type="button" color="primary" [disabled]="loading">
-          Back
-        </button>
-      }
+  <div class="buttons-container">
+    @if (selectedIndex > 0 && selectedIndex < SIGNUP_STEP.PROFILE) {
+      <button cdkStepperPrevious mat-stroked-button
+              type="button" color="primary" [disabled]="loading()">
+        Back
+      </button>
+    }
 
-        <button mat-flat-button type="submit" color="primary"
-                [disabled]="loading || selected?.stepControl?.invalid || false"
-                (click)="nextStep()">
-            {{(1 + selectedIndex === steps.length) ? 'Finish' : 'Continue'}}
-        </button>
-    </div>
+    <button mat-flat-button type="submit" color="primary"
+            [disabled]="loading() || stepFormControl()?.invalid"
+            (click)="nextStep()">
+      {{ (1 + selectedIndex === steps.length) ? 'Finish' : 'Continue' }}
+    </button>
+  </div>
 
   @if (selectedIndex === 0) {
     <p>
       <span>You already have an account?</span>
 
-      <button mat-button type="button" [disabled]="loading"
+      <button mat-button type="button" [disabled]="loading()"
               [routerLink]="[appRoutes.signIn]">
         Sign in
       </button>

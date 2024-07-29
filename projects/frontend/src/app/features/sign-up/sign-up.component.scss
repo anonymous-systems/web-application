@@ -1,0 +1,111 @@
+@import "../../../assets/scss/partials/media_queries";
+
+:host {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  padding: var(--padding);
+
+  @media (min-width: $small) {
+    display: grid;
+    place-items: center;
+  }
+}
+
+@media (min-width: $small) {
+  .loading-bar {
+    position: absolute;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+  width: 100%;
+  transition: all var(--emphasized-decelerate);
+  position: relative;
+
+  @media (min-width: $small) {
+    border: 1px solid;
+    border-radius: var(--border-radius);
+    padding: calc(var(--padding) * 2);
+    width: 450px;
+    height: min-content;
+    overflow: hidden;
+  }
+}
+
+cdk-step :is(.title, .description) {
+  width: 100%;
+}
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding-left: var(--padding);
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+  }
+}
+
+form.agreements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+form.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+
+  .photo-input {
+    display: none;
+  }
+
+  .photo {
+    display: grid;
+    place-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: relative;
+    align-self: center;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: all var(--emphasized-decelerate);
+    border-width: 4px;
+    border-style: solid;
+
+    .icon, .image {
+      $size: 65px;
+      width: $size;
+      height: $size;
+      font-size: $size;
+    }
+
+    .add-btn {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+    }
+  }
+
+  .name-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+
+    mat-form-field {
+      flex: 1 1 auto;
+    }
+  }
+}

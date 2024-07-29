@@ -1,23 +1,25 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  Auth,
-  AuthError,
-  authState,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  User,
-  UserCredential
+  authState, createUserWithEmailAndPassword,
+  signInWithPopup, signOut, updateProfile,
+  Auth, AuthError, User, UserCredential,
+  GoogleAuthProvider
 } from "@angular/fire/auth";
 import { LoggerService } from "../logger/logger.service";
 import { NavigationExtras, Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { FirestoreUser } from "../../interfaces";
+import { FirestoreService } from "../firestore/firestore.service";
+import { stringToUsername } from "../../fns";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private auth = inject(Auth);
   private logger = inject(LoggerService);
   private router = inject(Router);
+  private firestore = inject(FirestoreService);
+
+  readonly USERS_COLLECTION = 'users';
 
   /**
    * Retrieves the currently authenticated Firebase user, or
@@ -84,6 +86,49 @@ export class AuthService {
   }
 
   /**
+   * Creates a new user account associated with the specified email address and password.
+   *
+   * @remarks
+   * On successful creation of the user account, this user will also be signed in to your application.
+   *
+   * User account creation can fail if the account already exists or the password is invalid.
+   *
+   * Note: The email address acts as a unique identifier for the user and enables an email-based
+   * password reset. This function will create a new user account and set the initial user password.
+   *
+   * @param email - The user's email address.
+   * @param password - The user's chosen password.
+   */
+  async signUp(email: string, password: string): Promise<UserCredential> {
+    return createUserWithEmailAndPassword(this.auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+
+        try {
+          const userProfile: FirestoreUser = {
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            firstName: user.displayName?.split(" ")[0] ?? null,
+            lastName: user.displayName?.split(" ")[1] ?? null,
+            username: user.displayName ?
+              stringToUsername(user.displayName) : null,
+            providerId: user.providerId,
+          };
+          await this.firestore.set<FirestoreUser>(
+            `${this.USERS_COLLECTION}/${user.uid}`, userProfile,
+          );
+        } catch (error: unknown) {
+          this.logger.error(`Something went wrong saving user profile`, error);
+        }
+
+        return userCredential;
+      });
+  }
+
+  /**
    * Asserts that the current user is signed in.
    * If the user is not authenticated, they are redirected to the sign-in page.
    * This method is intended for use within route guards or other scenarios
@@ -131,5 +176,31 @@ export class AuthService {
 
         return error;
       });
+  }
+
+  async updateUser(
+    user: User,
+    { displayName, photoURL }: {
+      displayName?: string | null;
+      photoURL?: string | null;
+    },
+  ) {
+    try {
+      if (!displayName && !photoURL) {
+        throw new Error('Expecting display name or photoURL to update user profile');
+      }
+
+      const profile: { displayName?: string | null; photoURL?: string | null; } = {};
+
+      if (displayName) profile.displayName = displayName;
+
+      if (photoURL) profile.photoURL = photoURL;
+
+      return await updateProfile(user, profile);
+    } catch (error: unknown) {
+      this.logger.error('Error updating user profile:', error);
+
+      throw error;
+    }
   }
 }

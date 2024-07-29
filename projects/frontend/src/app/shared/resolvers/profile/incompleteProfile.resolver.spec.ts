@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { ResolveFn, RouterModule } from '@angular/router';
 
-import { profileResolver } from './profile.resolver';
+import { incompleteProfileResolver } from './incompleteProfileResolver';
 import {
   AuthService,
   LoggerService
 } from "../../../../../../shared/src/lib/services";
 import { UserService } from "../../services/user/user.service";
 
-describe('profileResolver', () => {
+describe('incompleteProfileResolver', () => {
   const executeResolver: ResolveFn<boolean> = (...resolverParameters) =>
-      TestBed.runInInjectionContext(() => profileResolver(...resolverParameters));
+      TestBed.runInInjectionContext(() => incompleteProfileResolver(...resolverParameters));
 
   beforeEach(() => {
     TestBed.configureTestingModule({
