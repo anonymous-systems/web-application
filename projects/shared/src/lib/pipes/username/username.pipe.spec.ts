@@ -30,7 +30,7 @@ describe('UsernamePipe', () => {
   it('should remove non-alphanumeric characters (except hyphens)', () => {
     const input = 'user_name!@#$%^&*()_with_symbols+=-`~[]{}\\|;:\'",.<>/?';
 
-    const expected = 'user_name-with_symbols';
+    const expected = 'usernamewithsymbols-';
 
     expect(pipe.transform(input)).toBe(expected);
   });
