@@ -8,7 +8,7 @@ import { containsLetterRegExp } from "../regular-expressions/contains-letter";
 import { containsDigitRegExp } from "../regular-expressions/contains-digit";
 import { containsSpecialCharacterRegExp } from "../regular-expressions/contains-special-character";
 
-const passwordMinLength = 8;
+export const passwordMinLength = 8;
 
 const passwordValidator = (
   control: AbstractControl<string>,
