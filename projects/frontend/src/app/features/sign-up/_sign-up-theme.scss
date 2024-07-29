@@ -20,8 +20,8 @@
       color: mat.get-theme-color($theme, secondary);
     }
     form.profile .photo {
-      background-color: mat.get-theme-color($theme, primary, 0);
-      border-color: mat.get-theme-color($theme, secondary);
+      background-color: mat.get-theme-color($theme, primary, 100);
+      border-color: mat.get-theme-color($theme, secondary, 80);
     }
   }
 }
