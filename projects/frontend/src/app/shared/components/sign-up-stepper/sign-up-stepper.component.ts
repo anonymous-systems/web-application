@@ -59,8 +59,6 @@ export class SignUpStepperComponent extends CdkStepper implements OnChanges, OnD
   stepChangeEffect = effect(() => {
     const control = this.stepFormControl();
 
-    this.logger.debug('step form control changed', control);
-
     if (control) {
       this.subscriptions.add(
         control.valueChanges.subscribe(() => this._stateChanged()),
