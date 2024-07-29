@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { incompleteProfileResolver } from "./shared/resolvers/profile/incompleteProfileResolver";
 
 export const appRoutes = {
   error: '/error',
@@ -20,12 +21,19 @@ export const routes: Routes = [
       .then((c) => c.ErrorComponent),
   },
   {
+    path: 'sign-up',
+    loadComponent: () => import('./features/sign-up/sign-up.component')
+      .then((c) => c.SignUpComponent),
+    resolve: {needsToCompleteProfile: incompleteProfileResolver},
+  },
+  {
     path: 'welcome',
     loadComponent: () => import('./features/welcome/welcome.component')
       .then((c) => c.WelcomeComponent),
   },
   {
     path: '**',
-    redirectTo: 'welcome',
+    loadComponent: () => import('./features/error/error.component')
+      .then((c) => c.ErrorComponent),
   },
 ];
