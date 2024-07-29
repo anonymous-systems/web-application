@@ -14,7 +14,9 @@ import { appRoutes } from "../../app.routes";
   imports: [NgOptimizedImage, MatButtonModule, RouterLink],
 })
 export class WelcomeComponent {
-  readonly title = `Welcome to ${CompanyInformation.name}`;
-  readonly description = CompanyInformation.byline;
   protected readonly appRoutes = appRoutes;
+
+  readonly title = `Welcome to ${CompanyInformation.name}`;
+
+  readonly description = CompanyInformation.byline;
 }
