@@ -49,6 +49,7 @@ export class ThreeDSphereComponent {
      * - height
      */
     effect(() => {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       const points = this.points();
 
       const radius = this.radius();
@@ -56,6 +57,7 @@ export class ThreeDSphereComponent {
       const width = this.width();
 
       const height = this.height();
+      /* eslint-enable @typescript-eslint/no-unused-vars */
 
       this.generateSphere();
     });
