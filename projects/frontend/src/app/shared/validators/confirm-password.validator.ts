@@ -13,7 +13,7 @@ const confirmPasswordValidator = (
     confirmPassword: FormControl<string>,
   }>;
 
-  const password = parentForm.controls.password.value;
+  const password = parentForm?.controls.password.value;
 
   return password === control.value ? null : { mismatch: true };
 };
