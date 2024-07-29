@@ -1,11 +1,18 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { map } from "rxjs";
 import { SignUpFormGroup } from "../interfaces/sign-up-form-group";
-import { passwordValidators } from "../validators/password.validator";
+import {
+  passwordMinLength,
+  passwordValidators
+} from "../validators/password.validator";
 import {
   confirmPasswordValidators
 } from "../validators/confirm-password.validator";
 import { containsLetterRegExp } from "../regular-expressions/contains-letter";
+import { containsDigitRegExp } from "../regular-expressions/contains-digit";
+import {
+  containsSpecialCharacterRegExp
+} from "../regular-expressions/contains-special-character";
 import { signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 
@@ -56,6 +63,8 @@ export class SignUpForm {
     }),
   });
 
+  passwordMinLength = signal(passwordMinLength);
+
   showPassword = signal(false);
 
   showConfirmPassword = signal(false);
@@ -74,40 +83,49 @@ export class SignUpForm {
 
   passwordHasSpecialCharacter = toSignal(
     this.passwordCtrl.valueChanges.pipe(
-      map((password) => containsLetterRegExp.test(password)),
+      map((password) => containsSpecialCharacterRegExp.test(password)),
     ),
   );
 
   loading = signal(false);
 
-  photoFile = signal<string | null>(null);
+  photoFile = signal<File | null>(null);
 
   get emailCtrl() { return this.signUpForm.controls.email; }
   get email() { return this.emailCtrl.value; }
+  set email(value: string) { this.emailCtrl.setValue(value); }
 
   get passwordCtrl() { return this.signUpForm.controls.password; }
   get password() { return this.passwordCtrl.value; }
+  set password(value: string) { this.passwordCtrl.setValue(value); }
 
   get confirmPasswordCtrl() { return this.signUpForm.controls.confirmPassword; }
   get confirmPassword() { return this.confirmPasswordCtrl.value; }
+  set confirmPassword(value: string) { this.confirmPasswordCtrl.setValue(value); }
 
   get agreementsCtrl() { return this.signUpForm.controls.agreements; }
   get agreements() { return this.agreementsCtrl.value; }
+  // set agreements(value: Agreements) { this.agreementsCtrl.setValue(value); }
 
   get profileCtrl() { return this.signUpForm.controls.profile; }
   get profile() { return this.profileCtrl.value; }
+  // set profile(value: Profile) { this.profileCtrl.setValue(value); }
 
   get firstNameCtrl() { return this.profileCtrl.controls.firstName; }
   get firstName() { return this.firstNameCtrl.value; }
+  set firstName(value: string) { this.firstNameCtrl.setValue(value); }
 
   get lastNameCtrl() { return this.profileCtrl.controls.lastName; }
   get lastName() { return this.lastNameCtrl.value; }
+  set lastName(value: string) { this.lastNameCtrl.setValue(value); }
 
   get usernameCtrl() { return this.profileCtrl.controls.username; }
   get username() { return this.usernameCtrl.value; }
+  set username(value: string) { this.usernameCtrl.setValue(value); }
 
   get photoCtrl() { return this.profileCtrl.controls.photo; }
   get photo() { return this.photoCtrl.value; }
+  set photo(value: string | null) { this.photoCtrl.setValue(value); }
 
   clearPhoto() {
     this.photoCtrl.setValue(null);
