@@ -4,16 +4,16 @@ export interface SignUpFormGroup {
   email: FormControl<string>,
   password: FormControl<string>,
   confirmPassword: FormControl<string>,
-  agreements: FormGroup<AgreementsForm>,
-  profile: FormGroup<ProfileForm>,
+  agreements: FormGroup<AgreementsFormGroup>,
+  profile: FormGroup<ProfileFormGroup>,
 }
 
-export interface AgreementsForm {
+export interface AgreementsFormGroup {
   termsConditions: FormControl<boolean>,
   privacyPolicy: FormControl<boolean>,
 }
 
-export interface ProfileForm {
+export interface ProfileFormGroup {
   firstName: FormControl<string>,
   lastName: FormControl<string>,
   username: FormControl<string>,
