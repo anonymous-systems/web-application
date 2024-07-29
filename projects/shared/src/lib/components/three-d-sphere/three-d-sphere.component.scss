@@ -1,0 +1,25 @@
+:host {
+  --sphere-perspective: 10000px;
+  --animation-duration: 16s;
+
+  display: grid;
+  place-content: center;
+  width: 100%;
+  min-height: 350px;
+  position: relative;
+}
+
+#sphere{
+  perspective: var(--sphere-perspective);
+  transform-style: preserve-3d;
+  will-change: transform;
+
+  &.rotate {
+    animation: spin var(--animation-duration) linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotateY(0deg) rotateZ(0deg); }
+  to { transform: rotateY(360deg) rotateZ(360deg); }
+}
