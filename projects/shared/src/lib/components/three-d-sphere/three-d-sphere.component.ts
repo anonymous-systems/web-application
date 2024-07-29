@@ -1,13 +1,23 @@
 import {
   ChangeDetectionStrategy, ElementRef, viewChild, input, inject,
-  Component, effect, model, signal, afterNextRender, afterRender,
+  Component, effect, model,
 } from '@angular/core';
 import { DOCUMENT, NgClass } from "@angular/common";
 import { LoggerService } from "../../services";
 
+interface SpherePoint {
+  x: number;
+  y: number;
+  z: number;
+  xAngleOfRotation: number;
+  yAngleOfRotation: number;
+  zAngleOfRotation: number;
+  color: string;
+}
+
 @Component({
   selector: 'anon-shared-three-d-sphere',
-  template: `<div #sphereEl id="sphere" [ngClass]="{'rotate': rotate()}"></div>`,
+  template: `<div #sphereEl id="sphere" [ngClass]="{'rotate': rotate}"></div>`,
   styleUrl: './three-d-sphere.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -19,53 +29,77 @@ export class ThreeDSphereComponent {
 
   sphereEl = viewChild<ElementRef<HTMLDivElement>>('sphereEl');
 
-  generationTime = signal<number | undefined>(undefined);
+  generationTime?: number;
 
-  rotate = model(true);
+  rotate = true;
 
-  points = input(500);
+  points = model(500);
 
   radius = input(160);
 
-  widthPx = input(200);
+  width = input(200);
 
-  heightPx = input(200);
+  height = input(200);
 
   constructor() {
-    const generateSphere = () => effect(
-      this.generateSphere,
-      { allowSignalWrites: true },
-    );
+    /** Generate 3D Sphere on changes of following:
+     * - points
+     * - radius
+     * - width
+     * - height
+     */
+    effect(() => {
+      const points = this.points();
 
-    afterNextRender({ mixedReadWrite: generateSphere });
+      const radius = this.radius();
+
+      const width = this.width();
+
+      const height = this.height();
+
+      this.generateSphere();
+    });
   }
 
   generateSphere() {
+    const start = performance.now();
+
+    const sphereElement = this.sphereEl()?.nativeElement;
+
+    if (!sphereElement) return;
+
+    sphereElement.style.width = `${this.width()}px`;
+
+    sphereElement.style.height = `${this.height()}px`;
+
+    sphereElement.innerHTML = '';
+
+    const spherePoints = this.calculateSpherePoints();
+
+    spherePoints.forEach((point, index) => {
+      const element = this.createPointElement(point, `point${index + 1}`);
+
+      sphereElement.appendChild(element);
+    });
+
+    this.generationTime = performance.now() - start;
+
+    this.logger.debug(`Generated 3D sphere in ${Number(this.generationTime).toFixed(2)}ms`);
+  }
+
+  calculateSpherePoints(): SpherePoint[] {
     const points = this.points();
 
     const radius = this.radius();
 
-    const rotate = this.rotate();
-
-    const sphereEl = this.sphereEl()?.nativeElement as HTMLDivElement;
-
-    if (!sphereEl) return;
-
-    const start = performance.now();
-
-    /** Temporarily disable rotation */
-    if (rotate) this.rotate.set(false);
-
-    sphereEl.style.width = `${this.widthPx()}px`;
-
-    sphereEl.style.height = `${this.heightPx()}px`;
-
-    sphereEl.innerHTML = '';
+    const spherePoints: SpherePoint[] = [];
 
     for (let i= 1; i <= points; i++) {
-      const azimuth = Math.acos(-1 + (2 * i - 1) / points); // Phi
+      /** Phi */
+      const azimuth = Math.acos(-1 + (2 * i - 1) / points);
 
-      const elevation = Math.sqrt(points * Math.PI) * azimuth; // Theta
+      /** Theta */
+      const elevation = Math.sqrt(points * Math.PI) * azimuth;
 
       const x = Math.round(radius * Math.sin(azimuth) * Math.cos(elevation));
 
@@ -79,29 +113,33 @@ export class ThreeDSphereComponent {
 
       const zAngleOfRotation = Math.atan(y / x) * 180 / Math.PI;
 
-      const el = this.document.createElement('div');
-
-      el.id = 'point' + i;
-
-      const elStyles = {
-        position: 'absolute',
-        left: '90px',
-        top: '90px',
-        width: '10px',
-        height: '10px',
-        backgroundColor: `hsla(${Math.ceil(360 / points * i)},50%, 50%, .7)`,
-        transform: `translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateX(${xAngleOfRotation}deg) rotateY(${yAngleOfRotation}deg) rotateZ(${zAngleOfRotation}deg)`,
-      };
-
-      Object.assign(el.style, elStyles);
-
-      sphereEl.appendChild(el);
+      spherePoints.push({
+        x, y, z,
+        xAngleOfRotation, yAngleOfRotation, zAngleOfRotation,
+        color: `hsla(${Math.ceil(360 / points * i)},50%, 50%, .7)`,
+      });
     }
 
-    this.generationTime.set(performance.now() - start);
+    return spherePoints;
+  }
 
-    this.logger.debug(`Generated 3D sphere in ${Number(this.generationTime()).toFixed(2)}ms`);
+  createPointElement(point: SpherePoint, elementId?: string): HTMLDivElement {
+    const element = this.document.createElement('div');
 
-    if (rotate) this.rotate.set(true);
+    element.id = elementId || `point${point.x}${point.y}${point.z}`;
+
+    const elementStyles = {
+      position: 'absolute',
+      left: '90px',
+      top: '90px',
+      width: '10px',
+      height: '10px',
+      backgroundColor: point.color,
+      transform: `translateX(${point.x}px) translateY(${point.y}px) translateZ(${point.z}px) rotateX(${point.xAngleOfRotation}deg) rotateY(${point.yAngleOfRotation}deg) rotateZ(${point.zAngleOfRotation}deg)`,
+    };
+
+    Object.assign(element.style, elementStyles);
+
+    return element;
   }
 }

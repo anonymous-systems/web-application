@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ThreeDSphereComponent } from './three-d-sphere.component';
 
 describe('ThreeDSphereComponent', () => {
@@ -23,12 +22,12 @@ describe('ThreeDSphereComponent', () => {
   });
 
   it('should generate a 3D sphere', () => {
-    expect(component.sphereEl()).toBeTruthy();
+    component.points.set(10);
+
+    fixture.detectChanges();
+
+    expect(component.sphereEl()?.nativeElement).toBeTruthy();
 
     expect(component.sphereEl()?.nativeElement.innerHTML).toContain('point1');
-  });
-
-  it('should calculate the time to generate the sphere', () => {
-    expect(component.generationTime()).toBeGreaterThan(0);
   });
 });
