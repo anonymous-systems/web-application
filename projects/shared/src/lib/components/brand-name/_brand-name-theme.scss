@@ -13,13 +13,13 @@
   $theme-type: mat.get-theme-type($theme);
 
   anon-shared-brand-name {
-    color: mat.get-theme-color($theme, on-surface-variant);
+    color: var(--secondary-color);
   }
 }
 
 @mixin typography($theme) {
   anon-shared-brand-name {
-    font: mat.get-theme-typography($theme, title-medium);
+    font: mat.get-theme-typography($theme, headline-small);
   }
 }
 
