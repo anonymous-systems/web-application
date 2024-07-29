@@ -120,8 +120,8 @@ export class AuthService {
           await this.firestore.set<FirestoreUser>(
             `${this.USERS_COLLECTION}/${user.uid}`, userProfile,
           );
-        } catch (error) {
-          this.logger.error(`Something went wrong saving user profile`);
+        } catch (error: unknown) {
+          this.logger.error(`Something went wrong saving user profile`, error);
         }
 
         return userCredential;

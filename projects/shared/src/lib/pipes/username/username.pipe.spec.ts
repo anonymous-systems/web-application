@@ -44,6 +44,7 @@ describe('UsernamePipe', () => {
   });
 
   it('should handle null input', () => {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const input = null as any;
 
     const expected = '';
