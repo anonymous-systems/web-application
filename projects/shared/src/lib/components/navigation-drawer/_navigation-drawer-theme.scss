@@ -3,13 +3,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './brand-name/brand-name-theme' as brandName;
-@use './navigation-drawer/navigation-drawer-theme' as navigationDrawer;
-
-@mixin componentThemeMixins($theme) {
-  @include brandName.theme($theme);
-  @include navigationDrawer.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -17,6 +11,12 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  anon-shared-navigation-drawer {
+    button.active {
+      background: mat.get-theme-color($theme, primary, 90);
+    }
+  }
 }
 
 @mixin typography($theme) {}
@@ -28,3 +28,4 @@
 
   @include componentThemeMixins($theme);
 }
+
