@@ -1,9 +1,9 @@
-import { UserInfo } from "@angular/fire/auth";
+import {UserInfo} from '@angular/fire/auth';
 import {
   FirestoreDocument,
   ReadFirestoreDocument,
-  WriteFirestoreDocument
-} from "./firestore-document";
+  WriteFirestoreDocument,
+} from './firestore-document';
 
 export interface FirestoreUser extends UserInfo, FirestoreDocument {
   username: string | null,

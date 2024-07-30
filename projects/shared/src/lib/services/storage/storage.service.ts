@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   Storage, StorageReference, uploadBytes,
   UploadResult, ref, getDownloadURL,
@@ -8,7 +8,7 @@ import {
 
 type ItemPredicate = string | StorageReference;
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class StorageService {
   constructor(private storage: Storage) {}
 
@@ -51,9 +51,9 @@ export class StorageService {
    * object.
    */
   async uploadBytes(
-    ref: ItemPredicate,
-    data: File | Blob | ArrayBuffer | Uint8Array,
-    metadata?: UploadMetadata
+      ref: ItemPredicate,
+      data: File | Blob | ArrayBuffer | Uint8Array,
+      metadata?: UploadMetadata,
   ): Promise<UploadResult> {
     return await uploadBytes(this.itemRef(ref), data, metadata);
   }
@@ -115,7 +115,7 @@ export class StorageService {
    *
    */
   async deleteFolder(folderPath: string): Promise<void> {
-    const { items, prefixes } = await this.listAll(this.itemRef(folderPath));
+    const {items, prefixes} = await this.listAll(this.itemRef(folderPath));
 
     try {
       /**

@@ -3,6 +3,7 @@
  *
  * @enum {number}
  */
+/* eslint-disable no-unused-vars */
 export enum SIGNUP_STEP {
   EMAIL,
   PASSWORD,
@@ -10,3 +11,4 @@ export enum SIGNUP_STEP {
   AGREEMENTS,
   PROFILE,
 }
+/* eslint-enable no-unused-vars */

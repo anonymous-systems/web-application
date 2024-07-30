@@ -3,12 +3,12 @@ import {
   computed,
   inject,
   Injectable,
-  signal
-} from "@angular/core";
-import { CookiesConsentValue } from "../../types/cookies-consent";
-import { SSRSafeService } from "../ssr-safe/ssr-safe.service";
+  signal,
+} from '@angular/core';
+import {CookiesConsentValue} from '../../types/cookies-consent';
+import {SSRSafeService} from '../ssr-safe/ssr-safe.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class CookiesService {
   private ssrSafeService = inject(SSRSafeService);
 

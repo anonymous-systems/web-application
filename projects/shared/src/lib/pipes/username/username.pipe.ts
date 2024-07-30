@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { stringToUsername } from "../../fns";
+import {Pipe, PipeTransform} from '@angular/core';
+import {stringToUsername} from '../../fns';
 
-@Pipe({ name: 'username', standalone: true })
+@Pipe({name: 'username', standalone: true})
 export class UsernamePipe implements PipeTransform {
   /**
    * Transforms an input string into a valid username format.

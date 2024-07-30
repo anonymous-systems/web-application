@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AppComponent } from "./app.component";
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {AppComponent} from './app.component';
 import {
-  CookiesPopupComponent
-} from "./shared/components/cookies-popup/cookies-popup.component";
+  CookiesPopupComponent,
+} from './shared/components/cookies-popup/cookies-popup.component';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;

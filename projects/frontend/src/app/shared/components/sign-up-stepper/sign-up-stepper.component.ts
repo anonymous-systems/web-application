@@ -3,15 +3,15 @@ import {
   OnChanges, OnDestroy, Component,
   computed, inject, output, effect, model,
 } from '@angular/core';
-import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { CdkStepper, CdkStepperModule } from "@angular/cdk/stepper";
-import { MatButtonModule } from "@angular/material/button";
-import { RouterLink } from "@angular/router";
-import { SIGNUP_STEP } from "../../enums/signup-step";
-import { appRoutes } from "../../../app.routes";
-import { BrandNameComponent, LoggerService } from "@shared-library";
-import { Subscription } from "rxjs";
-import { toSignal } from "@angular/core/rxjs-interop";
+import {NgClass, NgTemplateOutlet} from '@angular/common';
+import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
+import {MatButtonModule} from '@angular/material/button';
+import {RouterLink} from '@angular/router';
+import {SIGNUP_STEP} from '../../enums/signup-step';
+import {appRoutes} from '../../../app.routes';
+import {BrandNameComponent, LoggerService} from '@shared-library';
+import {Subscription} from 'rxjs';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'anon-sign-up-stepper',
@@ -20,7 +20,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: CdkStepper, useExisting: SignUpStepperComponent },
+    {provide: CdkStepper, useExisting: SignUpStepperComponent},
   ],
   imports: [
     NgTemplateOutlet,
@@ -31,6 +31,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
     NgClass,
   ],
 })
+/* eslint-disable-next-line max-len */
 export class SignUpStepperComponent extends CdkStepper implements OnChanges, OnDestroy {
   private logger = inject(LoggerService);
 
@@ -61,7 +62,7 @@ export class SignUpStepperComponent extends CdkStepper implements OnChanges, OnD
 
     if (control) {
       this.subscriptions.add(
-        control.valueChanges.subscribe(() => this._stateChanged()),
+          control.valueChanges.subscribe(() => this._stateChanged()),
       );
     }
 
@@ -107,9 +108,11 @@ export class SignUpStepperComponent extends CdkStepper implements OnChanges, OnD
       }
     } catch (error) {
       this.logger.error(
-        `Something went wrong trying to proceed to next sign up step`,
-        error,
+          `Something went wrong trying to proceed to next sign up step`,
+          error,
       );
-    } finally { this.loading.set(false); }
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

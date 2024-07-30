@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import { appRoutes } from '../../app.routes';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {RouterLink} from '@angular/router';
+import {appRoutes} from '../../app.routes';
 
 @Component({
   standalone: true,

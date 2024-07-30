@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 import {
-  CookiesPopupComponent
-} from "./shared/components/cookies-popup/cookies-popup.component";
+  CookiesPopupComponent,
+} from './shared/components/cookies-popup/cookies-popup.component';
 
 @Component({
   standalone: true,

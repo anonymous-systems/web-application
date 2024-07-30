@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SignUpStepperComponent } from './sign-up-stepper.component';
-import { LoggerService } from "../../../../../../shared/src/lib/services";
-import { ActivatedRoute } from "@angular/router";
+import {SignUpStepperComponent} from './sign-up-stepper.component';
+import {LoggerService} from '../../../../../../shared/src/lib/services';
+import {ActivatedRoute} from '@angular/router';
 
 describe('SignUpStepperComponent', () => {
   let component: SignUpStepperComponent;
@@ -12,8 +12,8 @@ describe('SignUpStepperComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SignUpStepperComponent],
       providers: [
-        { provide: LoggerService, useValue: {} },
-        { provide: ActivatedRoute, useValue: {} },
+        {provide: LoggerService, useValue: {}},
+        {provide: ActivatedRoute, useValue: {}},
       ],
     }).compileComponents();
 

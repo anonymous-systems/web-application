@@ -5,9 +5,13 @@
  * @template ArgumentType - The type of the arguments passed to the function.
  * @template ReturnType - The type of the value the promise resolves to.
  * @param {...ArgumentType} args - The arguments passed to the function.
- * @returns {Promise<ReturnType>} - A promise that resolves to a value of type ReturnType.
+ * @returns {Promise<ReturnType>} - A promise that resolves to a value of
+ * type ReturnType.
  */
-export type GenericPromiseFunction<ArgumentType = unknown, ReturnType = unknown> = (...args: ArgumentType[]) => Promise<ReturnType>;
+export type GenericPromiseFunction<
+  ArgumentType = unknown,
+  ReturnType = unknown,
+> = (...args: ArgumentType[]) => Promise<ReturnType>;
 
 /**
  * A type representing a generic function.
@@ -18,4 +22,7 @@ export type GenericPromiseFunction<ArgumentType = unknown, ReturnType = unknown>
  * @param {...ArgumentType} args - The arguments passed to the function.
  * @returns {ReturnType} - A value of type ReturnType.
  */
-export type GenericFunction<ArgumentType = unknown, ReturnType = unknown> = (...args: ArgumentType[]) => ReturnType;
+export type GenericFunction<
+  ArgumentType = unknown,
+  ReturnType = unknown,
+> = (...args: ArgumentType[]) => ReturnType;

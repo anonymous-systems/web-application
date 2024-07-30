@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CompanyInformation } from "../../information";
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {CompanyInformation} from '../../information';
 
 @Component({
   selector: 'anon-shared-brand-name',

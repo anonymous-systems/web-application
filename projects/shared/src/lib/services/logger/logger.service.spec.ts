@@ -1,10 +1,10 @@
-import { LoggerService } from "./logger.service";
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatSnackBarHarness } from '@angular/material/snack-bar/testing';
+import {LoggerService} from './logger.service';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {TestBed} from '@angular/core/testing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
+import {MatSnackBarHarness} from '@angular/material/snack-bar/testing';
 
 @Component({
   selector: 'anon-shared-test-logger',
@@ -69,9 +69,9 @@ describe('LoggerService', () => {
       service.info('test');
 
       expect(service.openSnackBar).toHaveBeenCalledWith(
-        'test',
-        'OK',
-        { duration: 5000, panelClass: 'info' },
+          'test',
+          'OK',
+          {duration: 5000, panelClass: 'info'},
       );
     });
   });
@@ -91,9 +91,9 @@ describe('LoggerService', () => {
       service.log('test');
 
       expect(service.openSnackBar).toHaveBeenCalledWith(
-        'test',
-        'OK',
-        { duration: 5000, panelClass: 'log' },
+          'test',
+          'OK',
+          {duration: 5000, panelClass: 'log'},
       );
     });
   });
@@ -113,9 +113,9 @@ describe('LoggerService', () => {
       service.warn('test');
 
       expect(service.openSnackBar).toHaveBeenCalledWith(
-        'test',
-        'OK',
-        { duration: 10000, panelClass: 'warn' },
+          'test',
+          'OK',
+          {duration: 10000, panelClass: 'warn'},
       );
     });
   });
@@ -137,9 +137,9 @@ describe('LoggerService', () => {
       service.error('test');
 
       expect(service.openSnackBar).toHaveBeenCalledWith(
-        'test',
-        'OK',
-        { duration: 0, panelClass: 'error' },
+          'test',
+          'OK',
+          {duration: 0, panelClass: 'error'},
       );
     });
   });
@@ -151,7 +151,7 @@ describe('LoggerService', () => {
       service.openSnackBar('test-message', 'test-action', {});
 
       expect(snackBar.open)
-        .toHaveBeenCalledWith('test-message', 'test-action', {});
+          .toHaveBeenCalledWith('test-message', 'test-action', {});
     });
 
     it('should show snackbar with message', async () => {

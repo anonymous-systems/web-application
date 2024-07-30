@@ -11,10 +11,10 @@ import {
   PartialWithFieldValue, UpdateData, FieldValue,
   SnapshotOptions, DocumentData,
 } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { FirebaseError } from '@angular/fire/app';
-import { SetOptions } from '@firebase/firestore';
-import { inject, Injectable } from '@angular/core';
+import {Observable} from 'rxjs';
+import {FirebaseError} from '@angular/fire/app';
+import {SetOptions} from '@firebase/firestore';
+import {inject, Injectable} from '@angular/core';
 
 type CollectionPredicate<T> = string | CollectionReference<T>;
 type CollectionGroupPredicate<T> = string | Query<T>;
@@ -29,7 +29,7 @@ type Col$Options<T, U> = {
 type ColQuery$Options<T, U> = Col$Options<T, U>;
 type ColGroupQuery$Options<T, U> = Col$Options<T, U>;
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FirestoreService {
   private db = inject(Firestore);
 
@@ -80,7 +80,7 @@ export class FirestoreService {
     AppModelType extends DocumentData,
     DbModelType extends AppModelType = AppModelType,
   >(
-    ref: DocumentPredicate<AppModelType, DbModelType>,
+      ref: DocumentPredicate<AppModelType, DbModelType>,
   ): DocumentReference<AppModelType, DbModelType> {
     return (
       typeof ref === 'string' ? doc(this.db, ref) : ref
@@ -134,7 +134,7 @@ export class FirestoreService {
   >(ref: DocumentPredicate<AppModelType, DbModelType>):
     Observable<AppModelType | DbModelType | undefined> {
     return docData<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
+        this.doc<AppModelType, DbModelType>(ref),
     );
   }
 
@@ -152,7 +152,7 @@ export class FirestoreService {
   >(ref: DocumentPredicate<AppModelType, DbModelType>):
     Promise<DocumentSnapshot<AppModelType, DbModelType>> {
     return getDoc<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
+        this.doc<AppModelType, DbModelType>(ref),
     );
   }
 
@@ -167,8 +167,8 @@ export class FirestoreService {
    * (with type 'T').
    */
   col$<T, U extends string = never>(
-    ref: CollectionPredicate<T>,
-    options?: Col$Options<T, U>,
+      ref: CollectionPredicate<T>,
+      options?: Col$Options<T, U>,
   ): Observable<T[]> {
     return collectionData(this.col(ref), options) as Observable<T[]>;
   }
@@ -184,8 +184,8 @@ export class FirestoreService {
    * of the retrieved documents.
    */
   colSnap<T>(
-    ref: CollectionPredicate<T>,
-    ...queryConstraints: QueryConstraint[]
+      ref: CollectionPredicate<T>,
+      ...queryConstraints: QueryConstraint[]
   ): Promise<QuerySnapshot<T>> {
     const q = query(this.col(ref), ...queryConstraints);
     return getDocs(q);
@@ -204,9 +204,9 @@ export class FirestoreService {
    * @return {Observable} An Observable emitting an array of filtered documents.
    */
   colQuery$<T, U extends string = never>(
-    ref: CollectionPredicate<T>,
-    options?: ColQuery$Options<T, U>,
-    ...queryConstraints: QueryConstraint[]
+      ref: CollectionPredicate<T>,
+      options?: ColQuery$Options<T, U>,
+      ...queryConstraints: QueryConstraint[]
   ): Observable<T[]> {
     const q = query(this.col(ref), ...queryConstraints);
     return collectionData(q, options) as Observable<T[]>;
@@ -226,9 +226,9 @@ export class FirestoreService {
    * (with type 'T') from the collection group query.
    */
   colGroupQuery$<T, U extends string = never>(
-    ref: CollectionGroupPredicate<T>,
-    options?: ColGroupQuery$Options<T, U>,
-    ...queryConstraints: QueryConstraint[]
+      ref: CollectionGroupPredicate<T>,
+      options?: ColGroupQuery$Options<T, U>,
+      ...queryConstraints: QueryConstraint[]
   ): Observable<T[]> {
     const q = query(this.colGroup(ref), ...queryConstraints);
     return collectionData(q, options) as Observable<T[]>;
@@ -246,8 +246,8 @@ export class FirestoreService {
    * array of QueryDocumentSnapshots representing the query results.
    */
   colSnapshots$<T>(
-    ref: CollectionPredicate<T>,
-    ...queryConstraints: QueryConstraint[]
+      ref: CollectionPredicate<T>,
+      ...queryConstraints: QueryConstraint[]
   ): Observable<QueryDocumentSnapshot<T>[]> {
     const q = query(this.col(ref), ...queryConstraints);
     return collectionSnapshots(q) as Observable<QueryDocumentSnapshot<T>[]>;
@@ -269,18 +269,18 @@ export class FirestoreService {
    * @return {Unsubscribe} A function to unsubscribe from the Firestore stream.
    */
   snapshots<T>(
-    ref: CollectionPredicate<T>,
-    onNext: (snap: QuerySnapshot<T>) => void,
-    onError: (error: FirebaseError) => void,
-    onCompletion: () => void,
-    ...queryConstraints: QueryConstraint[]
+      ref: CollectionPredicate<T>,
+      onNext: (snap: QuerySnapshot<T>) => void,
+      onError: (error: FirebaseError) => void,
+      onCompletion: () => void,
+      ...queryConstraints: QueryConstraint[]
   ): Unsubscribe {
     const q = query(this.col(ref), ...queryConstraints);
     return onSnapshot(
-      q,
-      (snapshot) => onNext(snapshot),
-      (error) => onError(error),
-      () => onCompletion
+        q,
+        (snapshot) => onNext(snapshot),
+        (error) => onError(error),
+        () => onCompletion,
     );
   }
 
@@ -301,16 +301,16 @@ export class FirestoreService {
     AppModelType extends DocumentData,
     DbModelType extends AppModelType = AppModelType,
   >(
-    ref: DocumentPredicate<AppModelType, DbModelType>,
-    onNext: (snap: DocumentSnapshot<AppModelType, DbModelType>) => void,
-    onError: (error: FirebaseError) => void,
-    onCompletion: () => void
+      ref: DocumentPredicate<AppModelType, DbModelType>,
+      onNext: (snap: DocumentSnapshot<AppModelType, DbModelType>) => void,
+      onError: (error: FirebaseError) => void,
+      onCompletion: () => void,
   ): Unsubscribe {
     return onSnapshot<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
-      (doc) => onNext(doc),
-      (error) => onError(error),
-      () => onCompletion
+        this.doc<AppModelType, DbModelType>(ref),
+        (doc) => onNext(doc),
+        (error) => onError(error),
+        () => onCompletion,
     );
   }
 
@@ -343,11 +343,11 @@ export class FirestoreService {
    * DocumentReference of the newly created document.
    */
   add<T>(
-    ref: CollectionPredicate<T>,
-    data: WithFieldValue<T>,
+      ref: CollectionPredicate<T>,
+      data: WithFieldValue<T>,
   ): Promise<DocumentReference<T>> {
     const timestamp = this.timestamp;
-    data = Object.assign({ created: timestamp }, data);
+    data = Object.assign({created: timestamp}, data);
     return addDoc(this.col(ref), data);
   }
 
@@ -372,20 +372,20 @@ export class FirestoreService {
     AppModelType extends DocumentData,
     DbModelType extends AppModelType = AppModelType,
   >(
-    ref: DocumentPredicate<AppModelType, DbModelType>,
-    data: PartialWithFieldValue<DbModelType>,
-    options: SetOptions = {},
-    overwriteOperation = false,
+      ref: DocumentPredicate<AppModelType, DbModelType>,
+      data: PartialWithFieldValue<DbModelType>,
+      options: SetOptions = {},
+      overwriteOperation = false,
   ): Promise<void> {
     const timestamp = this.timestamp;
     data = Object.assign(
-      { [overwriteOperation ? 'updated' : 'created']: timestamp },
-      data,
+        {[overwriteOperation ? 'updated' : 'created']: timestamp},
+        data,
     );
     return setDoc<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
-      data,
-      options,
+        this.doc<AppModelType, DbModelType>(ref),
+        data,
+        options,
     );
   }
 
@@ -400,11 +400,11 @@ export class FirestoreService {
    * of the update operation.
    */
   update<T extends DocumentData>(
-    ref: DocumentPredicate<T>,
-    data: UpdateData<T>,
+      ref: DocumentPredicate<T>,
+      data: UpdateData<T>,
   ): Promise<void> {
     const timestamp = this.timestamp;
-    data = Object.assign({ updated: timestamp }, data);
+    data = Object.assign({updated: timestamp}, data);
     return updateDoc(this.doc(ref), data);
   }
 
@@ -421,7 +421,7 @@ export class FirestoreService {
     DbModelType extends AppModelType = AppModelType,
   >(ref: DocumentPredicate<AppModelType, DbModelType>): Promise<boolean> {
     const snapshot = await getDoc<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
+        this.doc<AppModelType, DbModelType>(ref),
     );
     return snapshot.exists();
   }
@@ -438,7 +438,7 @@ export class FirestoreService {
     DbModelType extends AppModelType = AppModelType,
   >(ref: DocumentPredicate<AppModelType, DbModelType>): Promise<void> {
     return deleteDoc<AppModelType, DbModelType>(
-      this.doc<AppModelType, DbModelType>(ref),
+        this.doc<AppModelType, DbModelType>(ref),
     );
   }
 
@@ -461,8 +461,8 @@ export class FirestoreService {
    * transaction's `updateFunction`.
    */
   transaction<T>(
-    updateFunction: (transaction: Transaction) => Promise<T>,
-    options?: TransactionOptions,
+      updateFunction: (transaction: Transaction) => Promise<T>,
+      options?: TransactionOptions,
   ) {
     return runTransaction(this.db, updateFunction, options ?? undefined);
   }
@@ -477,18 +477,18 @@ export class FirestoreService {
    * of all write operations.
    */
   async batch(
-    updateFunction: (batch: WriteBatch) => Promise<void>,
+      updateFunction: (batch: WriteBatch) => Promise<void>,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const batch = writeBatch(this.db);
 
         return updateFunction(batch)
-          .then(() => batch.commit())
-          .then(() => resolve(undefined))
-          .catch((error: FirebaseError) => {
-            reject(error);
-          });
+            .then(() => batch.commit())
+            .then(() => resolve(undefined))
+            .catch((error: FirebaseError) => {
+              reject(error);
+            });
       } catch (error: unknown) {
         return reject(error);
       }

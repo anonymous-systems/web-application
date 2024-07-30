@@ -1,11 +1,11 @@
-import { EnvironmentProviders, isDevMode, Provider } from "@angular/core";
-import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
-import { environment } from '../environments/environment';
+import {EnvironmentProviders, isDevMode, Provider} from '@angular/core';
+import {getApp, initializeApp, provideFirebaseApp} from '@angular/fire/app';
+import {environment} from '../environments/environment';
 import {
   getAnalytics, isSupported,
   ScreenTrackingService, UserTrackingService,
 } from '@angular/fire/analytics';
-import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
+import {connectAuthEmulator, getAuth, provideAuth} from '@angular/fire/auth';
 import {
   connectFirestoreEmulator, getFirestore, provideFirestore,
 } from '@angular/fire/firestore';
@@ -17,8 +17,8 @@ import {
 } from '@angular/fire/functions';
 import {
   initializeAppCheck, provideAppCheck,
-  ReCaptchaV3Provider
-} from "@angular/fire/app-check";
+  ReCaptchaV3Provider,
+} from '@angular/fire/app-check';
 
 let firestoreEmulatorStarted = false;
 
@@ -46,7 +46,7 @@ const FirebaseProviders = [
   provideAuth(() => {
     const auth = getAuth();
     if (isDevMode()) {
-      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+      connectAuthEmulator(auth, 'http://localhost:9099', {disableWarnings: true});
     }
 
     return auth;
@@ -56,8 +56,8 @@ const FirebaseProviders = [
     const provider = new ReCaptchaV3Provider(environment.recaptcha3SiteKey);
 
     return initializeAppCheck(
-      getApp(),
-      { provider, isTokenAutoRefreshEnabled: true },
+        getApp(),
+        {provider, isTokenAutoRefreshEnabled: true},
     );
   }),
   /** Firestore */

@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ThreeDSphereComponent } from './three-d-sphere.component';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ThreeDSphereComponent} from './three-d-sphere.component';
 
 describe('ThreeDSphereComponent', () => {
   let component: ThreeDSphereComponent;

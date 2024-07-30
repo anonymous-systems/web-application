@@ -1,18 +1,18 @@
-import { inject, Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {
   authState, createUserWithEmailAndPassword,
   signInWithPopup, signOut, updateProfile,
   Auth, AuthError, User, UserCredential,
-  GoogleAuthProvider
-} from "@angular/fire/auth";
-import { LoggerService } from "../logger/logger.service";
-import { NavigationExtras, Router } from "@angular/router";
-import { Observable } from "rxjs";
-import { FirestoreUser } from "../../interfaces";
-import { FirestoreService } from "../firestore/firestore.service";
-import { stringToUsername } from "../../fns";
+  GoogleAuthProvider,
+} from '@angular/fire/auth';
+import {LoggerService} from '../logger/logger.service';
+import {NavigationExtras, Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {FirestoreUser} from '../../interfaces';
+import {FirestoreService} from '../firestore/firestore.service';
+import {stringToUsername} from '../../fns';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AuthService {
   private auth = inject(Auth);
   private logger = inject(LoggerService);
@@ -75,57 +75,63 @@ export class AuthService {
     const provider = new GoogleAuthProvider();
 
     return signInWithPopup(this.auth, provider)
-      .catch((error: AuthError) => {
-        this.logger.error(
-          `Something went wrong signing in with Google`,
-          [error, this.auth, provider],
-        );
+        .catch((error: AuthError) => {
+          this.logger.error(
+              `Something went wrong signing in with Google`,
+              [error, this.auth, provider],
+          );
 
-        return error;
-      });
+          return error;
+        });
   }
 
   /**
-   * Creates a new user account associated with the specified email address and password.
+   * Creates a new user account associated with the specified email address
+   * and password.
    *
    * @remarks
-   * On successful creation of the user account, this user will also be signed in to your application.
+   * On successful creation of the user account, this user will also be
+   * signed in to your application.
    *
-   * User account creation can fail if the account already exists or the password is invalid.
+   * User account creation can fail if the account already exists or the
+   * password is invalid.
    *
-   * Note: The email address acts as a unique identifier for the user and enables an email-based
-   * password reset. This function will create a new user account and set the initial user password.
+   * Note: The email address acts as a unique identifier for the user and
+   * enables an email-based password reset. This function will create a new
+   * user account and set the initial user password.
    *
    * @param email - The user's email address.
    * @param password - The user's chosen password.
    */
   async signUp(email: string, password: string): Promise<UserCredential> {
     return createUserWithEmailAndPassword(this.auth, email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
+        .then(async (userCredential) => {
+          const user = userCredential.user;
 
-        try {
-          const userProfile: FirestoreUser = {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            phoneNumber: user.phoneNumber,
-            email: user.email,
-            firstName: user.displayName?.split(" ")[0] ?? null,
-            lastName: user.displayName?.split(" ")[1] ?? null,
-            username: user.displayName ?
+          try {
+            const userProfile: FirestoreUser = {
+              uid: user.uid,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              phoneNumber: user.phoneNumber,
+              email: user.email,
+              firstName: user.displayName?.split(' ')[0] ?? null,
+              lastName: user.displayName?.split(' ')[1] ?? null,
+              username: user.displayName ?
               stringToUsername(user.displayName) : null,
-            providerId: user.providerId,
-          };
-          await this.firestore.set<FirestoreUser>(
-            `${this.USERS_COLLECTION}/${user.uid}`, userProfile,
-          );
-        } catch (error: unknown) {
-          this.logger.error(`Something went wrong saving user profile`, error);
-        }
+              providerId: user.providerId,
+            };
+            await this.firestore.set<FirestoreUser>(
+                `${this.USERS_COLLECTION}/${user.uid}`, userProfile,
+            );
+          } catch (error: unknown) {
+            this.logger.error(
+                `Something went wrong saving user profile`, error,
+            );
+          }
 
-        return userCredential;
-      });
+          return userCredential;
+        });
   }
 
   /**
@@ -143,9 +149,9 @@ export class AuthService {
    * @throws {Error} If the user is not signed in, triggering a redirection.
    */
   assertUser(
-    user: User | null,
-    failRoute?: unknown[],
-    navigationExtras?: NavigationExtras,
+      user: User | null,
+      failRoute?: unknown[],
+      navigationExtras?: NavigationExtras,
   ): asserts user {
     if (!user) {
       if (failRoute) this.router.navigate(failRoute, navigationExtras);
@@ -164,33 +170,38 @@ export class AuthService {
    */
   async signOut(successRoute?: unknown[]): Promise<void | AuthError> {
     await signOut(this.auth)
-      .then(() => {
-        this.logger.info(`Signed out`);
+        .then(() => {
+          this.logger.info(`Signed out`);
 
-        if (successRoute) this.router.navigate(successRoute);
-      }).catch((error: AuthError) => {
-        this.logger.error(
-          `Something went wrong signing out`,
-          [error, this.auth],
-        );
+          if (successRoute) this.router.navigate(successRoute);
+        }).catch((error: AuthError) => {
+          this.logger.error(
+              `Something went wrong signing out`,
+              [error, this.auth],
+          );
 
-        return error;
-      });
+          return error;
+        });
   }
 
   async updateUser(
-    user: User,
-    { displayName, photoURL }: {
+      user: User,
+      {displayName, photoURL}: {
       displayName?: string | null;
       photoURL?: string | null;
     },
   ) {
     try {
       if (!displayName && !photoURL) {
-        throw new Error('Expecting display name or photoURL to update user profile');
+        throw new Error(
+            'Expecting display name or photoURL to update user profile',
+        );
       }
 
-      const profile: { displayName?: string | null; photoURL?: string | null; } = {};
+      const profile: {
+        displayName?: string | null;
+        photoURL?: string | null;
+      } = {};
 
       if (displayName) profile.displayName = displayName;
 

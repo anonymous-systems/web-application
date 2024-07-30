@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SelectAvatarDialogComponent } from './select-avatar-dialog.component';
+import {SelectAvatarDialogComponent} from './select-avatar-dialog.component';
 
 describe('SelectAvatarComponent', () => {
   let component: SelectAvatarDialogComponent;
@@ -8,7 +8,7 @@ describe('SelectAvatarComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SelectAvatarDialogComponent]
+      imports: [SelectAvatarDialogComponent],
     });
     fixture = TestBed.createComponent(SelectAvatarDialogComponent);
     component = fixture.componentInstance;

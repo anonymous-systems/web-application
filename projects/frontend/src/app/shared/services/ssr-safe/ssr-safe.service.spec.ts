@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { SSRSafeService } from './ssr-safe.service';
-import { PLATFORM_ID } from "@angular/core";
+import {SSRSafeService} from './ssr-safe.service';
+import {PLATFORM_ID} from '@angular/core';
 
 describe('SSRSafeService', () => {
   let service: SSRSafeService;
@@ -9,7 +9,7 @@ describe('SSRSafeService', () => {
   describe('when running in a browser environment', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        providers: [{ provide: PLATFORM_ID, useValue: 'browser' }],
+        providers: [{provide: PLATFORM_ID, useValue: 'browser'}],
       });
       service = TestBed.inject(SSRSafeService);
     });
@@ -31,7 +31,7 @@ describe('SSRSafeService', () => {
   describe('when running in a server environment', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+        providers: [{provide: PLATFORM_ID, useValue: 'server'}],
       });
       service = TestBed.inject(SSRSafeService);
     });

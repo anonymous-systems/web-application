@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, ElementRef, viewChild, input, inject,
   Component, effect, model,
 } from '@angular/core';
-import { DOCUMENT, NgClass } from "@angular/common";
-import { LoggerService } from "../../services";
+import {DOCUMENT, NgClass} from '@angular/common';
+import {LoggerService} from '../../services';
 
 interface SpherePoint {
   x: number;
@@ -49,7 +49,7 @@ export class ThreeDSphereComponent {
      * - height
      */
     effect(() => {
-      /* eslint-disable @typescript-eslint/no-unused-vars */
+      /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
       const points = this.points();
 
       const radius = this.radius();
@@ -57,7 +57,7 @@ export class ThreeDSphereComponent {
       const width = this.width();
 
       const height = this.height();
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars */
 
       this.generateSphere();
     });
@@ -86,6 +86,7 @@ export class ThreeDSphereComponent {
 
     this.generationTime = performance.now() - start;
 
+    /* eslint-disable-next-line max-len */
     this.logger.debug(`Generated 3D sphere in ${Number(this.generationTime).toFixed(2)}ms`);
   }
 
@@ -137,6 +138,7 @@ export class ThreeDSphereComponent {
       width: '10px',
       height: '10px',
       backgroundColor: point.color,
+      /* eslint-disable-next-line max-len */
       transform: `translateX(${point.x}px) translateY(${point.y}px) translateZ(${point.z}px) rotateX(${point.xAngleOfRotation}deg) rotateY(${point.yAngleOfRotation}deg) rotateZ(${point.zAngleOfRotation}deg)`,
     };
 

@@ -1,12 +1,12 @@
-import { inject, Injectable } from '@angular/core';
-import { FirestoreService } from "@shared-library";
+import {inject, Injectable} from '@angular/core';
+import {FirestoreService} from '@shared-library';
 import {
   FirestoreUser, StorageService, LoggerService, AuthService,
-} from "@shared-library";
-import { where } from "@angular/fire/firestore";
-import { User } from '@angular/fire/auth';
+} from '@shared-library';
+import {where} from '@angular/fire/firestore';
+import {User} from '@angular/fire/auth';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class UserService {
   private firestore = inject(FirestoreService);
   private storage = inject(StorageService);
@@ -18,12 +18,12 @@ export class UserService {
   async hasCompletedProfile(userId: string): Promise<boolean> {
     try {
       const userSnap = await this.firestore.docSnap<FirestoreUser>(
-        `${this.USER_COLLECTION}/${userId}`,
+          `${this.USER_COLLECTION}/${userId}`,
       );
 
       if (!userSnap.exists()) return false;
 
-      const { username, firstName, lastName } = userSnap.data();
+      const {username, firstName, lastName} = userSnap.data();
 
       return !!username && !!firstName && !!lastName;
     } catch (error: unknown) {
@@ -36,7 +36,7 @@ export class UserService {
   async getUserById(id: string): Promise<FirestoreUser | null> {
     try {
       const userDocSnap = await this.firestore
-        .docSnap<FirestoreUser>(`${this.USER_COLLECTION}/${id}`);
+          .docSnap<FirestoreUser>(`${this.USER_COLLECTION}/${id}`);
 
       return userDocSnap.exists() ? userDocSnap.data() : null;
     } catch (error: unknown) {
@@ -50,8 +50,8 @@ export class UserService {
     try {
       const collectionQuerySnapshot =
         await this.firestore.colSnap<FirestoreUser>(
-          `users`,
-          where('username', '==', username),
+            `users`,
+            where('username', '==', username),
         );
 
       return !collectionQuerySnapshot.empty;
@@ -67,7 +67,7 @@ export class UserService {
       const userAvatarPath = this.getUserAvatarPath(userId, file);
 
       const uploadResult = await this.storage.uploadBytes(
-        userAvatarPath, file,
+          userAvatarPath, file,
       );
 
       return await this.storage.getURL(uploadResult.ref);
@@ -84,25 +84,27 @@ export class UserService {
     const avatarFileName = `avatar-${Date.now()}.${fileExtension}`;
 
     return `users/${userId}/avatars/${avatarFileName}`;
-  }
+  };
 
   async update(user: User, userProfile: Partial<FirestoreUser>) {
     try {
-      const firstName = userProfile.firstName || user.displayName?.split(' ')[0];
+      const firstName =
+        userProfile.firstName || user.displayName?.split(' ')[0];
 
-      const lastName = userProfile.lastName || user.displayName?.split(' ')[1];
+      const lastName =
+        userProfile.lastName || user.displayName?.split(' ')[1];
 
       await this.auth.updateUser(
-        user,
-        {
-          displayName: `${firstName} ${lastName}`,
-          photoURL: userProfile.photoURL || user.photoURL,
-        },
+          user,
+          {
+            displayName: `${firstName} ${lastName}`,
+            photoURL: userProfile.photoURL || user.photoURL,
+          },
       );
 
       await this.firestore.update<FirestoreUser>(
-        `${this.USER_COLLECTION}/${user.uid}`,
-        userProfile,
+          `${this.USER_COLLECTION}/${user.uid}`,
+          userProfile,
       );
     } catch (error: unknown) {
       this.logger.error('Error updating user:', error);

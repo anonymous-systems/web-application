@@ -1,7 +1,7 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from "@angular/core";
-import { catchError, map, of, take } from "rxjs";
-import { AuthService, LoggerService } from "../services";
+import {CanActivateFn, Router} from '@angular/router';
+import {inject} from '@angular/core';
+import {catchError, map, of, take} from 'rxjs';
+import {AuthService, LoggerService} from '../services';
 
 export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
@@ -15,22 +15,22 @@ export const RedirectAuthenticatedGuard: CanActivateFn = (route) => {
   const errorRoute = route.data['errorRoute'] || ['/error'];
 
   return auth.authState$().pipe(
-    take(1),
-    map((user) => {
-      const isAuthenticated = !!user;
+      take(1),
+      map((user) => {
+        const isAuthenticated = !!user;
 
-      if (isAuthenticated) {
-        router.navigate(authenticatedRoute);
-      }
+        if (isAuthenticated) {
+          router.navigate(authenticatedRoute);
+        }
 
-      return !isAuthenticated;
-    }),
-    catchError((error: unknown) => {
-      logger.error('Error in RedirectAuthenticatedGuard:', error);
+        return !isAuthenticated;
+      }),
+      catchError((error: unknown) => {
+        logger.error('Error in RedirectAuthenticatedGuard:', error);
 
-      router.navigate(errorRoute);
+        router.navigate(errorRoute);
 
-      return of(false);
-    }),
+        return of(false);
+      }),
   );
 };

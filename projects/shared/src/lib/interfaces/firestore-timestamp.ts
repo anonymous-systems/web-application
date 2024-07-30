@@ -1,4 +1,4 @@
-import { FieldValue, Timestamp } from "@angular/fire/firestore";
+import {FieldValue, Timestamp} from '@angular/fire/firestore';
 
 /**
  * @description Represents a Firestore date/time value for storage or
@@ -21,7 +21,8 @@ import { FieldValue, Timestamp } from "@angular/fire/firestore";
  * @see ReadFirestoreTimestamp
  * @see WriteFirestoreTimestamp
  */
-export type FirestoreTimestamp = ReadFirestoreTimestamp | WriteFirestoreTimestamp;
+export type FirestoreTimestamp =
+  ReadFirestoreTimestamp | WriteFirestoreTimestamp;
 
 /** Optional Helper Types for Improved Type Safety (Recommended) */
 

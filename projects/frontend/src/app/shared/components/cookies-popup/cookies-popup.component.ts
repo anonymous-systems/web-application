@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-} from "@angular/core";
-import { MatAnchor, MatButton } from "@angular/material/button";
-import { CookiesService } from "../../services/cookies/cookies.service";
+} from '@angular/core';
+import {MatAnchor, MatButton} from '@angular/material/button';
+import {CookiesService} from '../../services/cookies/cookies.service';
 
 @Component({
   selector: 'anon-cookies-popup',

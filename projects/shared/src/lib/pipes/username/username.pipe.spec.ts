@@ -1,4 +1,4 @@
-import { UsernamePipe } from './username.pipe';
+import {UsernamePipe} from './username.pipe';
 
 describe('UsernamePipe', () => {
   let pipe: UsernamePipe;

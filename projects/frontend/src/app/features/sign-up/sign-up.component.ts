@@ -3,35 +3,36 @@ import {
 } from '@angular/core';
 import {
   MatFormField,
-  MatFormFieldAppearance, MatLabel
-} from "@angular/material/form-field";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { SignUpForm } from "../../shared/forms/sign-up.form";
-import { SIGNUP_STEP } from '../../shared/enums/signup-step';
+  MatFormFieldAppearance, MatLabel,
+} from '@angular/material/form-field';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {SignUpForm} from '../../shared/forms/sign-up.form';
+import {SIGNUP_STEP} from '../../shared/enums/signup-step';
 import {
   AuthService, LoggerService, CompanyInformation, stringToUsername,
-} from "@shared-library";
-import { appRoutes } from "../../app.routes";
-import { UserService } from "../../shared/services/user/user.service";
-import { signUpAnimations } from "./sign-up.animations";
-import { toSignal } from "@angular/core/rxjs-interop";
+} from '@shared-library';
+import {appRoutes} from '../../app.routes';
+import {UserService} from '../../shared/services/user/user.service';
+import {signUpAnimations} from './sign-up.animations';
+import {toSignal} from '@angular/core/rxjs-interop';
 import {
   SelectAvatarDialogComponent,
-} from "../../shared/dialogs/select-avatar-dialog/select-avatar-dialog.component";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatProgressBar } from "@angular/material/progress-bar";
+/* eslint-disable-next-line max-len */
+} from '../../shared/dialogs/select-avatar-dialog/select-avatar-dialog.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatProgressBar} from '@angular/material/progress-bar';
 import {
   SignUpStepperComponent,
-} from "../../shared/components/sign-up-stepper/sign-up-stepper.component";
-import { CdkStep, CdkStepperModule } from "@angular/cdk/stepper";
-import { MatInput } from "@angular/material/input";
-import { MatIconButton, MatMiniFabButton } from "@angular/material/button";
-import { MatIcon } from "@angular/material/icon";
-import { MatCheckbox } from "@angular/material/checkbox";
-import { AsyncPipe, NgStyle } from "@angular/common";
-import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
-import { environment } from "../../../environments/environment";
+} from '../../shared/components/sign-up-stepper/sign-up-stepper.component';
+import {CdkStep, CdkStepperModule} from '@angular/cdk/stepper';
+import {MatInput} from '@angular/material/input';
+import {MatIconButton, MatMiniFabButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {AsyncPipe, NgStyle} from '@angular/common';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'anon-sign-up',
@@ -93,6 +94,7 @@ export class SignUpComponent extends SignUpForm {
       this.logger.debug('Route data', routeData);
 
       if (routeData && routeData['needsToCompleteProfile']) {
+        /* eslint-disable-next-line max-len */
         this.logger.debug('SignUpComponent needs to complete profile, set selected step to profile');
 
         this.selectedStep.set(SIGNUP_STEP.PROFILE);
@@ -105,9 +107,9 @@ export class SignUpComponent extends SignUpForm {
 
       if (!user) return;
 
-      const firstName = user.displayName?.split(" ")[0] ?? '';
+      const firstName = user.displayName?.split(' ')[0] ?? '';
 
-      const lastName = user.displayName?.split(" ")[1] ?? '';
+      const lastName = user.displayName?.split(' ')[1] ?? '';
 
       const username = stringToUsername(user.displayName || '');
 
@@ -152,7 +154,9 @@ export class SignUpComponent extends SignUpForm {
       this.photo = photoUrl;
     } catch (error) {
       this.logger.error('Something went wrong uploading photo', error);
-    } finally { this.loading.set(false); }
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async onAgreementsCompleted() {
@@ -160,14 +164,18 @@ export class SignUpComponent extends SignUpForm {
 
     try {
       await this.authService.signUp(this.email, this.password)
-        .then(() => {
-          this.logger.debug('User account created');
+          .then(() => {
+            this.logger.debug('User account created');
 
-          this.selectedStep.set(SIGNUP_STEP.PROFILE);
-        });
+            this.selectedStep.set(SIGNUP_STEP.PROFILE);
+          });
     } catch (error: unknown) {
-      this.logger.error(`Something went wrong signing up for an account`, error);
-    } finally { this.loading.set(false); }
+      this.logger.error(
+          `Something went wrong signing up for an account`, error,
+      );
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async onProfileCompleted() {
@@ -184,6 +192,7 @@ export class SignUpComponent extends SignUpForm {
         await this.userService.usernameExists(username);
 
       if (usernameAlreadyExists) {
+        /* eslint-disable-next-line max-len */
         return this.logger.error(`Username already exists, please select a different username`);
       }
 
@@ -194,7 +203,9 @@ export class SignUpComponent extends SignUpForm {
       const needToUploadPhoto = this.photo?.startsWith('blob:');
 
       if (needToUploadPhoto && photoFile) {
-        const uploadedPhotoUrl = await this.userService.uploadAvatar(user.uid, photoFile);
+        const uploadedPhotoUrl = await this.userService.uploadAvatar(
+            user.uid, photoFile,
+        );
 
         if (!uploadedPhotoUrl) {
           throw Error('Something went wrong uploading user avatar');
@@ -204,20 +215,20 @@ export class SignUpComponent extends SignUpForm {
       }
 
       await this.userService.update(
-        user,
-        {
-          photoURL: photoUrl,
-          firstName: this.firstName,
-          lastName: this.lastName,
-          username: username,
-          displayName: `${this.firstName} ${this.lastName}`,
-        },
+          user,
+          {
+            photoURL: photoUrl,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            username: username,
+            displayName: `${this.firstName} ${this.lastName}`,
+          },
       ).then(() => this.router.navigate([appRoutes.home]));
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       this.logger.error(`Something went wrong updating user profile`, error);
+    } finally {
+      this.loading.set(false);
     }
-    finally { this.loading.set(false); }
   }
 
   setUsername(event: Event) {

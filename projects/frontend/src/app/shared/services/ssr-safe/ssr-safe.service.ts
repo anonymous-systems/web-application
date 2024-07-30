@@ -1,7 +1,7 @@
-import { inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { isPlatformBrowser, isPlatformServer } from "@angular/common";
+import {inject, Injectable, PLATFORM_ID} from '@angular/core';
+import {isPlatformBrowser, isPlatformServer} from '@angular/common';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class SSRSafeService {
   private platformID = inject(PLATFORM_ID);
 

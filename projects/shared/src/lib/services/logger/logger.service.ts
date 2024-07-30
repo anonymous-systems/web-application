@@ -1,11 +1,11 @@
-import { inject, Injectable, isDevMode } from '@angular/core';
+import {inject, Injectable, isDevMode} from '@angular/core';
 import {
   MatSnackBar,
   MatSnackBarConfig,
-  MatSnackBarRef, TextOnlySnackBar
-} from "@angular/material/snack-bar";
+  MatSnackBarRef, TextOnlySnackBar,
+} from '@angular/material/snack-bar';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class LoggerService {
   private snackBar = inject(MatSnackBar);
 
@@ -20,19 +20,19 @@ export class LoggerService {
   info(value: string, ...restOfInfo: unknown[]): void {
     console.info(`${value}: `, restOfInfo);
 
-    this.openSnackBar(value, 'OK', { duration: 5000, panelClass: 'info' });
+    this.openSnackBar(value, 'OK', {duration: 5000, panelClass: 'info'});
   }
 
   log(value: string, ...restOfLog: unknown[]): void {
     console.log(`${value}: `, restOfLog);
 
-    this.openSnackBar(value, 'OK', { duration: 5000, panelClass: 'log' });
+    this.openSnackBar(value, 'OK', {duration: 5000, panelClass: 'log'});
   }
 
   warn(value: string, ...restOfWarn: unknown[]): void {
     console.warn(`${value}: `, restOfWarn);
 
-    this.openSnackBar(value, 'OK', { duration: 10000, panelClass: 'warn' });
+    this.openSnackBar(value, 'OK', {duration: 10000, panelClass: 'warn'});
   }
 
   error(message: string, ...restOfError: unknown[]): void {
@@ -59,13 +59,13 @@ export class LoggerService {
       console.error(error, restOfError);
     }
 
-    this.openSnackBar(message, 'OK', { duration: 0, panelClass: 'error' });
+    this.openSnackBar(message, 'OK', {duration: 0, panelClass: 'error'});
   }
 
   openSnackBar(
-    message: string,
-    action: string | undefined,
-    config: MatSnackBarConfig | undefined,
+      message: string,
+      action: string | undefined,
+      config: MatSnackBarConfig | undefined,
   ): MatSnackBarRef<TextOnlySnackBar> {
     return this.snackBar.open(message, action, config);
   }

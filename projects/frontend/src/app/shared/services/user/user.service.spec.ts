@@ -1,9 +1,9 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { UserService } from './user.service';
+import {UserService} from './user.service';
 import {
   FirestoreService, StorageService, AuthService, LoggerService,
-} from "@shared-library";
+} from '@shared-library';
 
 describe('UserService', () => {
   let service: UserService;
@@ -11,10 +11,10 @@ describe('UserService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: FirestoreService, useValue: {} },
-        { provide: StorageService, useValue: {} },
-        { provide: LoggerService, useValue: {} },
-        { provide: AuthService, useValue: {} },
+        {provide: FirestoreService, useValue: {}},
+        {provide: StorageService, useValue: {}},
+        {provide: LoggerService, useValue: {}},
+        {provide: AuthService, useValue: {}},
       ],
     });
     service = TestBed.inject(UserService);

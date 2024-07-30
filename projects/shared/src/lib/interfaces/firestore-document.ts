@@ -1,7 +1,7 @@
 import {
   FirestoreTimestamp,
-  ReadFirestoreTimestamp, WriteFirestoreTimestamp
-} from "./firestore-timestamp";
+  ReadFirestoreTimestamp, WriteFirestoreTimestamp,
+} from './firestore-timestamp';
 
 /**
  * @description Defines the structure of a document in Firestore,

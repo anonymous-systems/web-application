@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, HostBinding, model,
 } from '@angular/core';
-import { NgOptimizedImage } from "@angular/common";
+import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'anon-shared-logo',
@@ -12,7 +12,7 @@ import { NgOptimizedImage } from "@angular/common";
   `,
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage]
+  imports: [NgOptimizedImage],
 })
 export class LogoComponent {
   @HostBinding('attr.aria-hidden') ariaHidden = true;
