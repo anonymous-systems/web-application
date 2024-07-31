@@ -18,14 +18,14 @@ main {
   flex-grow: 1;
   overflow: auto;
   height: 0;
-  padding: $app-padding;
+  padding: var(--padding);
   /** Only add bottom padding for bottom navigation menu on small screen */
   @media (max-width: $small) {
-    padding-bottom: calc(#{$app-padding} + 80px);
+    padding-bottom: calc(var(--padding) + 80px);
   }
   
   @media (min-width: $small) {
-    border-radius: $app-border-radius;
-    margin: $app-padding calc(#{$app-padding} * 2) $app-padding $app-padding;
+    border-radius: var(--border-radius);
+    margin: var(--padding) calc(var(--padding) * 2) var(--padding) var(--padding);
   }
 }
