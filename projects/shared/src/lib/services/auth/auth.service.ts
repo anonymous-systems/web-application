@@ -19,7 +19,7 @@ export class AuthService {
   private router = inject(Router);
   private firestore = inject(FirestoreService);
 
-  readonly USERS_COLLECTION = 'users';
+  readonly USERS_COLLECTION: string = 'users';
 
   /**
    * Retrieves the currently authenticated Firebase user, or
