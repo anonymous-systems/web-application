@@ -5,10 +5,10 @@ import {TopAppBarComponent} from './top-app-bar.component';
 import {AuthService} from '@shared-library';
 import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
-import {User} from '@angular/fire/auth';
 import {HarnessLoader} from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatMenuItemHarness} from '@angular/material/menu/testing';
+import {mockUser} from '@shared-library/mocks';
 
 describe('TopAppBarComponent', () => {
   let component: TopAppBarComponent;
@@ -53,12 +53,6 @@ describe('TopAppBarComponent', () => {
   });
 
   xit('should display the user information', fakeAsync(() => {
-    // Mock user data
-    const mockUser = {
-      uid: 'mock-user-id',
-      displayName: 'Mock User Name',
-    } as User;
-
     mockAuthService.authState$.and.returnValue(of(mockUser));
 
     fixture.detectChanges();

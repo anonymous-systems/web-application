@@ -4,9 +4,9 @@
 @use '@angular/material' as mat;
 
 @use '../../app/app-theme' as app;
-@use '../../../../../projects/shared/src/lib/shared-material-theme' as shared;
+@use '../../../../shared/src//lib/shared-material-theme' as sharedLib;
 
-@import "./partials/light-theme";
+@import "../../../../shared/src/assets/scss/partials/light-theme";
 
 // Plus imports for other components in your app.
 // Include the common styles for Angular Material. We include this here
@@ -24,7 +24,7 @@ $theme: $light-theme;
   @include mat.all-component-themes($theme);
 
   @include app.theme($theme);
-  @include shared.theme($theme);
+  @include sharedLib.theme($theme);
 }
 
 // Comment out the line below if you want to use the pre-defined

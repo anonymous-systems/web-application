@@ -1,13 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {BottomNavigationMenuComponent, GenericItem} from '@shared-library';
+import {BottomNavigationMenuComponent, mockRoutes} from '@shared-library';
 import {provideRouter} from '@angular/router';
-
-const mockRoutes: GenericItem[] = [
-  {id: '1', name: 'Home'},
-  {id: '2', name: 'Profile'},
-  {id: '3', name: 'Settings'},
-];
 
 describe('BottomNavigationMenuComponent', () => {
   let component: BottomNavigationMenuComponent;

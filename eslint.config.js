@@ -18,8 +18,10 @@ const google = require("eslint-config-google");
 function getGoogleRulesForV9() {
     const rules = {...google.rules};
 
+    // @ts-ignore
     delete rules['valid-jsdoc'];
 
+    // @ts-ignore
     delete rules['require-jsdoc'];
 
     return rules;
