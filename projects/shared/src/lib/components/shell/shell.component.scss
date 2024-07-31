@@ -1,0 +1,31 @@
+@import '../../../assets/scss/partials/media_queries';
+
+:host {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  flex-grow: 1;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
+  height: 0;
+  padding: $app-padding;
+  /** Only add bottom padding for bottom navigation menu on small screen */
+  @media (max-width: $small) {
+    padding-bottom: calc(#{$app-padding} + 80px);
+  }
+  
+  @media (min-width: $small) {
+    border-radius: $app-border-radius;
+    margin: $app-padding calc(#{$app-padding} * 2) $app-padding $app-padding;
+  }
+}

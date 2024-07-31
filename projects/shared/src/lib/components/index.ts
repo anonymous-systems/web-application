@@ -9,3 +9,5 @@ export * from './navigation-drawer/navigation-drawer.component';
 export * from './bottom-navigation-menu/bottom-navigation-menu.component';
 
 export * from './top-app-bar/top-app-bar.component';
+
+export * from './shell/shell.component';
