@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, model} from '@angular/core';
 import {AuthService, BrandNameComponent} from '@shared-library';
 import {RouterLink} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
@@ -22,9 +22,9 @@ export class TopAppBarComponent {
 
   readonly title = 'Anonymous Systems';
 
-  homeRoute = input.required<string | string[]>();
+  homeRoute = model.required<string | string[]>();
 
-  singInRoute = input.required<string | string[]>();
+  singInRoute = model.required<string | string[]>();
 
   user = toSignal(this.authService.authState$());
 

@@ -7,10 +7,12 @@
             [matMenuTriggerFor]="userActionMenu">
         @if (user.photoURL) {
             <img width="48" height="48" class="user-avatar"
+                [ariaLabel]="user.displayName + ' profile avatar'"
                 [ngSrc]="user.photoURL"
                 [alt]="user.displayName+' profile avatar'" />
         } @else {
-            <mat-icon fontIcon="account_circle" class="user-avatar" />
+            <mat-icon fontIcon="account_circle" class="user-avatar"
+                [ariaLabel]="user.displayName + ' profile avatar'" />
         }
     </button>
 } @else {
@@ -20,7 +22,7 @@
 }
 
 <mat-menu #userActionMenu="matMenu">
-    <button mat-menu-item type="button" (click)="signOut()">
+    <button mat-menu-item type="button" id="sign-out" (click)="signOut()">
         <mat-icon fontIcon="logout" />
 
         <span>Sign out</span>
