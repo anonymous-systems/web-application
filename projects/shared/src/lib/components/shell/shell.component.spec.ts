@@ -7,7 +7,7 @@ import {
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 
 describe('ShellComponent', () => {
   let component: ShellComponent;
