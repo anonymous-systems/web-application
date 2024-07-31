@@ -1,7 +1,7 @@
 import {
   GenericFunction,
   GenericPromiseFunction,
-} from '../types/generic-function';
+} from '@shared-library/types';
 
 export interface GenericItem {
   id: string,

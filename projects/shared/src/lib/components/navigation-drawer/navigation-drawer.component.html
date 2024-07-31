@@ -1,0 +1,13 @@
+@for (segment of segments(); track segment.id) {
+  <button mat-button type="button" color="primary"
+          routerLinkActive="active"
+          [routerLink]="segment.routerLink"
+          [routerLinkActiveOptions]="{exact: true}">
+    @if (segment.icon) {
+      <mat-icon class="material-icons-outlined"
+                [fontIcon]="segment.icon" />
+    }
+
+    <span class="truncate-text">{{segment.name}}</span>
+  </button>
+}
