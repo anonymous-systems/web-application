@@ -8,14 +8,19 @@ import {provideRouter} from '@angular/router';
 import {HarnessLoader} from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatMenuItemHarness} from '@angular/material/menu/testing';
-import {mockAuthService, mockUser} from '@shared-library/mocks';
+import {mockUser} from '@shared-library/mocks';
 
 describe('TopAppBarComponent', () => {
   let component: TopAppBarComponent;
   let fixture: ComponentFixture<TopAppBarComponent>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
   let loader: HarnessLoader;
 
   beforeEach(async () => {
+    mockAuthService = jasmine.createSpyObj(
+        'AuthService', ['authState$', 'signOut'],
+    );
+
     mockAuthService.authState$.and.returnValue(of(null));
 
     await TestBed.configureTestingModule({

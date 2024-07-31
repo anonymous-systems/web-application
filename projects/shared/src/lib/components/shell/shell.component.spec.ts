@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ShellComponent} from './shell.component';
 import {
-  AuthService, mockAuthService, mockBreakpointObserver,
+  AuthService, mockBreakpointObserver,
 } from '@shared-library';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {of} from 'rxjs';
@@ -12,12 +12,14 @@ import {provideNoopAnimations} from '@angular/platform-browser/animations';
 describe('ShellComponent', () => {
   let component: ShellComponent;
   let fixture: ComponentFixture<ShellComponent>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
+    mockAuthService = jasmine.createSpyObj(AuthService, ['authState$']);
+
     mockAuthService.authState$.and.returnValue(of(null));
 
     mockBreakpointObserver.observe.and.returnValue(of({matches: true}));
-
 
     await TestBed.configureTestingModule({
       imports: [ShellComponent],
