@@ -7,3 +7,5 @@ export * from './logo/logo.component';
 export * from './navigation-drawer/navigation-drawer.component';
 
 export * from './bottom-navigation-menu/bottom-navigation-menu.component';
+
+export * from './top-app-bar/top-app-bar.component';
