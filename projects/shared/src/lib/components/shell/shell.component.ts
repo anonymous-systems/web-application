@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, model} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {map} from 'rxjs';
 import {
@@ -9,9 +9,9 @@ import {
 } from '../bottom-navigation-menu/bottom-navigation-menu.animations';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {
+  BottomNavigationMenuComponent, GenericItem,
   NavigationDrawerComponent,
-} from '../navigation-drawer/navigation-drawer.component';
-import {BottomNavigationMenuComponent, GenericItem} from '@shared-library';
+} from '@shared-library';
 import {TopAppBarComponent} from '../top-app-bar/top-app-bar.component';
 import {RouterOutlet} from '@angular/router';
 
@@ -30,11 +30,11 @@ import {RouterOutlet} from '@angular/router';
 export class ShellComponent {
   private breakpointObserver = inject(BreakpointObserver);
 
-  segments = input.required<GenericItem[]>();
+  segments = model.required<GenericItem[]>();
 
-  homeRoute = input.required<string | string[]>();
+  homeRoute = model.required<string | string[]>();
 
-  signInRoute = input.required<string | string[]>();
+  signInRoute = model.required<string | string[]>();
 
   isMobile = toSignal(
       this.breakpointObserver.observe('(max-width: 599px)').pipe(
