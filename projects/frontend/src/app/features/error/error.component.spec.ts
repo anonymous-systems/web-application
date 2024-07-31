@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ErrorComponent} from './error.component';
-import {ActivatedRoute} from '@angular/router';
+import {provideRouter} from '@angular/router';
 
 describe('ErrorComponent', () => {
   let fixture: ComponentFixture<ErrorComponent>;
@@ -9,12 +9,7 @@ describe('ErrorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ErrorComponent],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {},
-        },
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ErrorComponent);
