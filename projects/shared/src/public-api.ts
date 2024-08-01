@@ -17,3 +17,5 @@ export * from './lib/pipes';
 export * from './lib/fns';
 
 export * from './lib/mocks';
+
+export * from './lib/animations';
