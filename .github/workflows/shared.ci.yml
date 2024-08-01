@@ -23,6 +23,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Create keys.ts
+        run: |
+          echo "/* eslint-disable max-len */ export const FIREBASE_API_KEY = ''; export const RECAPTCHA3_SITE_KEY = ''; export const PROD_FIREBASE_API_KEY = ''; export const PROD_RECAPTCHA3_SITE_KEY = '' /* eslint-enable max-len */" > projects/frontend/src/environments/keys.ts
+
       - name: Install packages
         run: npm ci
 
