@@ -11,9 +11,12 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {
   BottomNavigationMenuComponent, GenericItem,
   NavigationDrawerComponent,
+  NavigationRailComponent,
+  TopAppBarComponent,
 } from '@shared-library';
-import {TopAppBarComponent} from '../top-app-bar/top-app-bar.component';
-import {RouterOutlet} from '@angular/router';
+import {RouterLink, RouterLinkActive} from '@angular/router';
+import {MatIcon} from '@angular/material/icon';
+import {MatAnchor} from '@angular/material/button';
 
 @Component({
   selector: 'anon-shared-shell',
@@ -23,7 +26,9 @@ import {RouterOutlet} from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NavigationDrawerComponent, TopAppBarComponent,
-    RouterOutlet, BottomNavigationMenuComponent,
+    BottomNavigationMenuComponent,
+    NavigationRailComponent, MatAnchor,
+    RouterLink, RouterLinkActive, MatIcon,
   ],
   animations: [NavigationDrawerAnimation, NavigationMenuAnimation],
 })
