@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {stringToUsername} from '../../fns';
+import {stringToUsername} from '../../functions';
 
 @Pipe({name: 'username', standalone: true})
 export class UsernamePipe implements PipeTransform {

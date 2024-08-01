@@ -32,7 +32,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {environment} from '../../../environments/environment';
 import {AuthService, LoggerService} from '@shared-library/services';
 import {CompanyInformation} from '@shared-library/information';
-import {stringToUsername} from '@shared-library/fns';
+import {stringToUsername} from '@shared-library/functions';
 
 @Component({
   selector: 'anon-sign-up',

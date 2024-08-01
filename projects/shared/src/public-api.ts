@@ -14,7 +14,7 @@ export * from './lib/interfaces';
 
 export * from './lib/pipes';
 
-export * from './lib/fns';
+export * from './lib/functions';
 
 export * from './lib/mocks';
 
