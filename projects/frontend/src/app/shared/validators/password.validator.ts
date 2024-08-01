@@ -4,11 +4,9 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import {containsLetterRegExp} from '../regular-expressions/contains-letter';
-import {containsDigitRegExp} from '../regular-expressions/contains-digit';
 import {
-  containsSpecialCharacterRegExp,
-} from '../regular-expressions/contains-special-character';
+  containsDigitRegExp, containsLetterRegExp, containsSpecialCharacterRegExp,
+} from '@shared-library/regular-expressions';
 
 export const passwordMinLength = 8;
 
