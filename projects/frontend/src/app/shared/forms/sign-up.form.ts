@@ -8,13 +8,11 @@ import {
 import {
   confirmPasswordValidators,
 } from '../validators/confirm-password.validator';
-import {containsLetterRegExp} from '../regular-expressions/contains-letter';
-import {containsDigitRegExp} from '../regular-expressions/contains-digit';
-import {
-  containsSpecialCharacterRegExp,
-} from '../regular-expressions/contains-special-character';
 import {signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {
+  containsDigitRegExp, containsLetterRegExp, containsSpecialCharacterRegExp,
+} from '@shared-library/regular-expressions';
 
 export class SignUpForm {
   signUpForm = new FormGroup<SignUpFormGroup>({

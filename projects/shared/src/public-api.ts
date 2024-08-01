@@ -19,3 +19,5 @@ export * from './lib/functions';
 export * from './lib/mocks';
 
 export * from './lib/animations';
+
+export * from './lib/regular-expressions';
