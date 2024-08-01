@@ -7,12 +7,14 @@
 @use './welcome/welcome-theme' as welcome;
 @use './sign-up/sign-up-theme' as signUp;
 @use './home/home-theme' as home;
+@use './sign-in//sign-in-theme' as signIn;
 
 @mixin componentThemeMixins($theme) {
   @include error.theme($theme);
   @include welcome.theme($theme);
   @include signUp.theme($theme);
   @include home.theme($theme);
+  @include signIn.theme($theme);
 }
 
 @mixin color($theme) {

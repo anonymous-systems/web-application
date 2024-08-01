@@ -4,6 +4,7 @@ import {
   signInWithPopup, signOut, updateProfile,
   Auth, AuthError, User, UserCredential,
   GoogleAuthProvider,
+  signInWithEmailAndPassword,
 } from '@angular/fire/auth';
 import {LoggerService} from '../logger/logger.service';
 import {NavigationExtras, Router} from '@angular/router';
@@ -54,10 +55,58 @@ export class AuthService {
    * with the UserCredential if the sign-in is successful, or rejects with
    * an AuthError if it fails.
    */
-  async signIn(successRoute?: unknown[]): Promise<void | AuthError> {
-    return this.googleLogin().then(() => {
-      if (successRoute) this.router.navigate(successRoute);
-    });
+  async signInWithGoogle(successRoute?: unknown[]): Promise<void | AuthError> {
+    try {
+      return this.googleLogin().then(() => {
+        if (successRoute) this.router.navigate(successRoute);
+      });
+    } catch (error: unknown) {
+      this.logger.error('Error caught while signing in with Google', error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Signs the user in using their email and password.
+   *
+   * @remarks
+   * This method attempts to sign in the user with the provided credentials.
+   * If successful, it navigates to the specified `successRoute`. Otherwise,
+   * it logs an error and rethrows the error.
+   *
+   * @param {string} email - The user's email address.
+   * @param {string} password - The user's password.
+   * @param {unknown[]} successRoute - (Optional) An array of route segments
+   * to navigate to upon successful sign-in.
+   *
+   * @returns {Promise<void | AuthError>} A Promise that resolves upon
+   * successful sign-in and navigation, or rejects with an AuthError if
+   * sign-in fails.
+   *
+   * @throws {AuthError} If an error occurs during the sign-in process.
+   */
+  async signInWithEmailAndPassword(
+      email: string, password: string, successRoute?: unknown[],
+  ): Promise<void | AuthError> {
+    try {
+      // eslint-disable-next-line max-len
+      // await setPersistence(this.auth, { type: rememberMe ? 'LOCAL' : 'SESSION' });
+
+      return signInWithEmailAndPassword(this.auth, email, password)
+          .then(() => {
+            if (successRoute) this.router.navigate(successRoute);
+          }).catch((error: AuthError) => {
+            // eslint-disable-next-line max-len
+            this.logger.error(`Something went wrong signing in: ${error.code}`, [error, email, password]);
+
+            throw error;
+          });
+    } catch (error: unknown) {
+      this.logger.error('Error caught while signing in', error);
+
+      throw error;
+    }
   }
 
   /**
@@ -72,17 +121,26 @@ export class AuthService {
    * with UserCredential upon success, or an AuthError on failure.
    */
   async googleLogin(): Promise<UserCredential | AuthError> {
-    const provider = new GoogleAuthProvider();
+    try {
+      const provider = new GoogleAuthProvider();
 
-    return signInWithPopup(this.auth, provider)
-        .catch((error: AuthError) => {
-          this.logger.error(
-              `Something went wrong signing in with Google`,
-              [error, this.auth, provider],
-          );
+      return signInWithPopup(this.auth, provider)
+          .catch((error: AuthError) => {
+            this.logger.error(
+                `Something went wrong signing in with Google`,
+                [error, this.auth, provider],
+            );
 
-          return error;
-        });
+            return error;
+          });
+    } catch (error: unknown) {
+      this.logger.error(
+          'Error caught while signing in with popup as a google provider',
+          error,
+      );
+
+      throw error;
+    }
   }
 
   /**
@@ -184,13 +242,27 @@ export class AuthService {
         });
   }
 
+  /**
+   * Updates the user's profile information (display name and/or photo URL).
+   *
+   * @param {User} user - The Firebase User object to update.
+   * @param {Object} updates - An object containing the fields to update:
+   *   - `displayName` (optional): The new display name for the user.
+   *   - `photoURL` (optional): The new photo URL for the user.
+   *
+   * @returns {Promise<void>} A Promise that resolves upon successful
+   * profile update.
+   *
+   * @throws {Error} If neither `displayName` nor `photoURL` is provided,
+   * or if an error occurs during the update process.
+   */
   async updateUser(
       user: User,
       {displayName, photoURL}: {
       displayName?: string | null;
       photoURL?: string | null;
     },
-  ) {
+  ): Promise<void> {
     try {
       if (!displayName && !photoURL) {
         throw new Error(
@@ -209,7 +281,7 @@ export class AuthService {
 
       return await updateProfile(user, profile);
     } catch (error: unknown) {
-      this.logger.error('Error updating user profile:', error);
+      this.logger.error('Error caught while updating user profile.', error);
 
       throw error;
     }

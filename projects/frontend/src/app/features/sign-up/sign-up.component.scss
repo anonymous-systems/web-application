@@ -46,7 +46,7 @@ cdk-step :is(.title, .description) {
   display: flex;
   flex-direction: column;
   gap: var(--gap);
-  padding-left: var(--padding);
+  padding: 0 0 var(--padding) var(--padding);
 
   div {
     display: flex;

@@ -2,6 +2,7 @@ import {Routes} from '@angular/router';
 import {
   incompleteProfileResolver,
 } from './shared/resolvers/profile/incompleteProfileResolver';
+import {RedirectAuthenticatedGuard} from '@shared-library/guards';
 
 export const appRoutes = {
   error: '/error',
@@ -12,6 +13,12 @@ export const appRoutes = {
 };
 
 export const routes: Routes = [
+  {
+    path: 'sign-in',
+    loadComponent: () => import('./features/sign-in/sign-in.component')
+        .then((c) => c.SignInComponent),
+    canActivate: [RedirectAuthenticatedGuard],
+  },
   {
     path: 'sign-up',
     loadComponent: () => import('./features/sign-up/sign-up.component')

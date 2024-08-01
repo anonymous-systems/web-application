@@ -1,0 +1,62 @@
+<div class="card">
+    @if (loading()) {
+        <mat-progress-bar class="loading-bar" mode="indeterminate" />
+    }
+
+    <a class="name" [routerLink]="[appRoutes.home]">
+        <anon-shared-brand-name />
+    </a>
+
+    <h1 class="title">{{title}}</h1>
+
+    <p class="description">{{description}}</p>
+
+    <form [formGroup]="signInForm" (ngSubmit)="signIn()">
+        <mat-form-field [appearance]="matFormFieldAppearance">
+            <mat-label>Email Address</mat-label>
+
+            <input matInput name="email" formControlName="email"
+                autocomplete="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field [appearance]="matFormFieldAppearance">
+            <mat-label>Password</mat-label>
+
+            <input matInput name="password" formControlName="password"
+                autocomplete="current-password"
+                [type]="showPassword() ? 'text' : 'password'" />
+            <button mat-icon-button matIconSuffix type="button"
+                [attr.aria-label]="'Show Password'"
+                [attr.aria-pressed]="showPassword()"
+                (click)="showPassword.set(!showPassword())">
+                <mat-icon [fontIcon]="showPassword() ? 'visibility' : 'visibility_off'" />
+            </button>
+        </mat-form-field>
+
+<!--        <mat-checkbox formControlName="remember">Remember Me</mat-checkbox>-->
+
+        <button mat-flat-button type="submit" class="sign-in-btn"
+            [disabled]="signInForm.invalid" (click)="signIn()">
+            Sign in
+        </button>
+    </form>
+
+    <button mat-stroked-button type="button" class="sign-in-with-google-btn"
+        (click)="googleSignIn()">
+        <span class="container">
+            <!-- eslint-disable-next-line @angular-eslint/template/prefer-ngsrc -->
+            <img src="assets/svgs/google-superg.svg"
+                alt="Google Super G Logo" width="24" height="24" />
+
+            <span>Sign in with Google</span>
+        </span>
+    </button>
+
+    <p class="sign-up-container">
+        <span>You don't have an account.</span>
+
+        <button mat-button type="button" [routerLink]="[appRoutes.signUp]">
+            Sign up
+        </button>
+    </p>
+</div>

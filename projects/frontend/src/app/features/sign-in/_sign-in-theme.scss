@@ -12,25 +12,21 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  anon-sign-up {
+  anon-sign-in {
     .card {
-      border-color: mat.get-theme-color($theme, outline);
+      border-color: mat.get-theme-color($theme, outline-variant);
     }
     .description {
       color: mat.get-theme-color($theme, on-surface-variant);
-    }
-    form.profile .photo {
-      background-color: mat.get-theme-color($theme, primary, 100);
-      border-color: mat.get-theme-color($theme, secondary, 80);
     }
   }
 }
 
 @mixin typography($theme) {
-  anon-sign-up {
+  anon-sign-in {
     h1.title {
-      font: mat.get-theme-typography($theme, headline-large);
-      margin: 0;
+      // @include mat.typography-level($typography-config, 'headline-4');
+      font: mat.get-theme-typography($theme, headline-medium);
     }
   }
 }

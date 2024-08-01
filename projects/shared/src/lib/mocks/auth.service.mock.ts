@@ -12,7 +12,7 @@ export class MockAuthService extends AuthService {
     return of(null);
   }
 
-  override signIn() {
+  override signInWithGoogle() {
     return Promise.resolve();
   }
 
@@ -33,6 +33,13 @@ export class MockAuthService extends AuthService {
   }
 
   override updateUser() {
+    return Promise.resolve();
+  }
+
+  override signInWithEmailAndPassword(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      email: string, password: string, successRoute?: unknown[],
+  ): Promise<void | AuthError> {
     return Promise.resolve();
   }
 }
