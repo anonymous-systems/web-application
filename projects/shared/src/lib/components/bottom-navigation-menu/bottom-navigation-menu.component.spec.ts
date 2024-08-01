@@ -17,7 +17,7 @@ describe('BottomNavigationMenuComponent', () => {
 
     component = fixture.componentInstance;
 
-    component.bottomNavMenuRoutes.set([]);
+    component.segments.set([]);
 
     fixture.detectChanges();
   });
@@ -27,36 +27,36 @@ describe('BottomNavigationMenuComponent', () => {
   });
 
   it('should set bottomNavMenuRoutes correctly', () => {
-    component.bottomNavMenuRoutes.set(mockRoutes);
+    component.segments.set(mockRoutes);
 
     fixture.detectChanges();
 
-    expect(component.bottomNavMenuRoutes()).toEqual(mockRoutes);
+    expect(component.segments()).toEqual(mockRoutes);
   });
 
   it('should handle empty bottomNavMenuRoutes', () => {
-    component.bottomNavMenuRoutes.set([]);
+    component.segments.set([]);
 
     fixture.detectChanges();
 
-    expect(component.bottomNavMenuRoutes()).toEqual([]);
+    expect(component.segments()).toEqual([]);
   });
 
   it('should handle null bottomNavMenuRoutes', () => {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    component.bottomNavMenuRoutes.set(null as any);
+    component.segments.set(null as any);
 
     fixture.detectChanges();
 
-    expect(component.bottomNavMenuRoutes()).toBeNull();
+    expect(component.segments()).toBeNull();
   });
 
   it('should handle undefined bottomNavMenuRoutes', () => {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    component.bottomNavMenuRoutes.set(undefined as any);
+    component.segments.set(undefined as any);
 
     fixture.detectChanges();
 
-    expect(component.bottomNavMenuRoutes()).toBeUndefined();
+    expect(component.segments()).toBeUndefined();
   });
 });

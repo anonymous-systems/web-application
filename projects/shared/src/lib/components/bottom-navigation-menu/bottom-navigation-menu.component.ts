@@ -17,5 +17,5 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
   ],
 })
 export class BottomNavigationMenuComponent {
-  bottomNavMenuRoutes = model.required<GenericItem[]>({});
+  segments = model.required<GenericItem[]>({});
 }
