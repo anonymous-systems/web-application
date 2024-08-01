@@ -1,7 +1,7 @@
 export const CompanyInformation = {
   acronym: 'AS',
   name: 'Anonymous Systems',
-  short_name: 'AnonSys',
+  short_name: 'Anonymous Systems',
   full_name: 'Anonymous Systems LLC',
   title: 'Anonymous Systems Technology Consultants',
   /* eslint-disable-next-line max-len */
