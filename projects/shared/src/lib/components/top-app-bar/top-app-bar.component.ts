@@ -5,6 +5,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
 import {NgOptimizedImage} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'anon-shared-top-app-bar',
@@ -13,7 +14,7 @@ import {MatIcon} from '@angular/material/icon';
   standalone: true,
   imports: [
     RouterLink, BrandNameComponent, MatMenuTrigger, NgOptimizedImage,
-    MatIcon, MatMenu,
+    MatIcon, MatMenu, MatButton,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

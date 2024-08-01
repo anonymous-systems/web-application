@@ -3,7 +3,7 @@
 </a>
 
 @if (user(); as user) {
-    <button mat-icon-button type="button" class="user-avatar-button"
+    <button mat-icon-button type="button" class="user-avatar-button w-fit-content"
             [matMenuTriggerFor]="userActionMenu">
         @if (user.photoURL) {
             <img width="48" height="48" class="user-avatar"
@@ -16,7 +16,7 @@
         }
     </button>
 } @else {
-    <button mat-button type="button" [routerLink]="singInRoute()">
+    <button mat-button type="button" class="w-fit-content" [routerLink]="singInRoute()">
         Sign in
     </button>
 }

@@ -2,12 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--top-bar-height);
+  height: var(--header-height);
   padding: calc(var(--padding) * 1/4) var(--padding);
 }
 
 .title {
   text-decoration: none;
+  flex: 1;
 }
 
 button.user-avatar-button {

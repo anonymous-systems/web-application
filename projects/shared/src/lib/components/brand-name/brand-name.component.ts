@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding} from '@angular/core';
 import {CompanyInformation} from '../../information';
 
 @Component({
@@ -10,4 +10,7 @@ import {CompanyInformation} from '../../information';
 })
 export class BrandNameComponent {
   readonly name = CompanyInformation.name;
+
+  @HostBinding('title')
+  readonly title = this.name;
 }

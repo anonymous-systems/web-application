@@ -1,5 +1,5 @@
 @for (segment of segments(); track segment.id) {
-  <button mat-button type="button" color="primary"
+  <a mat-button type="button" color="primary"
           routerLinkActive="active"
           [routerLink]="segment.routerLink"
           [routerLinkActiveOptions]="{exact: true}">
@@ -9,5 +9,5 @@
     }
 
     <span class="truncate-text">{{segment.name}}</span>
-  </button>
+  </a>
 }

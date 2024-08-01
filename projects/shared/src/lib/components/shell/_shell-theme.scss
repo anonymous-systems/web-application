@@ -12,9 +12,15 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  anon-shell {
+  anon-shared-shell {
     // background-color: mat.get-color-from-palette($background-palette, 'app-bar');
     background-color: mat.get-theme-color($theme, surface-variant);
+
+    aside#rail {
+      a.active span mat-icon {
+        background: mat.get-theme-color($theme, primary, 80);
+      }
+    }
 
     main {
       background-color: mat.get-theme-color($theme, surface);

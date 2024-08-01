@@ -1,5 +1,27 @@
+<!-- Side Navigation Rail -->
+@if (isTabletPortrait() && !isDesktopExpanded()) {
+    <!-- TODO: investigate error when using component below: undefined (reading 'ɵcmp') -->
+    <!-- <anon-shared-navigation-rail [(segments)]="segments" /> -->
+    <aside id="rail">
+        @for (segment of segments(); track segment.id) {
+            <a mat-button routerLinkActive="active"
+                    [routerLink]="segment.routerLink"
+                    [routerLinkActiveOptions]="{exact: true}">
+              <span class="flex-col justify-content-center align-items-center">
+                @if (segment.icon) {
+                  <mat-icon class="rail-icon material-icons-outlined"
+                    [fontIcon]="segment.icon" />
+                }
+                
+                <span>{{segment.name}}</span>
+              </span>
+            </a>
+          }
+    </aside>
+}
+
 <!-- Side Navigation Drawer -->
- @if (isTabletPortrait()) {
+ @if (isDesktopExpanded()) {
     <anon-shared-navigation-drawer [@navigationDrawerAnimation]
         [(segments)]="segments" />
  }
@@ -9,12 +31,12 @@
         [(homeRoute)]="homeRoute" [(singInRoute)]="signInRoute" />
 
     <main class="content">
-        <router-outlet />
+        <ng-content />
     </main>
 
     <!-- Bottom Navigation Menu -->
      @if (isMobile()) {
         <anon-shared-bottom-navigation-menu [@navigationMenuAnimation]
-            [(bottomNavMenuRoutes)]="segments" />
+            [(segments)]="segments" />
      }
 </div>
