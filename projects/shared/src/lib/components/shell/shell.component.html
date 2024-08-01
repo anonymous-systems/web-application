@@ -1,12 +1,12 @@
 <!-- Side Navigation Drawer -->
  @if (isTabletPortrait()) {
     <anon-shared-navigation-drawer [@navigationDrawerAnimation]
-        [segments]="segments()" />
+        [(segments)]="segments" />
  }
 
 <div class="container">
     <anon-shared-top-app-bar role="heading"
-        [homeRoute]="homeRoute()" [singInRoute]="signInRoute()" />
+        [(homeRoute)]="homeRoute" [(singInRoute)]="signInRoute" />
 
     <main class="content">
         <router-outlet />
@@ -15,6 +15,6 @@
     <!-- Bottom Navigation Menu -->
      @if (isMobile()) {
         <anon-shared-bottom-navigation-menu [@navigationMenuAnimation]
-            [bottomNavMenuRoutes]="segments()" />
+            [(bottomNavMenuRoutes)]="segments" />
      }
 </div>
