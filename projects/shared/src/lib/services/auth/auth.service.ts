@@ -10,7 +10,7 @@ import {NavigationExtras, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {FirestoreUser} from '../../interfaces';
 import {FirestoreService} from '../firestore/firestore.service';
-import {stringToUsername} from '../../fns';
+import {stringToUsername} from '../../functions';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
