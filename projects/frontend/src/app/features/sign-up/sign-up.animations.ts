@@ -1,21 +1,19 @@
 import {
-  animate,
-  AnimationTriggerMetadata, style,
-  transition,
-  trigger,
+  animate, AnimationTriggerMetadata, style, transition, trigger,
 } from '@angular/animations';
+import {
+  emphasizedAccelerate, emphasizedDelecelerate,
+} from '@shared-library/animations';
 
 export const signUpAnimations: AnimationTriggerMetadata[] = [
   trigger(
       'userPhotoAnimation', [
         transition(':enter', [
           style({opacity: 0}),
-          /** Emphasized decelerate */
-          animate('var(--emphasized-decelerate)', style({opacity: 1})),
+          animate(emphasizedDelecelerate(), style({opacity: 1})),
         ]),
         transition(':leave',
-        /** Emphasized accelerate */
-            animate('var(--emphasized-accelerate)', style({opacity: 0})),
+            animate(emphasizedAccelerate(), style({opacity: 0})),
         ),
       ],
   ),
