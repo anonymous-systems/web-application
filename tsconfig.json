@@ -16,9 +16,6 @@
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "paths": {
-      "@shared-library": [
-        "./projects/shared/src/public-api.ts",
-      ],
       "@shared-library/*": [
         "./projects/shared/src/lib/*",
       ]

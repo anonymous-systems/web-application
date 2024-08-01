@@ -1,6 +1,6 @@
 import {animate, style, transition, trigger} from '@angular/animations';
-import { emphasizedDelecelerate } from './emphasized-decelerate.timing';
-import { emphasizedAccelerate } from './emphasized-accelerate.timing';
+import {emphasizedDelecelerate} from './emphasized-decelerate.timing';
+import {emphasizedAccelerate} from './emphasized-accelerate.timing';
 
 export const SlideInFromLeftAnimation = [
   trigger('slideInFromLeftAnimation', [

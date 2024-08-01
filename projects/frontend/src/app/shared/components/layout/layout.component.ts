@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ShellComponent} from '@shared-library';
 import {appRoutes} from '../../../app.routes';
-import {GenericItem} from '@shared-library';
 import {RouterOutlet} from '@angular/router';
+import {ShellComponent} from '@shared-library/components';
+import {GenericItem} from '@shared-library/interfaces';
 
 @Component({
   selector: 'anon-layout',

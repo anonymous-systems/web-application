@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {UserService} from './user.service';
 import {
   FirestoreService, StorageService, AuthService, LoggerService,
-} from '@shared-library';
+} from '@shared-library/services';
 
 describe('UserService', () => {
   let service: UserService;

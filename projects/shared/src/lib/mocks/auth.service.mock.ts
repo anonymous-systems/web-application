@@ -1,7 +1,8 @@
 import {
   AuthError, IdTokenResult, OperationType, User, UserCredential,
 } from '@angular/fire/auth';
-import {AuthService, GenericItem} from '@shared-library';
+import {GenericItem} from '@shared-library/interfaces';
+import {AuthService} from '@shared-library/services';
 import {Observable, of} from 'rxjs';
 
 export class MockAuthService extends AuthService {

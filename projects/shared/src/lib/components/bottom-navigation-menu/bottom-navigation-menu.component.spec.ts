@@ -1,7 +1,10 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {BottomNavigationMenuComponent, mockRoutes} from '@shared-library';
 import {provideRouter} from '@angular/router';
+import {
+  BottomNavigationMenuComponent,
+} from './bottom-navigation-menu.component';
+import {mockRoutes} from '@shared-library/mocks';
 
 describe('BottomNavigationMenuComponent', () => {
   let component: BottomNavigationMenuComponent;

@@ -9,9 +9,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
 import {SIGNUP_STEP} from '../../enums/signup-step';
 import {appRoutes} from '../../../app.routes';
-import {BrandNameComponent, LoggerService} from '@shared-library';
 import {Subscription} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {BrandNameComponent} from '@shared-library/components';
+import {LoggerService} from '@shared-library/services';
 
 @Component({
   selector: 'anon-sign-up-stepper',

@@ -2,8 +2,9 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
-import {CompanyInformation, LogoComponent} from '@shared-library';
 import {appRoutes} from '../../app.routes';
+import {CompanyInformation} from '@shared-library/information';
+import {LogoComponent} from '@shared-library/components';
 
 @Component({
   standalone: true,

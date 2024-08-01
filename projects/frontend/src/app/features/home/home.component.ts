@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CompanyInformation, ThreeDSphereComponent} from '@shared-library';
+import {ThreeDSphereComponent} from '@shared-library/components';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatChipListbox, MatChipOption} from '@angular/material/chips';
+import {CompanyInformation} from '@shared-library/information';
 
 @Component({
   selector: 'anon-home',

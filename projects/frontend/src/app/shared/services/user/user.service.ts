@@ -1,10 +1,10 @@
 import {inject, Injectable} from '@angular/core';
-import {FirestoreService} from '@shared-library';
-import {
-  FirestoreUser, StorageService, LoggerService, AuthService,
-} from '@shared-library';
 import {where} from '@angular/fire/firestore';
 import {User} from '@angular/fire/auth';
+import {
+  AuthService, FirestoreService, LoggerService, StorageService,
+} from '@shared-library/services';
+import {FirestoreUser} from '@shared-library/interfaces';
 
 @Injectable({providedIn: 'root'})
 export class UserService {

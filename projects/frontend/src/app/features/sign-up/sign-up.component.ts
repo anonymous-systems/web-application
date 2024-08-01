@@ -9,9 +9,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {SignUpForm} from '../../shared/forms/sign-up.form';
 import {SIGNUP_STEP} from '../../shared/enums/signup-step';
-import {
-  AuthService, LoggerService, CompanyInformation, stringToUsername,
-} from '@shared-library';
 import {appRoutes} from '../../app.routes';
 import {UserService} from '../../shared/services/user/user.service';
 import {signUpAnimations} from './sign-up.animations';
@@ -33,6 +30,9 @@ import {MatCheckbox} from '@angular/material/checkbox';
 import {AsyncPipe, NgStyle} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {environment} from '../../../environments/environment';
+import {AuthService, LoggerService} from '@shared-library/services';
+import {CompanyInformation} from '@shared-library/information';
+import {stringToUsername} from '@shared-library/fns';
 
 @Component({
   selector: 'anon-sign-up',
