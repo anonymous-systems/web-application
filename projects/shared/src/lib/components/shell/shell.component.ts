@@ -8,15 +8,15 @@ import {
   NavigationMenuAnimation,
 } from '../bottom-navigation-menu/bottom-navigation-menu.animations';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {
-  BottomNavigationMenuComponent, GenericItem,
-  NavigationDrawerComponent,
-  NavigationRailComponent,
-  TopAppBarComponent,
-} from '@shared-library';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
 import {MatAnchor} from '@angular/material/button';
+import {
+  TopAppBarComponent, NavigationDrawerComponent,
+  BottomNavigationMenuComponent,
+  NavigationRailComponent,
+} from '@shared-library/components';
+import {GenericItem} from '@shared-library/interfaces';
 
 @Component({
   selector: 'anon-shared-shell',

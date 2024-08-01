@@ -1,9 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ShellComponent} from './shell.component';
-import {
-  AuthService,
-} from '@shared-library';
+import {AuthService} from '@shared-library/services';
 import {BreakpointObserver, BreakpointState} from '@angular/cdk/layout';
 import {Observable, of} from 'rxjs';
 import {provideRouter} from '@angular/router';

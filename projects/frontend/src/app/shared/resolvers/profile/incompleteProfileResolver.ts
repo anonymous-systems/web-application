@@ -1,6 +1,6 @@
 import {ResolveFn} from '@angular/router';
 import {inject} from '@angular/core';
-import {AuthService} from '@shared-library';
+import {AuthService} from '@shared-library/services';
 import {UserService} from '../../services/user/user.service';
 import {firstValueFrom} from 'rxjs';
 

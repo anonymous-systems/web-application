@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, model} from '@angular/core';
-import {GenericItem} from '@shared-library';
+import {GenericItem} from '@shared-library/interfaces';
 import {MatFabButton} from '@angular/material/button';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatIcon} from '@angular/material/icon';

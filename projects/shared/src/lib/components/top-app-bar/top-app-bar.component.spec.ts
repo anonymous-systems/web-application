@@ -2,7 +2,7 @@ import {
   ComponentFixture, fakeAsync, TestBed, tick,
 } from '@angular/core/testing';
 import {TopAppBarComponent} from './top-app-bar.component';
-import {AuthService} from '@shared-library';
+import {AuthService} from '@shared-library/services';
 import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
 import {HarnessLoader} from '@angular/cdk/testing';

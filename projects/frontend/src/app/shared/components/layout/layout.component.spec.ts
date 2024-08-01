@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LayoutComponent} from './layout.component';
-import {AuthService} from '@shared-library';
+import {AuthService} from '@shared-library/services';
 import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
