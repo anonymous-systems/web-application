@@ -12,6 +12,7 @@ import {Observable} from 'rxjs';
 import {FirestoreUser} from '../../interfaces';
 import {FirestoreService} from '../firestore/firestore.service';
 import {stringToUsername} from '../../functions';
+import { FirebaseError } from '@angular/fire/app';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -61,7 +62,7 @@ export class AuthService {
         if (successRoute) this.router.navigate(successRoute);
       });
     } catch (error: unknown) {
-      this.logger.error('Error caught while signing in with Google', error);
+      this.logger.error('Error signing in with Google', error);
 
       throw error;
     }
@@ -103,7 +104,7 @@ export class AuthService {
             throw error;
           });
     } catch (error: unknown) {
-      this.logger.error('Error caught while signing in', error);
+      this.logger.error('Error signing in with email and password', error);
 
       throw error;
     }
@@ -125,17 +126,12 @@ export class AuthService {
       const provider = new GoogleAuthProvider();
 
       return signInWithPopup(this.auth, provider)
-          .catch((error: AuthError) => {
-            this.logger.error(
-                `Something went wrong signing in with Google`,
-                [error, this.auth, provider],
-            );
-
-            return error;
+          .catch((error: FirebaseError) => {
+            throw error;
           });
     } catch (error: unknown) {
       this.logger.error(
-          'Error caught while signing in with popup as a google provider',
+          'Error signing in with popup as a google provider',
           error,
       );
 
