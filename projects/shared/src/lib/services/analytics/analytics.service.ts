@@ -1,13 +1,21 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, isDevMode} from '@angular/core';
 import {
-  AnalyticsCallOptions, EventParams, getAnalytics, Item, logEvent,
+  isSupported,
+  Analytics, AnalyticsCallOptions, EventParams, Item, logEvent,
 } from '@angular/fire/analytics';
 import {LoggerService} from '../logger/logger.service';
 
 @Injectable({providedIn: 'root'})
 export class AnalyticsService {
-  private analytics = inject(getAnalytics);
   private logger = inject(LoggerService);
+
+  private analytics?: Analytics;
+
+  constructor() {
+    if (isSupported() && !isDevMode()) {
+      this.analytics = inject(Analytics);
+    }
+  }
 
   /**
    * Logs a "login" event to Google Analytics 4.
@@ -27,6 +35,8 @@ export class AnalyticsService {
       eventParams?: {method?: string},
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'login', eventParams, options);
     } catch (error: unknown) {
@@ -54,6 +64,8 @@ export class AnalyticsService {
   logSearch(
       eventParams: {search_terms: string}, options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'search', eventParams, options);
     } catch (error: unknown) {
@@ -86,6 +98,8 @@ export class AnalyticsService {
       },
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'share', eventParams, options);
     } catch (error: unknown) {
@@ -114,6 +128,8 @@ export class AnalyticsService {
       eventParams?: {method?: string},
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'sign_up', eventParams, options);
     } catch (error: unknown) {
@@ -145,6 +161,8 @@ export class AnalyticsService {
       eventParams: {content_type: string, content_id: string},
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'select_content', eventParams, options);
     } catch (error: unknown) {
@@ -182,6 +200,8 @@ export class AnalyticsService {
       },
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'select_item', eventParams, options);
     } catch (error: unknown) {
@@ -219,6 +239,8 @@ export class AnalyticsService {
       },
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'view_item_list', eventParams, options);
     } catch (error: unknown) {
@@ -254,6 +276,8 @@ export class AnalyticsService {
       },
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'view_item', eventParams, options);
     } catch (error: unknown) {
@@ -285,6 +309,8 @@ export class AnalyticsService {
       eventParams?: EventParams,
       options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'tutorial_begin', eventParams, options);
     } catch (error: unknown) {
@@ -315,6 +341,8 @@ export class AnalyticsService {
   logTutorialComplete(
       eventParams?: EventParams, options?: AnalyticsCallOptions,
   ): void | Error {
+    if (!this.analytics) return;
+
     try {
       logEvent(this.analytics, 'tutorial_complete', eventParams, options);
     } catch (error: unknown) {
@@ -337,6 +365,8 @@ export class AnalyticsService {
    * @throws {Error} If there is an error logging the event.
    */
   logExecption(description: string, fatal = true): void | Error {
+    if (!this.analytics) return;
+
     try {
       // Limit descriptions to maximum of 150 characters.
       // See: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters#exd.
