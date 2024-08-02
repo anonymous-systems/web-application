@@ -12,7 +12,7 @@ import {Observable} from 'rxjs';
 import {FirestoreUser} from '../../interfaces';
 import {FirestoreService} from '../firestore/firestore.service';
 import {stringToUsername} from '../../functions';
-import { FirebaseError } from '@angular/fire/app';
+import {FirebaseError} from '@angular/fire/app';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
