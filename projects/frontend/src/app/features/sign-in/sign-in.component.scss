@@ -16,6 +16,10 @@
   width: 100%;
   transition: all var(--emphasized-decelerate);
   position: relative;
+
+  .name {
+    text-decoration: none;
+  }
 }
 
 .title, .description {
