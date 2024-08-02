@@ -33,7 +33,8 @@ const FirebaseProviders = [
   provideFirebaseApp(() => {
     const app = initializeApp(environment.firebaseConfig);
 
-    /** Initialize Analytics (if supported and production) */
+    /** Analytics */
+    /** Initialize (if supported and production) */
     if (!isDevMode()) {
       isSupported().then((supported: boolean) => {
         if (supported) getAnalytics(app);
