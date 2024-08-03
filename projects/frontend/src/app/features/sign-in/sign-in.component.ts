@@ -11,6 +11,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {SignInForm} from '../../shared/forms/sign-in.form';
 import {UserService} from '../../shared/services/user/user.service';
+import {ErrorService} from '@shared-library/services';
 
 @Component({
   selector: 'anon-sign-in',
@@ -29,6 +30,8 @@ export class SignInComponent extends SignInForm {
   private usersService = inject(UserService);
 
   private logger = inject(LoggerService);
+
+  private errorService = inject(ErrorService);
 
   protected readonly appRoutes = appRoutes;
 
@@ -54,9 +57,7 @@ export class SignInComponent extends SignInForm {
           email, password, [appRoutes.home],
       );
     } catch (error) {
-      this.logger.error('Something went wrong signing in', error);
-
-      throw error;
+      this.errorService.handleAuthenticationError(error);
     } finally {
       this.loading.set(false);
     }
@@ -68,9 +69,7 @@ export class SignInComponent extends SignInForm {
     try {
       await this.usersService.signInWithGoogle([appRoutes.home]);
     } catch (error: unknown) {
-      this.logger.error('Error continuing with Google', error);
-
-      throw error;
+      this.errorService.handleAuthenticationError(error);
     } finally {
       this.loading.set(false);
     }
