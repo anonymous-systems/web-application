@@ -13,6 +13,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {
   containsDigitRegExp, containsLetterRegExp, containsSpecialCharacterRegExp,
 } from '@shared-library/regular-expressions';
+import {MatFormFieldAppearance} from '@angular/material/form-field';
 
 export class SignUpForm {
   signUpForm = new FormGroup<SignUpFormGroup>({
@@ -60,6 +61,8 @@ export class SignUpForm {
       ),
     }),
   });
+
+  matFormFieldAppearance = signal<MatFormFieldAppearance>('outline');
 
   passwordMinLength = signal(passwordMinLength);
 

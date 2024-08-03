@@ -14,7 +14,7 @@
 
       <p class="description">Enter your details to continue</p>
 
-      <mat-form-field [appearance]="matFormFieldAppearance">
+      <mat-form-field [appearance]="matFormFieldAppearance()">
         <mat-label>Email Address</mat-label>
 
         <input matInput name="email" type="email"
@@ -33,7 +33,7 @@
         one letter, one digit, and one special character.
       </p>
 
-      <mat-form-field [appearance]="matFormFieldAppearance">
+      <mat-form-field [appearance]="matFormFieldAppearance()">
         <mat-label>Password</mat-label>
 
         <input matInput name="password" formControlName="password"
@@ -86,7 +86,7 @@
 
       <p class="description">Enter your password again</p>
 
-      <mat-form-field [appearance]="matFormFieldAppearance">
+      <mat-form-field [appearance]="matFormFieldAppearance()">
         <mat-label>Confirm Password</mat-label>
 
         <input matInput name="confirmPassword" minlength="8"
@@ -166,7 +166,7 @@
         </picture>
 
         <div class="name-container">
-          <mat-form-field [appearance]="matFormFieldAppearance">
+          <mat-form-field [appearance]="matFormFieldAppearance()">
             <mat-label>First Name</mat-label>
 
             <input matInput name="firstName" type="text"
@@ -174,7 +174,7 @@
                    formControlName="firstName" />
           </mat-form-field>
 
-          <mat-form-field [appearance]="matFormFieldAppearance">
+          <mat-form-field [appearance]="matFormFieldAppearance()">
             <mat-label>Last Name</mat-label>
 
             <input matInput name="lastName" type="text"
@@ -183,7 +183,7 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field [appearance]="matFormFieldAppearance">
+        <mat-form-field [appearance]="matFormFieldAppearance()">
           <mat-label>Username</mat-label>
 
           <input matInput name="username" type="text"

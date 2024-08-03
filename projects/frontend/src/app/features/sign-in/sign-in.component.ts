@@ -1,20 +1,16 @@
-import {
-  ChangeDetectionStrategy, Component, inject, signal,
-} from '@angular/core';
-import {
-  MatFormField, MatFormFieldAppearance, MatLabel,
-} from '@angular/material/form-field';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {appRoutes} from '../../app.routes';
 import {AuthService, LoggerService} from '@shared-library/services';
-import {
-  FormControl, FormGroup, ReactiveFormsModule, Validators,
-} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RouterLink} from '@angular/router';
 import {BrandNameComponent} from '@shared-library/components';
 import {MatInput} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
+import {SignInForm} from '../../shared/forms/sign-in.form';
+import {UserService} from '../../shared/services/user/user.service';
 
 @Component({
   selector: 'anon-sign-in',
@@ -27,8 +23,10 @@ import {MatButton} from '@angular/material/button';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SignInComponent {
+export class SignInComponent extends SignInForm {
   private authService = inject(AuthService);
+
+  private usersService = inject(UserService);
 
   private logger = inject(LoggerService);
 
@@ -37,30 +35,6 @@ export class SignInComponent {
   readonly title = 'Sign in';
 
   readonly description = 'Enter your details to continue';
-
-  readonly matFormFieldAppearance: MatFormFieldAppearance = 'outline';
-
-  showPassword = signal(false);
-
-  loading = signal(false);
-
-  signInForm = new FormGroup({
-    email: new FormControl<string>(
-        '',
-        {
-          nonNullable: true,
-          validators: [Validators.email, Validators.required],
-        },
-    ),
-    password: new FormControl<string>(
-        '',
-        {nonNullable: true, validators: [Validators.required]},
-    ),
-    remember: new FormControl<boolean>(
-        true,
-        {nonNullable: true, validators: [Validators.required]},
-    ),
-  });
 
   async signIn() {
     this.loading.set(true);
@@ -88,13 +62,17 @@ export class SignInComponent {
     }
   }
 
-  async googleSignIn() {
+  async continueWithGoogle() {
+    this.loading.set(true);
+
     try {
-      await this.authService.signInWithGoogle([appRoutes.home]);
+      await this.usersService.signInWithGoogle([appRoutes.home]);
     } catch (error: unknown) {
-      this.logger.error('Error caught while signing in with Google', error);
+      this.logger.error('Error continuing with Google', error);
 
       throw error;
+    } finally {
+      this.loading.set(false);
     }
   }
 }

@@ -5,12 +5,15 @@ import {AuthService, LoggerService} from '@shared-library/services';
 import {appRoutes} from '../../app.routes';
 import {provideRouter} from '@angular/router';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
+import {UserService} from '../../shared/services/user/user.service';
 
 describe('SignInComponent', () => {
   let component: SignInComponent;
   let fixture: ComponentFixture<SignInComponent>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockLoggerService: jasmine.SpyObj<LoggerService>;
+  let mockUsersService: jasmine.SpyObj<UserService>;
+
 
   beforeEach(async () => {
     mockAuthService = jasmine.createSpyObj(
@@ -20,6 +23,11 @@ describe('SignInComponent', () => {
 
     mockLoggerService = jasmine.createSpyObj('LoggerService', ['error']);
 
+    mockUsersService = jasmine.createSpyObj(
+        'UserService',
+        ['signInWithGoogle'],
+    );
+
     await TestBed.configureTestingModule({
       imports: [SignInComponent],
       providers: [
@@ -27,6 +35,7 @@ describe('SignInComponent', () => {
         provideNoopAnimations(),
         {provide: AuthService, useValue: mockAuthService},
         {provide: LoggerService, useValue: mockLoggerService},
+        {provide: UserService, useValue: mockUsersService},
       ],
     }).compileComponents();
 
@@ -71,14 +80,49 @@ describe('SignInComponent', () => {
     );
   });
 
-  describe('googleSignIn', () => {
+  describe('continueWithGoogle', () => {
     it('should call signInWithGoogle', () => {
-      mockAuthService.signInWithGoogle.and.returnValue(Promise.resolve());
+      mockUsersService.signInWithGoogle.and.returnValue(Promise.resolve());
 
-      component.googleSignIn();
+      component.continueWithGoogle();
 
-      expect(mockAuthService.signInWithGoogle)
+      expect(mockUsersService.signInWithGoogle)
           .toHaveBeenCalledWith([appRoutes.home]);
+    });
+
+    it('should log an error if signInWithGoogle fails', async () => {
+      const mockError = new Error('Google sign-in failed');
+
+      mockUsersService.signInWithGoogle.and.returnValue(
+          Promise.reject(mockError),
+      );
+
+      try {
+        await component.continueWithGoogle();
+      } catch (error: unknown) {
+        expect(error).toBe(mockError);
+
+        expect(mockLoggerService.error).toHaveBeenCalledWith(
+            'Error continuing with Google',
+            mockError,
+        );
+      }
+    });
+
+    it('should set loading to true and false', async () => {
+      mockUsersService.signInWithGoogle.and.callFake(() => {
+        return new Promise((resolve) => setTimeout(resolve, 500));
+      });
+
+      expect(component.loading()).toBe(false);
+
+      component.continueWithGoogle();
+
+      expect(component.loading()).toBe(true);
+
+      setTimeout(() => {
+        expect(component.loading()).toBe(false);
+      }, 501);
     });
   });
 });
