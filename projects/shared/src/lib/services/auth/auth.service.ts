@@ -12,7 +12,6 @@ import {Observable} from 'rxjs';
 import {FirestoreUser} from '../../interfaces';
 import {FirestoreService} from '../firestore/firestore.service';
 import {stringToUsername} from '../../functions';
-import {FirebaseError} from '@angular/fire/app';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -70,14 +69,9 @@ export class AuthService {
       return signInWithEmailAndPassword(this.auth, email, password)
           .then(() => {
             if (successRoute) this.router.navigate(successRoute);
-          }).catch((error: AuthError) => {
-            // eslint-disable-next-line max-len
-            this.logger.error(`Something went wrong signing in: ${error.code}`, [error, email, password]);
-
-            throw error;
           });
     } catch (error: unknown) {
-      this.logger.error('Error signing in with email and password', error);
+      this.logger.error('signInWithEmailAndPassword error', error);
 
       throw error;
     }
@@ -98,13 +92,10 @@ export class AuthService {
     try {
       const provider = new GoogleAuthProvider();
 
-      return signInWithPopup(this.auth, provider)
-          .catch((error: FirebaseError) => {
-            throw error;
-          });
+      return signInWithPopup(this.auth, provider);
     } catch (error: unknown) {
       this.logger.error(
-          'Error signing in with popup as a google provider',
+          'googleLogin error',
           error,
       );
 
