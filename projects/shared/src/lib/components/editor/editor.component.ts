@@ -39,7 +39,7 @@ export class EditorComponent {
 
   constructor() {
     afterNextRender(() => {
-      import('./CustomEditorSuperBuild/ckeditor.js' as string)
+      import('ckeditor5-custom-balloon-editor/ckeditor.js' as string)
           .then((e) => {
             console.debug('Editor', Object.keys(e.default));
 
