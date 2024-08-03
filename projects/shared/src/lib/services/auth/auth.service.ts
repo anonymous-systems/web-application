@@ -94,7 +94,7 @@ export class AuthService {
    * @return {Promise<UserCredential | AuthError>} A Promise that resolves
    * with UserCredential upon success, or an AuthError on failure.
    */
-  async googleLogin(): Promise<UserCredential> {
+  async googleLogin(): Promise<UserCredential | AuthError> {
     try {
       const provider = new GoogleAuthProvider();
 
