@@ -1,10 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, effect, inject, signal,
 } from '@angular/core';
-import {
-  MatFormField,
-  MatFormFieldAppearance, MatLabel,
-} from '@angular/material/form-field';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {SignUpForm} from '../../shared/forms/sign-up.form';
@@ -74,9 +71,6 @@ export class SignUpComponent extends SignUpForm {
   readonly companyName = CompanyInformation.name;
 
   readonly domain = environment.domain;
-
-
-  matFormFieldAppearance: MatFormFieldAppearance = 'outline';
 
   selectedStep = signal(SIGNUP_STEP.EMAIL);
 
