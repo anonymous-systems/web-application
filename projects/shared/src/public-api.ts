@@ -21,3 +21,5 @@ export * from './lib/mocks';
 export * from './lib/animations';
 
 export * from './lib/regular-expressions';
+
+export * from './lib/error-handling';
