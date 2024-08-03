@@ -13,3 +13,5 @@ export * from './top-app-bar/top-app-bar.component';
 export * from './shell/shell.component';
 
 export * from './navigation-rail/navigation-rail.component';
+
+export * from './confirm-dialog/confirm-dialog.component';
