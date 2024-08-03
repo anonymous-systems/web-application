@@ -7,7 +7,7 @@ import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
 import {HarnessLoader} from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
-import {MatMenuHarness, MatMenuItemHarness} from '@angular/material/menu/testing';
+import {MatMenuHarness} from '@angular/material/menu/testing';
 import {mockUser} from '@shared-library/mocks';
 import {MatButtonHarness} from '@angular/material/button/testing';
 
