@@ -7,3 +7,5 @@ export * from './firestore/firestore.service';
 export * from './storage/storage.service';
 
 export * from './analytics/analytics.service';
+
+export * from './error/error.service';

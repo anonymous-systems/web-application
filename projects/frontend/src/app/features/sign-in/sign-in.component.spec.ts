@@ -1,7 +1,9 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SignInComponent} from './sign-in.component';
-import {AuthService, LoggerService} from '@shared-library/services';
+import {
+  AuthService, ErrorService, LoggerService,
+} from '@shared-library/services';
 import {appRoutes} from '../../app.routes';
 import {provideRouter} from '@angular/router';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
@@ -13,6 +15,7 @@ describe('SignInComponent', () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockLoggerService: jasmine.SpyObj<LoggerService>;
   let mockUsersService: jasmine.SpyObj<UserService>;
+  let mockErrorService: jasmine.SpyObj<ErrorService>;
 
 
   beforeEach(async () => {
@@ -28,6 +31,12 @@ describe('SignInComponent', () => {
         ['signInWithGoogle'],
     );
 
+    mockErrorService = jasmine.createSpyObj(
+        'ErrorService',
+        ['handleAuthenticationError'],
+    );
+
+
     await TestBed.configureTestingModule({
       imports: [SignInComponent],
       providers: [
@@ -36,6 +45,7 @@ describe('SignInComponent', () => {
         {provide: AuthService, useValue: mockAuthService},
         {provide: LoggerService, useValue: mockLoggerService},
         {provide: UserService, useValue: mockUsersService},
+        {provide: ErrorService, useValue: mockErrorService},
       ],
     }).compileComponents();
 
@@ -90,24 +100,25 @@ describe('SignInComponent', () => {
           .toHaveBeenCalledWith([appRoutes.home]);
     });
 
-    it('should log an error if signInWithGoogle fails', async () => {
-      const mockError = new Error('Google sign-in failed');
+    it(
+        'should handle authentication error if signInWithGoogle fails',
+        async () => {
+          const mockError = new Error('Google sign-in failed');
 
-      mockUsersService.signInWithGoogle.and.returnValue(
-          Promise.reject(mockError),
-      );
+          mockUsersService.signInWithGoogle.and.returnValue(
+              Promise.reject(mockError),
+          );
 
-      try {
-        await component.continueWithGoogle();
-      } catch (error: unknown) {
-        expect(error).toBe(mockError);
+          try {
+            await component.continueWithGoogle();
+          } catch (error: unknown) {
+            expect(error).toBe(mockError);
 
-        expect(mockLoggerService.error).toHaveBeenCalledWith(
-            'Error continuing with Google',
-            mockError,
-        );
-      }
-    });
+            expect(mockErrorService.handleAuthenticationError)
+                .toHaveBeenCalledWith(mockError);
+          }
+        },
+    );
 
     it('should set loading to true and false', async () => {
       mockUsersService.signInWithGoogle.and.callFake(() => {

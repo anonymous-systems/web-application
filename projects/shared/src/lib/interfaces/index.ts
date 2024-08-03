@@ -7,3 +7,5 @@ export * from './firestore-user';
 export * from './generic-item';
 
 export * from './seo-meta-tags';
+
+export * from './error-with-handled-flag';
