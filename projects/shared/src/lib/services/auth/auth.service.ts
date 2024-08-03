@@ -42,33 +42,6 @@ export class AuthService {
   }
 
   /**
-   * Signs the user in using Google authentication and navigates to the
-   * schedules route.
-   *
-   * @remarks
-   * This method calls `googleLogin()` to initiate the Google sign-in process
-   * and, upon successful authentication, redirects the user to the schedules
-   * route as defined in the `appRoutes` configuration.
-   *
-   * @param {unknown[]} successRoute - An array of route segments to
-   * navigate on successful sign in.
-   * @returns {Promise<UserCredential | AuthError>} A Promise that resolves
-   * with the UserCredential if the sign-in is successful, or rejects with
-   * an AuthError if it fails.
-   */
-  async signInWithGoogle(successRoute?: unknown[]): Promise<void | AuthError> {
-    try {
-      return this.googleLogin().then(() => {
-        if (successRoute) this.router.navigate(successRoute);
-      });
-    } catch (error: unknown) {
-      this.logger.error('Error signing in with Google', error);
-
-      throw error;
-    }
-  }
-
-  /**
    * Signs the user in using their email and password.
    *
    * @remarks
@@ -121,7 +94,7 @@ export class AuthService {
    * @return {Promise<UserCredential | AuthError>} A Promise that resolves
    * with UserCredential upon success, or an AuthError on failure.
    */
-  async googleLogin(): Promise<UserCredential | AuthError> {
+  async googleLogin(): Promise<UserCredential> {
     try {
       const provider = new GoogleAuthProvider();
 
