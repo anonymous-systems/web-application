@@ -15,3 +15,5 @@ export * from './shell/shell.component';
 export * from './navigation-rail/navigation-rail.component';
 
 export * from './confirm-dialog/confirm-dialog.component';
+
+export * from './editor/editor.component';
