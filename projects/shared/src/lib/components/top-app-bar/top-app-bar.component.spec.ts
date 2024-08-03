@@ -7,8 +7,9 @@ import {of} from 'rxjs';
 import {provideRouter} from '@angular/router';
 import {HarnessLoader} from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
-import {MatMenuItemHarness} from '@angular/material/menu/testing';
+import {MatMenuHarness, MatMenuItemHarness} from '@angular/material/menu/testing';
 import {mockUser} from '@shared-library/mocks';
+import {MatButtonHarness} from '@angular/material/button/testing';
 
 describe('TopAppBarComponent', () => {
   let component: TopAppBarComponent;
@@ -21,7 +22,7 @@ describe('TopAppBarComponent', () => {
         'AuthService', ['authState$', 'signOut'],
     );
 
-    mockAuthService.authState$.and.returnValue(of(null));
+    mockAuthService.authState$.and.returnValue(of(mockUser));
 
     await TestBed.configureTestingModule({
       imports: [TopAppBarComponent],
@@ -74,14 +75,29 @@ describe('TopAppBarComponent', () => {
 
   xit(
       'should call signOut on the AuthService when signOut is clicked',
-      async () => {
-        const signOutBtn = await loader.getHarness(
-            MatMenuItemHarness.with({text: 'Sign out'}),
+      fakeAsync(async () => {
+        console.debug('user', component.user()?.uid);
+
+        const profileButton = await loader.getHarness(
+            MatButtonHarness.with({variant: 'icon'}),
         );
 
-        signOutBtn.click();
+        profileButton.click();
+
+        fixture.detectChanges();
+        tick(500);
+
+        const profileMenu = await loader.getHarness(MatMenuHarness);
+
+        const profileMenuItems = await profileMenu.getItems();
+
+        console.debug('profileMenuItems', profileMenuItems);
+
+        const signOutButton = profileMenuItems[0];
+
+        signOutButton.click();
 
         expect(mockAuthService.signOut).toHaveBeenCalled();
-      },
+      }),
   );
 });

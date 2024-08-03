@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, inject, model} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {NgOptimizedImage} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {BrandNameComponent} from '@shared-library/components';
 import {AuthService} from '@shared-library/services';
 
@@ -15,7 +15,7 @@ import {AuthService} from '@shared-library/services';
   standalone: true,
   imports: [
     RouterLink, BrandNameComponent, MatMenuTrigger, NgOptimizedImage,
-    MatIcon, MatMenu, MatButton,
+    MatIcon, MatMenu, MatMenuItem, MatButton, MatIconButton,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
