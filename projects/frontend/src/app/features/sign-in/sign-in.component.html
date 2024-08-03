@@ -12,14 +12,14 @@
     <p class="description">{{description}}</p>
 
     <form [formGroup]="signInForm" (ngSubmit)="signIn()">
-        <mat-form-field [appearance]="matFormFieldAppearance">
+        <mat-form-field [appearance]="matFormFieldAppearance()">
             <mat-label>Email Address</mat-label>
 
             <input matInput name="email" formControlName="email"
                 autocomplete="email" type="email" />
         </mat-form-field>
 
-        <mat-form-field [appearance]="matFormFieldAppearance">
+        <mat-form-field [appearance]="matFormFieldAppearance()">
             <mat-label>Password</mat-label>
 
             <input matInput name="password" formControlName="password"
@@ -42,13 +42,13 @@
     </form>
 
     <button mat-stroked-button type="button" class="sign-in-with-google-btn"
-        (click)="googleSignIn()">
+        (click)="continueWithGoogle()">
         <span class="container">
             <!-- eslint-disable-next-line @angular-eslint/template/prefer-ngsrc -->
             <img src="assets/svgs/google-superg.svg"
                 alt="Google Super G Logo" width="24" height="24" />
 
-            <span>Sign in with Google</span>
+            <span>Continue with Google</span>
         </span>
     </button>
 
