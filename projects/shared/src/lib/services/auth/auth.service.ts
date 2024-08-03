@@ -4,7 +4,7 @@ import {
   signInWithPopup, signOut, updateProfile,
   Auth, AuthError, User, UserCredential,
   GoogleAuthProvider,
-  signInWithEmailAndPassword,
+  signInWithEmailAndPassword, IdTokenResult, getIdTokenResult,
 } from '@angular/fire/auth';
 import {LoggerService} from '../logger/logger.service';
 import {NavigationExtras, Router} from '@angular/router';
@@ -245,5 +245,25 @@ export class AuthService {
 
       throw error;
     }
+  }
+
+  /**
+   * Gets a valid ID Token for the user.
+   * Refreshes the token if necessary before returning.
+   *
+   * @remarks
+   * Returns the current token if it has not expired or if it will not
+   * expire in the next five minutes. Otherwise, this will refresh the token
+   * and return a new one.
+   *
+   * @param {User} user - The Firebase User to get the ID Token for.
+   * @param {boolean} forceRefresh - Forces a refresh even if the current
+   * token is valid.
+   * @return {Promise<IdTokenResult>} A Promise resolving with the current
+   * or refreshed ID Token.
+   *
+   */
+  getUserToken(user: User, forceRefresh?: boolean): Promise<IdTokenResult> {
+    return getIdTokenResult(user, forceRefresh);
   }
 }
