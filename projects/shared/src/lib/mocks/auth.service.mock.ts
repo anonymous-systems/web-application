@@ -12,10 +12,6 @@ export class MockAuthService extends AuthService {
     return of(null);
   }
 
-  override signInWithGoogle() {
-    return Promise.resolve();
-  }
-
   override googleLogin() {
     return Promise.resolve(new Error('mock google login error') as AuthError);
   }
