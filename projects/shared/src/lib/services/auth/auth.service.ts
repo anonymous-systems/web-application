@@ -5,6 +5,8 @@ import {
   Auth, AuthError, User, UserCredential,
   GoogleAuthProvider,
   signInWithEmailAndPassword, IdTokenResult, getIdTokenResult,
+  ActionCodeSettings,
+  sendPasswordResetEmail,
 } from '@angular/fire/auth';
 import {LoggerService} from '../logger/logger.service';
 import {NavigationExtras, Router} from '@angular/router';
@@ -265,5 +267,35 @@ export class AuthService {
    */
   getUserToken(user: User, forceRefresh?: boolean): Promise<IdTokenResult> {
     return getIdTokenResult(user, forceRefresh);
+  }
+
+  /**
+   * Sends a password reset email to the provided email address.
+   *
+   * @remarks
+   * To complete the password reset, call {@link confirmPasswordReset} with
+   * the code supplied in the email sent to the user, along with the new
+   * password specified by the user.
+   *
+   * @param {string} email The user's email address.
+   * @param {ActionCodeSettings} actionCodeSettings (Optional) Settings to
+   * configure the password reset email
+   * (e.g., URL for redirect after password reset)
+   * @return {Promise<void | AuthError>} A Promise that resolves on
+   * successful email send, or rejects with an AuthError on failure.
+   */
+  async sendPasswordResetEmail(
+      email: string,
+      actionCodeSettings?: ActionCodeSettings,
+  ): Promise<void | AuthError> {
+    return sendPasswordResetEmail(this.auth, email, actionCodeSettings)
+        .then(() => this.logger.log(`Password reset email sent`))
+        .catch((error: AuthError) => {
+          this.logger.error(
+              `Something went wrong sending password reset email`,
+              [error, email, actionCodeSettings],
+          );
+          return error;
+        });
   }
 }
