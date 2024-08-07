@@ -1,0 +1,106 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+header.header {
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+header.header.items-selected {
+  justify-content: flex-start;
+  gap: 1rem;
+  mat-icon { color: inherit; };
+}
+.crumbs {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+
+  width: 100px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.inputUpload { display: none; }
+.content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.table-sidebar {
+  width: 100%;
+  display: grid;
+  margin: 0;
+  grid-gap: 1.5rem;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  overflow: hidden;
+}
+.table-wrapper {
+  grid-column-end: span 12;
+
+  border-top-width: 1px;
+  border-top-style: solid;
+
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+
+  display: inline-flex;
+  flex-direction: column;
+  overflow: auto;
+
+  border-radius: 0 0 8px 8px;
+  width: 100%;
+}
+table {
+  min-width: 100%;
+  border: 0;
+  white-space: nowrap;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.checkbox-column { width: 64px; }
+.name-column {
+  max-width: 50vw;
+  display: flex;
+  align-items: center;
+
+  height: auto;
+  min-height: 52px;
+  overflow-wrap: break-word;
+  white-space: pre;
+  padding: 0.75rem 1rem 0.75rem 0;
+}
+.name-column span {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 100%;
+}
+aside.sidebar {
+  width: auto;
+  margin: 0;
+}
+td { border: none!important; }
+.mat-mdc-header-cell, .mat-mdc-cell {
+  height: auto;
+  min-height: 52px;
+  padding: 0 1rem;
+}
+.mat-mdc-row { cursor: pointer; }
+.empty-folder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  height: 100%;
+}
+.grid-column-end-span-4 { grid-column-end: span 4; }
+.grid-column-end-span-8 { grid-column-end: span 8; }
+.grid-column-end-span-12 { grid-column-end: span 12; }
