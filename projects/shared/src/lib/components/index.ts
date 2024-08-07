@@ -17,3 +17,5 @@ export * from './navigation-rail/navigation-rail.component';
 export * from './confirm-dialog/confirm-dialog.component';
 
 export * from './editor/editor.component';
+
+export * from './select-image/select-image.component';

@@ -9,6 +9,7 @@
 @use './top-app-bar/top-app-bar-theme' as topAppBar;
 @use './shell/shell-theme' as shell;
 @use './navigation-rail//navigation-rail-theme' as navigationRail;
+@use './select-image/select-image-theme' as selectImage;
 
 @mixin componentThemeMixins($theme) {
   @include brandName.theme($theme);
@@ -17,6 +18,7 @@
   @include topAppBar.theme($theme);
   @include shell.theme($theme);
   @include navigationRail.theme($theme);
+  @include selectImage.theme($theme);
 }
 
 @mixin color($theme) {

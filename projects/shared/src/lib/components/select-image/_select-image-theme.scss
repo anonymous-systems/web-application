@@ -1,0 +1,36 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
+// https://material.angular.io/guide/theming-your-components
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin componentThemeMixins($theme) {}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+
+  anon-shared-select-image {
+    picture {
+      // background-color: mat.get-color-from-palette($primary-palette, 100);
+      background-color: mat.get-theme-color($theme, primary, 90);
+    }
+    picture .image-error-container {
+      // background: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, mat.get-color-from-palette($warn-palette, 100) 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, mat.get-theme-color($theme, 90) 100%);
+    }
+  }
+}
+
+@mixin typography($theme) {}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) { @include color($theme); }
+
+  @if mat.theme-has($theme, typography) { @include typography($theme); }
+
+  @include componentThemeMixins($theme);
+}
+
