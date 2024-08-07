@@ -19,7 +19,7 @@
     }
     picture .image-error-container {
       // background: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, mat.get-color-from-palette($warn-palette, 100) 100%);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, mat.get-theme-color($theme, 90) 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, mat.get-theme-color($theme, error, 90) 100%);
     }
   }
 }
