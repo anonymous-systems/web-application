@@ -6,6 +6,7 @@ import {RedirectAuthenticatedGuard} from '@shared-library/guards';
 
 export const appRoutes = {
   error: '/error',
+  forgotPassword: '/forgot-password',
   home: '/',
   signIn: '/sign-in',
   signUp: '/sign-up',
@@ -13,6 +14,13 @@ export const appRoutes = {
 };
 
 export const routes: Routes = [
+  {
+    path: 'forgot-password',
+    // eslint-disable-next-line max-len
+    loadComponent: () => import('./features/forgot-password/forgot-password.component')
+        .then((c) => c.ForgotPasswordComponent),
+    canActivate: [RedirectAuthenticatedGuard],
+  },
   {
     path: 'sign-in',
     loadComponent: () => import('./features/sign-in/sign-in.component')
