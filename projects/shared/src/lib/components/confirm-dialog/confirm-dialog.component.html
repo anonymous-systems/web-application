@@ -1,15 +1,15 @@
-@if (contract?.title; as title) {
+@if (contract.title; as title) {
   <h1 mat-dialog-title>{{title}}</h1>
 }
 
 <mat-dialog-content>
   <p>{{description()}}</p>
 
-  @if (contract?.additionalInformation; as addInfo) {
+  @if (contract.additionalInformation; as addInfo) {
     <p>{{addInfo}}</p>
   }
 
-  @if (contract?.metadata; as metadata) {
+  @if (contract.metadata; as metadata) {
     <div class="metadata">
       @for (item of metadata | keyvalue; track item.key) {
         <dt>
