@@ -30,7 +30,7 @@ function getGoogleRulesForV9() {
 module.exports = tseslint.config(
     {
         files: ["**/*.ts"],
-        ignores: ['*/CustomEditorSuperBuild/*'],
+        ignores: ['local-node-modules/*'],
         extends: [
             eslint.configs.recommended,
             ...tseslint.configs.recommended,
