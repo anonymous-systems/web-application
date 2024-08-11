@@ -7,8 +7,9 @@
 @use './welcome/welcome-theme' as welcome;
 @use './sign-up/sign-up-theme' as signUp;
 @use './home/home-theme' as home;
-@use './sign-in//sign-in-theme' as signIn;
+@use './sign-in/sign-in-theme' as signIn;
 @use './forgot-password/forgot-password-theme' as forgotPassword;
+@use './page-not-found/page-not-found-theme' as pageNotFound;
 
 @mixin componentThemeMixins($theme) {
   @include error.theme($theme);
@@ -17,6 +18,7 @@
   @include home.theme($theme);
   @include signIn.theme($theme);
   @include forgotPassword.theme($theme);
+  @include pageNotFound.theme($theme);
 }
 
 @mixin color($theme) {
