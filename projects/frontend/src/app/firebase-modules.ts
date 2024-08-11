@@ -19,6 +19,7 @@ import {
   initializeAppCheck, provideAppCheck,
   ReCaptchaV3Provider,
 } from '@angular/fire/app-check';
+import { getPerformance, providePerformance } from '@angular/fire/performance';
 
 let firestoreEmulatorStarted = false;
 
@@ -96,6 +97,8 @@ const FirebaseProviders = [
 
     return functions;
   }),
+  /** Performance */
+  providePerformance(() => getPerformance()),
 ];
 
 /**

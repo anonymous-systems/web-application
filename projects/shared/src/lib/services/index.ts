@@ -9,3 +9,5 @@ export * from './storage/storage.service';
 export * from './analytics/analytics.service';
 
 export * from './error/error.service';
+
+export * from './performance/performance.service';
