@@ -56,8 +56,9 @@ export const routes: Routes = [
       },
       {
         path: '**',
-        loadComponent: () => import('./features/error/error.component')
-            .then((c) => c.ErrorComponent),
+        // eslint-disable-next-line max-len
+        loadComponent: () => import('./features/page-not-found/page-not-found.component')
+            .then((c) => c.PageNotFoundComponent),
       },
     ],
   },

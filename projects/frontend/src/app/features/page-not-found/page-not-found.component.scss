@@ -1,0 +1,7 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  margin-top: calc(var(--margin) * 3);
+  padding: calc(var(--padding) * 2);
+  text-align: center;
+}
