@@ -1,4 +1,0 @@
-Sitemap: https://anonsys.tech/sitemap.xml
-
-User-agent: *
-Disallow: /admin
