@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
-import '../styles/globals.css'
+import '../styles/global.css'
 
 export const metadata: Metadata = {
   title: 'Anonymous Systems',
