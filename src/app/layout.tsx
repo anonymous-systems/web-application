@@ -1,21 +1,27 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
+import { ReactNode } from 'react'
+import '../styles/globals.css'
 
 export const metadata: Metadata = {
-  title: "Anonymous Systems",
-  description: "Michigan Technology Consultant: Helping Businesses Grow with Technology",
-};
+  title: 'Anonymous Systems',
+  description: 'Michigan Technology Consultant: Helping Businesses Grow with Technology',
+}
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode
 }
-export default function RootLayout(props: Props) {
+export default function AppLayout(props: Props) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <link rel="icon" href="/favicon.ico" />
+        <title>{metadata.title as string}</title>
+      </head>
       <body>
-        <main>
-          {props.children}
-        </main>
+        {props.children}
       </body>
     </html>
-  );
+  )
 }
