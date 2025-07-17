@@ -4,10 +4,10 @@ export default function HomePage() {
   const { name } = CompanyInformation
 
   return (
-    <div className="flex items-center justify-center min-h-svh">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-6xl font-bold">{name}</h1>
-        <p className='text-2xl text-gray-500 dark:text-gray-400 font-semibold mt-4'>Frontend Coming soon...</p>
+    <div className="grid place-content-center min-h-svh">
+      <div className="flex flex-col items-center gap-8">
+        <h1 className="huge">{name}</h1>
+        <h2 className='h2 text-muted-foreground'>Frontend Coming soon...</h2>
       </div>
     </div>
   )
