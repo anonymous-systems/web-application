@@ -13,10 +13,11 @@ pnpm dlx shadcn@latest init
 To add components to your app, run the following command at the root of your `web` app:
 
 ```bash
-pnpm dlx shadcn@latest add button -c apps/web
+pnpm dlx shadcn@latest add button -c apps/frontend
 ```
 
 This will place the ui components in the `packages/ui/src/components` directory.
+But you may have to move the added dependencies to the 'packages/ui' directory manually.
 
 ## Using components
 
