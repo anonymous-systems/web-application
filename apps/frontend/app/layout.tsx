@@ -25,9 +25,7 @@ export default function AppLayout(props: Readonly<Props>) {
         <link rel="icon" href="/favicon.ico"/>
         <title>{metadata.title as string}</title>
       </head>
-      <body
-        className={`${inter.className} antialiased`}
-      >
+      <body className={`${inter.className} antialiased`}>
         <Providers>{props.children}</Providers>
         <Toaster />
       </body>
