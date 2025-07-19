@@ -1,5 +1,5 @@
 import { CSSProperties, JSX } from 'react'
-import { CompanyInformation } from '@workspace/ui/lib/company-information.js'
+import { CompanyInformation } from '@workspace/ui/lib/company-information'
 
 interface Props {
   className?: string
