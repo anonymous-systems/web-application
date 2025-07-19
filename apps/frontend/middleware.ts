@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authMiddleware, redirectToHome, redirectToLogin } from 'next-firebase-auth-edge'
 import { authConfig } from '@workspace/firebase-config/auth'
-import { AppRoutes, AuthRoutes, PublicRoutes } from '@/lib/app-routes'
+import { AppRoutes, AuthRoutes, PrivateRoutes, PublicRoutes } from '@/lib/app-routes'
 
 const AUTH_PATHS = Object.values(AuthRoutes)
 const PUBLIC_PATHS = Object.values(PublicRoutes)
+const PRIVATE_PATHS = Object.values(PrivateRoutes)
 
 export const middleware = async (request: NextRequest) => {
   return authMiddleware(request, {
@@ -27,7 +28,7 @@ export const middleware = async (request: NextRequest) => {
     },
     handleInvalidToken: async (reason) => {
       // console.debug('Missing or malformed credentials', {reason})
-      if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+      if (PRIVATE_PATHS.includes(request.nextUrl.pathname)) {
         console.debug('User is not authenticated to access this page', { reason })
         return redirectToLogin(request, { path: AppRoutes.signIn, publicPaths: PUBLIC_PATHS })
       }
