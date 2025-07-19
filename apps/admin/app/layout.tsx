@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
 import { Metadata } from 'next'
+import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
   title: CompanyInformation.name,
@@ -13,10 +14,7 @@ export const metadata: Metadata = {
 
 const inter = Inter({ subsets: ['latin'] })
 
-interface Props {
-  children: React.ReactNode
-}
-export default function RootLayout(props: Readonly<Props>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -28,7 +26,7 @@ export default function RootLayout(props: Readonly<Props>) {
       <body
         className={`${inter.className} antialiased`}
       >
-        <Providers>{props.children}</Providers>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>
