@@ -26,12 +26,12 @@ export const WelcomeCard = (): JSX.Element => {
             <div className='text-3xl'>Welcome to {name}</div>
             <div className='text-sm text-muted-foreground'>{byline}</div>
           </div>
-          <Link href={AppRoutes.home}>
+          <Link href={AppRoutes.signIn}>
             <Button className='w-full'>Get started</Button>
           </Link>
           <div className='flex justify-center align-items-center gap-1'>
             <p className='self-center'>You already have an account?</p>
-            <Link href={AppRoutes.home}>
+            <Link href={AppRoutes.signIn}>
               <Button variant='link'>Sign in</Button>
             </Link>
           </div>

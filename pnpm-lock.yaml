@@ -112,6 +112,9 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
+      '@workspace/firebase-config':
+        specifier: workspace:*
+        version: link:../../packages/firebase-config
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
