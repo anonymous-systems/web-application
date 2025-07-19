@@ -2,8 +2,14 @@
 
 import * as React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import { User } from '@/interfaces/user'
+import { AuthProvider } from '@/providers/AuthProvider'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode
+  user: User | null
+}
+export function Providers(props: Props) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -12,7 +18,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      {children}
+      <AuthProvider user={props.user}>
+        {props.children}
+      </AuthProvider>
     </NextThemesProvider>
   )
 }
