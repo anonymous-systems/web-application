@@ -1,10 +1,14 @@
-import { Inter } from 'next/font/google'
-
 import '@workspace/ui/globals.css'
+import { Inter } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { Metadata } from 'next'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
+import { getTokens } from 'next-firebase-auth-edge'
+import { cookies, headers } from 'next/headers'
+import { toUser } from '@/lib/to-user'
+import { ReactNode } from 'react'
+import { authConfig } from '@workspace/firebase-config/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,10 +17,14 @@ export const metadata: Metadata = {
   description: CompanyInformation.byline,
 }
 
-interface Props {
-  children: React.ReactNode
-}
-export default function AppLayout(props: Readonly<Props>) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  const tokens = await getTokens(
+    await cookies(),
+    { ...authConfig, headers: await headers() }
+  )
+
+  const user = tokens ? toUser(tokens) : null
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -26,7 +34,7 @@ export default function AppLayout(props: Readonly<Props>) {
         <title>{metadata.title as string}</title>
       </head>
       <body className={`${inter.className} antialiased`}>
-        <Providers>{props.children}</Providers>
+        <Providers user={user}>{children}</Providers>
         <Toaster />
       </body>
     </html>
