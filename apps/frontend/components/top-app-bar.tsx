@@ -7,7 +7,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import {
   DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut,
+  DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger
 } from '@workspace/ui/components/dropdown-menu'
 import { LogOut } from 'lucide-react'
