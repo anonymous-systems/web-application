@@ -9,6 +9,7 @@ import { AppRoutes } from '@/lib/app-routes'
 import Link from 'next/link'
 import { toast } from '@workspace/ui/components/sonner'
 import { useRouter } from 'next/navigation'
+import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/GoogleSuperGIcon'
 
 export const SignInCard = (): JSX.Element => {
   const { signIn } = useAuth()
@@ -43,7 +44,11 @@ export const SignInCard = (): JSX.Element => {
       <h3 className='text-3xl'>Sign in</h3>
       <p className='text-muted-foreground'>Sign in using your google account to continue</p>
       <Button loading={isLoading} onClick={handleSignIn}>
-        {isLoading && <Loader2Icon className="animate-spin" />}
+        <div className='mr-1'>
+          {isLoading
+          ? <Loader2Icon className="animate-spin" />
+          : <GoogleSuperGIcon />}
+        </div>
         Sign in with Google
       </Button>
 
