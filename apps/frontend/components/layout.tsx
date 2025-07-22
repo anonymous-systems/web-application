@@ -38,8 +38,16 @@ export const Layout = (props: Props): JSX.Element => {
     setIsLoading(false)
   }
 
+  // const manyNavLinks: NavLink[] = [
+  //   ...Array(4).fill(Object.entries(AppRoutes)).flat().map(([k,v]) => ({
+  //     id: k,
+  //     name: k,
+  //     href: v,
+  //   }))
+  // ]
+
   const navLinks: NavLink[] = [
-    ...Array(4).fill(Object.entries(AppRoutes)).flat().map(([k,v]) => ({
+    ...Object.entries(AppRoutes).map(([k,v]) => ({
       id: k,
       name: k,
       href: v,
@@ -63,7 +71,7 @@ export const Layout = (props: Props): JSX.Element => {
               </Link>
             )
             : (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild disabled={isLoading}>
                   <Avatar className='cursor-pointer'>
                     <AvatarImage

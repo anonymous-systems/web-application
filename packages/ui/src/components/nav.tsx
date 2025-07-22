@@ -31,10 +31,12 @@ export const Nav = (props: Props): JSX.Element => {
   const navVariants: Variants = {
     closed: {
       height: 'var(--header-height)',
+      overflowY: 'hidden',
       transition: { duration: 1, ease: [0.22, 1, 0.36, 1] }
     },
     open: {
       height: '100svh',
+      overflowY: 'scroll',
       transition: { duration: 1, ease: [0.22, 1, 0.36, 1] }
     }
   };
@@ -72,12 +74,15 @@ export const Nav = (props: Props): JSX.Element => {
   };
 
   return (
-    <div>
+    <div className='flex flex-col'>
       <motion.header
-        className={`bg-accent z-10 fixed w-full ${isOpen ? 'overflow-auto' : 'overflow-hidden'}`}
+        className={`z-10 fixed w-full transition-colors ${isOpen ? 'bg-background' : 'bg-background/20'}`}
         initial='closed'
         animate={isOpen ? 'open' : 'closed'}
         variants={navVariants}
+        style={{
+          backdropFilter: 'saturate(180%) blur(20px)'
+        }}
       >
         <nav className={`flex w-full gap-4 py-2 px-4 ${isOpen ? '' : 'items-center'}`}>
           <Button variant='ghost' size='icon' onClick={() => { setIsOpen(prev => !prev) }}>
@@ -120,7 +125,7 @@ export const Nav = (props: Props): JSX.Element => {
           )}
         </AnimatePresence>
       </motion.header>
-      <main className='pt-[var(--header-height)]'>
+      <main className='mt-[var(--header-height)] pt-4'>
         {props.children}
       </main>
     </div>
