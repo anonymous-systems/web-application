@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react'
 // @ts-expect-error Import not registering in this project properly
 import Link from 'next/link'
 import { stagger, Variants } from 'motion'
+import { ChevronRight } from 'lucide-react'
 
 interface Props {
   children: ReactNode
@@ -90,16 +91,14 @@ export const Nav = (props: Props): JSX.Element => {
           </Button>
 
           {props.content != null && (
-            <AnimatePresence>
-              <motion.div
-                  className='flex-grow flex gap-4 items-center'
-                  variants={headerVariants}
-                  initial='closed'
-                  animate={isOpen ? 'open' : 'closed'}
-                >
-                  {props.content}
-                </motion.div>
-            </AnimatePresence>
+            <motion.div
+                className='flex-grow flex gap-4 items-center'
+                variants={headerVariants}
+                initial='closed'
+                animate={isOpen ? 'open' : 'closed'}
+              >
+                {props.content}
+              </motion.div>
           )}
         </nav>
 
@@ -113,13 +112,25 @@ export const Nav = (props: Props): JSX.Element => {
                 exit='closed'
               >
                 {props.navLinks.map((link, index) => (
-                  <motion.li
-                    key={`${link.id}-${index}`}
-                    className={`text-3xl font-semibold text-muted-foreground hover:text-foreground transition-colors duration-300 ${link.className}`}
-                    variants={linkVariants}
-                  >
-                    <Link href={link.href}>{link.name}</Link>
-                  </motion.li>
+                  <Link key={`${link.id}-${index}`} href={link.href}>
+                    <motion.li
+                      className={[
+                        'group flex justify-between items-center',
+                        'text-3xl font-semibold text-muted-foreground',
+                        'hover:text-foreground transition-colors duration-300',
+                        link.className ?? ''
+                      ].join(' ')}
+                      variants={linkVariants}
+                    >
+                        {link.name}
+
+                        <span
+                          className='ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+                        >
+                          {link.icon ?? <ChevronRight />}
+                        </span>
+                    </motion.li>
+                  </Link>
                 ))}
               </motion.ul>
           )}
