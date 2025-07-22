@@ -38,6 +38,8 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./hooks/*": "./src/hooks/*.ts",
+    "./assets/*": ["./src/assets/*.tsx", "./src/assets/*.svg"],
+    "./models/*": "./src/models/*.ts"
   }
 }
