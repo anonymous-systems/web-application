@@ -54,3 +54,7 @@
 .muted {
   @apply text-muted-foreground text-sm;
 }
+
+.font-nunito {
+  font-family: var(--font-nunito), Inter, system-ui;
+}

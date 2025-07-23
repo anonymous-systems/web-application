@@ -1,5 +1,5 @@
 import '@workspace/ui/globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Nunito } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@workspace/ui/components/sonner'
 import { Metadata } from 'next'
@@ -11,6 +11,7 @@ import { ReactNode } from 'react'
 import { authConfig } from '@workspace/firebase-config/auth'
 
 const inter = Inter({ subsets: ['latin'] })
+const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito' })
 
 export const metadata: Metadata = {
   title: CompanyInformation.name,
@@ -26,14 +27,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = tokens ? toUser(tokens) : null
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.className} ${nunito.variable}`}>
       <head>
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="initial-scale=1, width=device-width"/>
         <link rel="icon" href="/favicon.ico"/>
         <title>{metadata.title as string}</title>
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className='antialiased'>
         <Providers user={user}>{children}</Providers>
         <Toaster />
       </body>
