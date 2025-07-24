@@ -8,6 +8,7 @@ import { AnimatePresence, motion, stagger, Variants, resize } from 'motion/react
 // @ts-expect-error Import not registering in this project properly
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
+import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 
 const SMALL_SCREEN_MAX_WIDTH = 834
 
@@ -133,6 +134,7 @@ export const Nav = (props: Props): JSX.Element => {
           'z-10 fixed w-full transition-colors',
           'max-w-[1024px] mx-auto align-self-center',
           isOpen ? 'bg-background' : 'bg-background/20',
+          isOpen ? 'flex flex-col' : '',
           props.headerClassName || ''
         ].join(' ')}
         initial={{
@@ -160,35 +162,43 @@ export const Nav = (props: Props): JSX.Element => {
 
         <AnimatePresence>
           {isOpen && isSmallScreen && (
-            <motion.ul
-              className='flex flex-col gap-4 px-8 pt-8 pb-16 flex-grow'
-              variants={linkContainerVariants}
-              initial='closed'
-              animate='open'
-              exit='closed'
-            >
-              {props.navLinks.map((link, index) => (
-                <Link key={`${link.id}-${index}`} href={link.href}>
-                  <motion.li
-                    className={[
-                      'group flex justify-between items-center',
-                      'text-3xl font-semibold text-muted-foreground',
-                      'hover:text-foreground transition-colors duration-300',
-                      link.className ?? ''
-                    ].join(' ')}
-                    variants={linkVariants}
-                  >
-                    {link.name}
-
-                    <span
-                      className='ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+            <>
+              <motion.ul
+                className='flex flex-col gap-4 px-8 pt-8 pb-16 flex-grow'
+                variants={linkContainerVariants}
+                initial='closed'
+                animate='open'
+                exit='closed'
+              >
+                {props.navLinks.map((link, index) => (
+                  <Link key={`${link.id}-${index}`} href={link.href}>
+                    <motion.li
+                      className={[
+                        'group flex justify-between items-center',
+                        'text-3xl font-semibold text-muted-foreground',
+                        'hover:text-foreground transition-colors duration-300',
+                        link.className ?? ''
+                      ].join(' ')}
+                      variants={linkVariants}
                     >
-                      {link.icon ?? <ChevronRight />}
-                    </span>
-                  </motion.li>
-                </Link>
-              ))}
-            </motion.ul>
+                      {link.name}
+
+                      <span
+                        className='ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+                      >
+                        {link.icon ?? <ChevronRight />}
+                      </span>
+                    </motion.li>
+                  </Link>
+                ))}
+                <motion.li
+                  className='mt-auto mx-auto'
+                  variants={linkVariants}
+                >
+                  <ThemeToggle />
+                </motion.li>
+              </motion.ul>
+            </>
           )}
         </AnimatePresence>
       </motion.header>
