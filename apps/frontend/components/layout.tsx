@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
 import { UserMenu } from '@/components/user-menu'
 import { MainNavigation } from '@/components/main-navigation'
+import { WelcomeCard } from '@/app/welcome/_components/WelcomeCard'
 
 interface Props {
   children: ReactNode
@@ -34,7 +35,7 @@ export const Layout = (props: Props): JSX.Element => {
 
   const navLinks: NavLink[] = [
     { id: 'home', name: 'Home', href: AppRoutes.home },
-    { id: 'welcome', name: 'Welcome', href: AppRoutes.welcome },
+    { id: 'welcome', name: 'Welcome', href: AppRoutes.welcome, content: <WelcomeCard /> },
   ]
 
   return (
@@ -57,7 +58,7 @@ export const Layout = (props: Props): JSX.Element => {
             <BrandName />
           </Link>
 
-          <MainNavigation className='flex-grow max-w-none' navLinks={navLinks} />
+          <MainNavigation className='flex-grow max-w-none' viewport={false} navLinks={navLinks} />
           {/*<NavigationMenuDemo />*/}
 
           <UserMenu user={user} isLoading={isLoading} onSignOut={handleSignOut} />
