@@ -59,7 +59,6 @@ export const Layout = (props: Props): JSX.Element => {
           </Link>
 
           <MainNavigation className='flex-grow max-w-none' viewport={false} navLinks={navLinks} />
-          {/*<NavigationMenuDemo />*/}
 
           <UserMenu user={user} isLoading={isLoading} onSignOut={handleSignOut} />
         </>
