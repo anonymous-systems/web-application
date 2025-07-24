@@ -58,3 +58,19 @@
 .font-nunito {
   font-family: var(--font-nunito), Inter, system-ui;
 }
+
+.title-lg {
+  @apply text-3xl text-center;
+}
+
+.headline-sm {
+  @apply text-4xl;
+}
+
+.label-lg {
+  @apply text-lg text-center;
+}
+
+.body-lg {
+  @apply text-lg;
+}
