@@ -1,12 +1,8 @@
 import { JSX } from 'react'
-import { SignUpCard } from '@/app/sign-up/_components/SignUpCard'
+import { SignUpPage } from '@/app/_pages/sign-up'
 
-const SignUpPage = async (): Promise<JSX.Element> => {
-  return (
-    <main className='grid place-items-center h-screen bg-background p-8 pb-22'>
-      <SignUpCard />
-    </main>
-  )
+const Page = async (): Promise<JSX.Element> => {
+  return <SignUpPage />
 }
 
-export default SignUpPage
+export default Page
