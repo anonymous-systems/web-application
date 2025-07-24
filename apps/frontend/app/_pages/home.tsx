@@ -2,7 +2,7 @@ import { JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { ThreeDSphere } from '@workspace/ui/components/three-d-sphere/three-d-sphere'
 import { Button } from '@workspace/ui/components/button'
-import { CalendarDays, Mail, Star, StarHalf, User } from 'lucide-react'
+import { CalendarDays, Mail, Star, StarHalf } from 'lucide-react'
 import {
   Carousel,
   CarouselContent,
@@ -10,6 +10,7 @@ import {
   CarouselPrevious
 } from '@workspace/ui/components/carousel'
 import { Divider } from '@workspace/ui/components/divider'
+import { Card, CardContent } from '@workspace/ui/components/card'
 
 export const HomePage = (): JSX.Element => {
   const testimonials = [
@@ -80,10 +81,17 @@ export const HomePage = (): JSX.Element => {
             <CarouselContent>
               {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index} className='basis-1/3'>
-                  <div className='bg-accent text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm'>
-                    <div className='flex aspect-square items-center justify-center p-6'>
-                      <span className="text-4xl font-semibold">{index + 1}</span>
-                    </div>
+                  {/*<div className='bg-accent text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm'>*/}
+                  {/*  <div className='flex aspect-square items-center justify-center p-6'>*/}
+                  {/*    <span className="text-4xl font-semibold">{index + 1}</span>*/}
+                  {/*  </div>*/}
+                  {/*</div>*/}
+                  <div className="p-1">
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center p-6">
+                        <span className="text-4xl font-semibold">{index + 1}</span>
+                      </CardContent>
+                    </Card>
                   </div>
                 </CarouselItem>
               ))}
