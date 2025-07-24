@@ -4,13 +4,21 @@
 }
 
 .sphere {
+  position: relative;
+  user-select: none;
   perspective: var(--sphere-perspective);
   transform-style: preserve-3d;
   will-change: transform;
-  transform: transale3d(0,0,0);
+  transform: translate3d(0,0,0);
 
   &.rotate {
     animation: spin var(--animation-duration) linear infinite;
+  }
+
+  .point {
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
   }
 }
 
