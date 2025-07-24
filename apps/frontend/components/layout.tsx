@@ -65,7 +65,7 @@ export const Layout = (props: Props): JSX.Element => {
         </>
       }
     >
-      <main>{props.children}<div className='min-h-svh'></div></main>
+      <main>{props.children}</main>
     </Nav>
   )
 }
