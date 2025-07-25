@@ -155,7 +155,7 @@ export const HomePage = (): JSX.Element => {
 
           <picture className='bg-card w-full h-[300px] rounded-2xl' />
         </section>
-
+v
         <section id='steps' className='flex flex-col items-center gap-4 bg-accent p-4 rounded-2xl'>
           <div className='flex flex-col gap-2'>
             <h2 className='title-lg'>Discover the benefits of working with us</h2>
