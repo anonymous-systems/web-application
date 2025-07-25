@@ -74,3 +74,6 @@
 .body-lg {
   @apply text-lg;
 }
+.body-md {
+  @apply text-base font-normal leading-normal;
+}
