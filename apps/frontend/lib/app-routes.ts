@@ -6,5 +6,7 @@ export const PublicRoutes = {
   home: '/',
   welcome: '/welcome',
 }
-export const PrivateRoutes = {}
+export const PrivateRoutes = {
+  profile: '/profile'
+}
 export const AppRoutes = { ...AuthRoutes, ...PublicRoutes, ...PrivateRoutes }
