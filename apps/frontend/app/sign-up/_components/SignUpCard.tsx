@@ -8,13 +8,11 @@ import { useAuth } from '@/hooks/use-auth'
 import { AppRoutes } from '@/lib/app-routes'
 import Link from 'next/link'
 import { toast } from '@workspace/ui/components/sonner'
-import { useRouter } from 'next/navigation'
 import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/GoogleSuperGIcon'
 
 export const SignUpCard = (): JSX.Element => {
-  const { signIn } = useAuth()
+  const { signIn, redirectAfterSignIn } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   const handleSignUp = async (): Promise<void> => {
     setIsLoading(true)
@@ -23,7 +21,7 @@ export const SignUpCard = (): JSX.Element => {
     if (!success) {
       toast.error('Something went wrong while signing up. Please try again later.')
     } else {
-      router.refresh()
+      redirectAfterSignIn()
     }
 
     setIsLoading(false)
