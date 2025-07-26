@@ -7,6 +7,8 @@ export const CompanyInformation = {
   byline: 'Michigan Technology Consultant: Helping Businesses Grow with Technology',
   missionStatement: 'To provide innovative and cutting-edge technology solutions to businesses',
   email: 'info@anonsys.tech',
+  domain: 'anonsys.tech',
+  website: `https://${this.domain}`,
   business: {
     hours: 'Monday - Friday: 9:00 AM - 5:00 PM',
     telephone: '(517) 798-1479',
