@@ -2,7 +2,7 @@
 
 import { User } from '@/interfaces/user'
 import { JSX, ReactNode } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
+import { AuthContext } from '@/contexts/auth-context'
 
 interface Props {
   user: User | null

@@ -1,7 +1,8 @@
 import { User } from '@/interfaces/user'
 import { useContext } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
-import { signIn , signOut } from '@/services/AuthService'
+import { AuthContext } from '@/contexts/auth-context'
+import { signIn , signOut } from '@/services/auth-service'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface AuthType {
   user: User | null

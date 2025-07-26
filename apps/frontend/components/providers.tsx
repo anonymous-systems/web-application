@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { User } from '@/interfaces/user'
-import { AuthProvider } from '@/providers/AuthProvider'
+import { AuthProvider } from '@/providers/auth-provider'
 
 interface Props {
   children: React.ReactNode
