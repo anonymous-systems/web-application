@@ -39,9 +39,9 @@ const buttonVariants = cva(
 
 type Props = ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> &
-  { asChild?: boolean, loading?: boolean, }
+  { asChild?: boolean, loading?: boolean }
 const Button = (props: Props): JSX.Element => {
-  const { className, variant, size, asChild = false, loading = false, ...restOfProps } = props
+  const { className, variant, size, asChild = false, loading = false, disabled = false, ...restOfProps } = props
 
   const Comp = asChild ? Slot : 'button'
 
@@ -49,8 +49,8 @@ const Button = (props: Props): JSX.Element => {
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
       {...restOfProps}
-      disabled={loading}
     />
   )
 }
