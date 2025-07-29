@@ -8,8 +8,8 @@ import { AppRoutes } from '@/lib/app-routes'
 import { Button } from '@workspace/ui/components/button'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
 import { toast } from '@workspace/ui/components/sonner'
-import { clsx } from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
+import { cn } from '@workspace/ui/lib/utils'
 
 interface Props {
   onContinue?: () => void
@@ -70,7 +70,7 @@ export const Agreements = (props: Props): JSX.Element => {
           id='terms-conditions'
           checked={acceptedTerms}
           onCheckedChange={handleTermsChange}
-          className={clsx({ highlightedClass: highlightTerms }, 'transition-colors')}
+          className={cn({ highlightedClass: highlightTerms }, 'transition-colors')}
           aria-invalid={highlightTerms}
           aria-describedby={highlightTerms ? 'terms-and-conditions-error' : undefined}
         />
@@ -104,7 +104,7 @@ export const Agreements = (props: Props): JSX.Element => {
           id='privacy-policy'
           checked={acceptedPrivacy}
           onCheckedChange={handlePrivacyChange}
-          className={clsx({ highlightPrivacy: highlightedClass }, 'transition-colors')}
+          className={cn({ highlightPrivacy: highlightedClass }, 'transition-colors')}
           aria-invalid={highlightPrivacy}
           aria-describedby={highlightPrivacy ? 'privacy-policy-error' : undefined}
         />
