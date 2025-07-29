@@ -72,9 +72,6 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       firebase:
         specifier: ^12.0.0
         version: 12.0.0
@@ -102,9 +99,6 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
-      react-hook-form:
-        specifier: ^7.61.1
-        version: 7.61.1(react@19.0.0)
     devDependencies:
       '@svgr/webpack':
         specifier: ^8.1.0
