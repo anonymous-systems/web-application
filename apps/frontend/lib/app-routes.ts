@@ -1,6 +1,7 @@
 export const AuthRoutes = {
   signIn: '/sign-in',
   signUp: '/sign-up',
+  onboarding: '/onboarding',
 }
 export const PublicRoutes = {
   home: '/',

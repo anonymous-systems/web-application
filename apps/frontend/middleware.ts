@@ -18,10 +18,20 @@ export const middleware = async (request: NextRequest) => {
     enableMultipleCookies: authConfig.enableMultipleCookies,
     enableCustomToken: authConfig.enableCustomToken,
     serviceAccount: authConfig.serviceAccount,
-    handleValidToken: async (_, headers) => {
-      if (AUTH_PATHS.includes(request.nextUrl.pathname)) {
+    handleValidToken: async ({ decodedToken }, headers) => {
+      // remove onboarding path from auth paths
+      const AuthPathsWithoutOnboarding = AUTH_PATHS
+        .filter((path) => path !== AppRoutes.onboarding)
+      if (AuthPathsWithoutOnboarding.includes(request.nextUrl.pathname)) {
         console.debug('User is authenticated, redirecting to home page')
         return redirectToHome(request)
+      }
+
+      const userCompletedOnboarding = decodedToken.onboardingComplete || false
+      if (PRIVATE_PATHS.includes(request.nextUrl.pathname) && !userCompletedOnboarding) {
+        const userId = decodedToken.uid
+        console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
+        return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
       }
 
       return NextResponse.next({ request: { headers } })
