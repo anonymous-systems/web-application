@@ -152,7 +152,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
         </picture>
 
         <div className='flex flex-col gap-1'>
-          <div className='flex items-center gap-4'>
+          <div id='name-fields' className='flex items-center gap-4'>
             <Input
               type='text'
               placeholder='First Name'
@@ -180,7 +180,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
-                <Label className='px-2 text-destructive-foreground text-xs'>
+                <Label htmlFor='name-fields' className='px-2 text-destructive-foreground text-xs'>
                   Name fields must only contain letters and cannot be empty.
                 </Label>
               </motion.div>
@@ -215,7 +215,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
         </div>
 
         <div className='flex items-center gap-2'>
-          <Button className='basis-1/2' variant='outline' onClick={props.onBack}>Back</Button>
+          <Button className='basis-1/2' variant='outline' type='button' onClick={props.onBack}>Back</Button>
           <Button className='basis-1/2' type='submit'>Finish</Button>
         </div>
       </form>
