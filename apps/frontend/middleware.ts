@@ -28,12 +28,12 @@ export const middleware = async (request: NextRequest) => {
         return redirectToHome(request)
       }
 
-      const userCompletedOnboarding = decodedToken.onboardingComplete || false
-      if (PRIVATE_PATHS.includes(request.nextUrl.pathname) && !userCompletedOnboarding) {
-        const userId = decodedToken.uid
-        console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
-        return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
-      }
+      // const userCompletedOnboarding = decodedToken.onboardingComplete || false
+      // if (PRIVATE_PATHS.includes(request.nextUrl.pathname) && !userCompletedOnboarding) {
+      //   const userId = decodedToken.uid
+      //   console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
+      //   return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
+      // }
 
       return NextResponse.next({ request: { headers } })
     },
