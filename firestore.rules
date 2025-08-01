@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    /* deny everything not allowed */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    /* function to check if signed-in  */
+    function isSignedIn() { return request.auth != null; }
+
+    /* function to check if admin */
+    function isAdmin() { return request.auth.token.admin == true; }
+
+    /* stories collection */
+    match /stories/{storyID} {
+      /* function to get role of signed in user */
+      function getRole(rsc) { return rsc.data.roles[request.auth.uid]; }
+
+      /* function to tell if role story has provided roles */
+      function isOneOfRoles(rsc, array) { return isSignedIn() && (getRole(rsc) in array); }
+
+      /* function to tell if story is public */
+      function publicStory(rsc) { return rsc.data.visibility == 'public'; }
+
+      /* function to validate new story owner */
+      function isValidNewStory() { return isOneOfRoles(request.resource, ["owner"]) && request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid); }
+
+      /* function to tell if story comments are enabled */
+      function commentsEnabled(rsc) { return rsc.data.allowComments; }
+
+      allow create: if isSignedIn() && isValidNewStory();
+      allow update: if isOneOfRoles(resource, ['owner', 'writer']);
+      allow delete: if isOneOfRoles(resource, ['owner']);
+      allow read: if isOneOfRoles(resource, ['owner', 'writer', 'reader']) || publicStory(resource) || isAdmin() || resource == null;
+
+      /* story comments collection */
+      match /comments/{commentID} {
+        allow create, update: if request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid) && publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID)));
+        allow read: if publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID))) || isOneOfRoles(get(/databases/$(database)/documents/stories/$(storyID)), ["owner", "writer", "reader"]);
+      }
+    }
+
+    /* categories collection */
+    match /categories/{categoryID} {
+      allow read; allow write: if isSignedIn();
+    }
+
+    /* tags collection */
+    match /tags/{tagID} {
+      allow read; allow write: if isSignedIn();
+    }
+
+    /* comments collection group */
+    match /{path=**}/comments/{commentID} {
+      allow read: if isAdmin();
+    }
+
+    /* users collection */
+    match /users/{userUID} { allow read; }
+    
+    /* projects collection */
+    match /projects/{projectID} {
+    allow read;
+    allow write: if isAdmin();
+    }
+  }
+}

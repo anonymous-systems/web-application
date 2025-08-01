@@ -40,3 +40,7 @@ pglite-debug.log
 # Editor directories
 .idea
 .vscode
+
+# Firebase
+seed
+firestore-debug.log
