@@ -1,5 +1,7 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+// import { initializeApp } from 'firebase/app'
+// import { getAuth } from 'firebase/auth'
+import { getApp, getApps, initializeApp } from 'firebase/app'
+import { getAuth, setPersistence, inMemoryPersistence, connectAuthEmulator } from 'firebase/auth'
 
 export const firebaseClientConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,7 +14,7 @@ export const firebaseClientConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 }
 
-const app = initializeApp(firebaseClientConfig)
+// const app = initializeApp(firebaseClientConfig)
 
 // const appCheck = initializeAppCheck(
 //   app,
@@ -22,7 +24,7 @@ const app = initializeApp(firebaseClientConfig)
 //   }
 // )
 // const analytics = getAnalytics(app)
-const auth = getAuth(app)
+// const auth = getAuth(app)
 // const db = getFirestore(app)
 // const storage = getStorage(app)
 // const ai = getAI(app, { backend: new GoogleAIBackend() })
@@ -41,7 +43,37 @@ const auth = getAuth(app)
 //   connectFunctionsEmulator(functions, 'localhost', 5001)
 // }
 
+const getFirebaseApp = () => {
+  if (getApps().length) return getApp()
+
+  const app = initializeApp(firebaseClientConfig)
+
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    console.debug('⮑ Initializing Firebase App Check with reCAPTCHA v3.')
+    // getOrInitializeAppCheck(app)
+  }
+
+  return app
+}
+
+const getFirebaseAuth = () => {
+  const auth = getAuth(getFirebaseApp())
+
+  setPersistence(auth, inMemoryPersistence)
+
+  if (process.env.NEXT_PUBLIC_AUTH_EMULATOR_HOST) {
+    // https://stackoverflow.com/questions/73605307/firebase-auth-emulator-fails-intermittently-with-auth-emulator-config-failed
+    (auth as unknown as any)._canInitEmulator = true
+    connectAuthEmulator(auth, `http://${process.env.NEXT_PUBLIC_AUTH_EMULATOR_HOST}`, {
+      disableWarnings: true
+    })
+  }
+
+  return auth
+}
+
+
 export {
-  auth,
+  getFirebaseAuth,
   // analytics, db, storage, ai, appCheck, functions
 }

@@ -10,11 +10,13 @@ export const authConfig = {
   cookieSerializeOptions: {
     path: "/",
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: firebaseServerConfig.useSecureCookies,
     sameSite: "lax" as const,
     maxAge: 12 * 60 * 60 * 24, // Twelve days
   },
   enableMultipleCookies: true,
-  enableCustomToken: true,
-  serviceAccount: firebaseServerConfig.serviceAccount,
+  enableCustomToken: false,
+  experimental_enableTokenRefreshOnExpiredKidHeader: true,
+  debug: process.env.NODE_ENV === 'development',
+  serviceAccount: firebaseServerConfig.serviceAccount
 }

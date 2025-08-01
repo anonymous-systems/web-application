@@ -9,5 +9,6 @@ export const firebaseServerConfig = {
           '\n'
         )!
       }
-    : undefined
+    : undefined,
+  useSecureCookies: process.env.USE_SECURE_COOKIES === 'true'
 }

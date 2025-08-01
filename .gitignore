@@ -44,3 +44,4 @@ pglite-debug.log
 # Firebase
 seed
 firestore-debug.log
+firebase-debug.log

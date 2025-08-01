@@ -9,8 +9,9 @@ const PRIVATE_PATHS = Object.values(PrivateRoutes)
 
 export const middleware = async (request: NextRequest) => {
   return authMiddleware(request, {
-    loginPath: "/api/login",
-    logoutPath: "/api/logout",
+    loginPath: '/api/login',
+    logoutPath: '/api/logout',
+    refreshTokenPath: '/api/refresh-token',
     apiKey: authConfig.apiKey,
     cookieName: authConfig.cookieName,
     cookieSignatureKeys: authConfig.cookieSignatureKeys,
@@ -53,5 +54,11 @@ export const middleware = async (request: NextRequest) => {
 }
 
 export const config = {
-  matcher: ["/api/login", "/api/logout", "/", "/((?!_next|favicon.ico|api|.*\\.).*)"],
+  matcher: [
+    '/api/login',
+    '/api/logout',
+    '/api/refresh-token',
+    '/',
+    '/((?!_next|favicon.ico|api|.*\\.).*)'
+  ],
 }
