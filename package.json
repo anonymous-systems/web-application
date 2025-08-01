@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "turbo dev --parallel --ui=stream",
+    "dev:ui":"turbo dev",
+    "dev:emulators":  "firebase emulators:exec \"pnpm dev\" --ui",
+    "dev:seed":  "firebase emulators:exec \"pnpm dev\" --import=seed --export-on-exit=seed --ui",
     "lint": "turbo lint",
     "lint:fix": "turbo lint -- --fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
