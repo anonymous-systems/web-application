@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+// import admin from 'firebase-admin';
 
 export const firebaseServerConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
