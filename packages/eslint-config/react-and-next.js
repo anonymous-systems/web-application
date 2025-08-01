@@ -22,7 +22,7 @@ export const reactAndNextJsConfig = [
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
-      // 'no-undef': 'error',
+      'no-undef': 'error',
       'linebreak-style': 0,
       'object-curly-spacing': [ 'error', 'always' ],
       quotes: [ 'error', 'single' ],
