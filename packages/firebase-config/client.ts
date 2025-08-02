@@ -1,7 +1,8 @@
 // import { initializeApp } from 'firebase/app'
 // import { getAuth } from 'firebase/auth'
 import { getApp, getApps, initializeApp } from 'firebase/app'
-import { getAuth, setPersistence, inMemoryPersistence, connectAuthEmulator } from 'firebase/auth'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 
 export const firebaseClientConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -73,8 +74,22 @@ const getFirebaseAuth = () => {
   return auth
 }
 
+const getFirebaseFunctions = () => {
+  const functions = getFunctions(getFirebaseApp())
+
+  if (process.env.NEXT_PUBLIC_FUNCTIONS_EMULATOR_HOST) {
+    const split = process.env.NEXT_PUBLIC_FUNCTIONS_EMULATOR_HOST.split(':')
+    const host = split[0] as string
+    const port = parseInt(split[1] as string, 10)
+    connectFunctionsEmulator(functions, host, port)
+  }
+
+  return functions
+}
+
 
 export {
   getFirebaseAuth,
+  getFirebaseFunctions
   // analytics, db, storage, ai, appCheck, functions
 }
