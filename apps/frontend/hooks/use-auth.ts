@@ -1,4 +1,4 @@
-import { User } from '@/interfaces/user'
+import { User, AuthUser } from '@/interfaces/user'
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/auth-context'
 import { signIn , signOut } from '@/services/auth-service'
@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 interface AuthType {
   user: User | null
+  clientUser: AuthUser | null
+  isLoadingClientUser: boolean
   signIn: () => Promise<boolean>
   signOut: () => Promise<boolean>
   redirectAfterSignIn: () => void
@@ -24,6 +26,8 @@ export const useAuth = (): AuthType => {
 
   return {
     user: auth.user,
+    clientUser: auth.clientUser,
+    isLoadingClientUser: auth.isLoadingClientUser,
     signIn,
     signOut,
     redirectAfterSignIn

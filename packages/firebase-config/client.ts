@@ -59,7 +59,8 @@ const getFirebaseApp = () => {
 const getFirebaseAuth = () => {
   const auth = getAuth(getFirebaseApp())
 
-  setPersistence(auth, inMemoryPersistence)
+  // Note: In-memory persistence is not recommended refresh token api implemented for this
+  // setPersistence(auth, inMemoryPersistence)
 
   if (process.env.NEXT_PUBLIC_AUTH_EMULATOR_HOST) {
     // https://stackoverflow.com/questions/73605307/firebase-auth-emulator-fails-intermittently-with-auth-emulator-config-failed

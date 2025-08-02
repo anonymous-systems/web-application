@@ -1,10 +1,14 @@
 import { createContext } from 'react'
-import { User } from '@/interfaces/user'
+import { User, AuthUser } from '@/interfaces/user'
 
 export interface AuthContextValue {
   user: User | null
+  clientUser: AuthUser | null
+  isLoadingClientUser: boolean
 }
 
 export const AuthContext = createContext<AuthContextValue>({
-  user: null
+  user: null,
+  clientUser: null,
+  isLoadingClientUser: false
 })
