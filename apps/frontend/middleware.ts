@@ -44,30 +44,6 @@ export const middleware = async (request: NextRequest) => {
 
       // allow access to public and private paths
       return NextResponse.next({ request: { headers } })
-
-      // removes onboarding path from auth paths if onboarding is completed
-      // const authPaths = userCompletedOnboarding
-      //   ? AUTH_PATHS
-      //   : AUTH_PATHS.filter((path) => path !== AppRoutes.onboarding)
-      //
-      // console.debug('User:', { userCompletedOnboarding, authPaths })
-      //
-      // const accessingAuthPath = authPaths.includes(request.nextUrl.pathname)
-      //
-      // if (accessingAuthPath) {
-      //   console.debug('User is authenticated, redirecting to home page')
-      //   return redirectToHome(request)
-      // }
-      //
-      // const accessingPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname)
-      //
-      // if (accessingPublicPath && !userCompletedOnboarding) {
-      //   const userId = decodedToken.uid
-      //   console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
-      //   return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
-      // }
-      //
-      // return NextResponse.next({ request: { headers } })
     },
     handleInvalidToken: async () => {
       const pathname = request.nextUrl.pathname
@@ -90,13 +66,6 @@ export const middleware = async (request: NextRequest) => {
 
       // allow access to public and auth routes
       return NextResponse.next()
-
-      // console.debug('Missing or malformed credentials', {reason})
-      // if (PRIVATE_PATHS.includes(request.nextUrl.pathname)) {
-      //   console.debug('User is not authenticated to access this page', { reason })
-      //   return redirectToLogin(request, { path: AppRoutes.signIn, publicPaths: PUBLIC_PATHS })
-      // }
-      // return NextResponse.next()
     },
     handleError: async (error) => {
       console.error('Unhandled authentication error', error)
