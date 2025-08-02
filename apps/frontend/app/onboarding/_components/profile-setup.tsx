@@ -22,16 +22,21 @@ import { AnimatePresence, motion } from 'motion/react'
 import { FormValueValidator } from '@workspace/ui/models/interfaces/form-value-validator'
 import { toast } from '@workspace/ui/components/sonner'
 import { Label } from '@workspace/ui/components/label'
+import { useAuth } from '@/hooks/use-auth'
 
 interface Props {
   onBack?: () => void
   onFinish?: (userProfile: UserProfile) => void
 }
 export const ProfileSetup = (props: Props): JSX.Element => {
+  const { user } = useAuth()
+  const splitName = user?.displayName?.split(' ') ?? []
+  const firstName = splitName[0] ?? ''
+  const lastName = splitName.slice(1).join(' ') ?? ''
   const [form, setForm] = useState<UserProfile>({
-    avatar: null,
-    firstName: '',
-    lastName: '',
+    avatar: user?.photoURL ?? null,
+    firstName,
+    lastName,
     username: ''
   })
   const [showAvatarDialog, setShowAvatarDialog] = useState(false)
