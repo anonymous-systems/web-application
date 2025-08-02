@@ -8,6 +8,10 @@ import {
 } from '@workspace/ui/components/dialog'
 import Image from 'next/image'
 import { Button } from '@workspace/ui/components/button'
+import { getAvatars } from '@/services/avatar-service'
+import { toast } from '@workspace/ui/components/sonner'
+import { LoadingSpinner } from '@workspace/ui/components/loading-spinner'
+import { AnimatePresence, motion, Variants } from 'motion/react'
 
 interface Props {
   open: boolean
@@ -17,23 +21,46 @@ interface Props {
 }
 export const AvatarSelectionDialog = (props: Props): JSX.Element => {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
+  const [avatars, setAvatars] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    if (props.selectedAvatar != null) {
-      setSelectedAvatar(props.selectedAvatar)
-    } else {
-      setSelectedAvatar(null)
+    const fetchAvatars = async (): Promise<void> => {
+      setIsLoading(true)
+      const avatars = await getAvatars()
+
+      if (avatars == null) {
+        toast.error('Something went wrong while fetching avatars. Please try again later.')
+      }
+
+      setAvatars(avatars == null ? [] : avatars)
+
+      if (props.selectedAvatar && avatars?.includes(props.selectedAvatar)) {
+        setSelectedAvatar(props.selectedAvatar)
+      }
+      setIsLoading(false)
     }
+
+    void fetchAvatars()
   }, [])
 
-  const avatars = new Array<string>(30).fill('')
-    .map((_, i) => `/avatars/${i + 1}.webp`)
+  const avatarListVariants: Variants = {
+    visible: {
+      transition: { staggerChildren: 0.07 }
+    },
+    hidden: {}
+  }
+
+  const avatarItemVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.8, y: 20 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  }
 
   return (
     <Dialog open={props.open}>
       <DialogPortal>
         <DialogOverlay>
-          <DialogContent>
+          <DialogContent onCloseButton={props.onClose}>
             <DialogTitle>Select Avatar</DialogTitle>
             <DialogDescription>
               Select an avatar from the available options or upload a new one.
@@ -46,32 +73,45 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
                 props.onClose?.()
               }
             }}>
-              <div
-                className={[
-                  'flex flex-wrap justify-center gap-4',
-                  'py-4 px-0 max-h-[40vh] overflow-y-auto'
-                ].join(' ')}
-              >
-                {avatars.map((avatar, index) => (
-                  <picture
-                    key={index}
+              {isLoading
+                ? <LoadingSpinner className='justify-self-center' />
+                : (
+                  <motion.div
                     className={[
-                      'rounded-full',
-                      selectedAvatar === avatar
-                        ? 'outline-4 outline-primary/60 transition-transform scale-110'
-                        : 'cursor-pointer'
+                      'flex flex-wrap justify-center gap-4',
+                      'py-4 px-0 max-h-[40vh] overflow-y-auto'
                     ].join(' ')}
-                    onClick={() => { setSelectedAvatar(avatar) }}
+                    variants={avatarListVariants}
+                    initial='hidden'
+                    animate='visible'
                   >
-                    <Image
-                      src={avatar}
-                      alt={`Avatar ${index}`}
-                      width={100}
-                      height={100}
-                    />
-                  </picture>
-                ))}
-              </div>
+                    <AnimatePresence>
+                      {avatars.map((avatar, index) => (
+                        <motion.picture
+                          key={index}
+                          className={[
+                            'rounded-full',
+                            selectedAvatar === avatar
+                              ? 'outline-4 outline-primary/60 transition-transform scale-110'
+                              : 'cursor-pointer'
+                          ].join(' ')}
+                          onClick={() => { setSelectedAvatar(avatar) }}
+                          variants={avatarItemVariants}
+                          initial='hidden'
+                          animate='visible'
+                          exit='hidden'
+                        >
+                          <Image
+                            src={avatar}
+                            alt={`Avatar ${index}`}
+                            width={100}
+                            height={100}
+                          />
+                        </motion.picture>
+                      ))}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
 
               <DialogFooter>
                 <Button type="button" variant="secondary" onClick={props.onClose}>
