@@ -9,7 +9,7 @@ import { ArrowRight } from 'lucide-react'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 
 interface Props {
-  userProfile: UserProfile
+  userProfile: UserProfile | null
 }
 export const ProfilePage = (props: Props): JSX.Element => {
   const { user } = useAuth()
@@ -62,7 +62,7 @@ export const ProfilePage = (props: Props): JSX.Element => {
             </picture>
             <div>
               <h2 className='title-lg'>{user.displayName}</h2>
-              <p className='body-md'>@{props.userProfile.username}</p>
+              <p className='body-md'>@{props.userProfile?.username}</p>
             </div>
           </div>
         </section>

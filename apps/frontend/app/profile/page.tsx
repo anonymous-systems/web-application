@@ -8,7 +8,7 @@ import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 import { getFirebaseAdminApp } from '@/app/firebase'
 
 const db = getFirestore(getFirebaseAdminApp())
-const getUserProfile = async (): Promise<UserProfile> => {
+const getUserProfile = async (): Promise<UserProfile | null> => {
   const tokens = await getTokens(await cookies(), authConfig)
 
   if (!tokens) {
@@ -20,7 +20,9 @@ const getUserProfile = async (): Promise<UserProfile> => {
     .doc(tokens.decodedToken.uid)
     .get()
 
-  return snapshot.data() as UserProfile
+  return snapshot.exists
+    ? snapshot.data() as UserProfile
+    : null
 }
 const Page = async (): Promise<JSX.Element> => {
   const userProfile = await getUserProfile()
