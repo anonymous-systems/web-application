@@ -1,8 +1,7 @@
-// import { initializeApp } from 'firebase/app'
-// import { getAuth } from 'firebase/auth'
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
+import { getStorage, connectStorageEmulator } from 'firebase/storage'
 
 export const firebaseClientConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,35 +13,6 @@ export const firebaseClientConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 }
-
-// const app = initializeApp(firebaseClientConfig)
-
-// const appCheck = initializeAppCheck(
-//   app,
-//   {
-//     provider: new ReCaptchaV3Provider(process.env.REACT_APP_RECAPTCHA_SITE_KEY),
-//     isTokenAutoRefreshEnabled: true
-//   }
-// )
-// const analytics = getAnalytics(app)
-// const auth = getAuth(app)
-// const db = getFirestore(app)
-// const storage = getStorage(app)
-// const ai = getAI(app, { backend: new GoogleAIBackend() })
-// const functions = getFunctions(app)
-
-// const isLocal = true
-// if (isLocal) {
-//   console.debug('⮑ Starting application in development mode.')
-
-//   Note: Firebase Auth Emulator will not validate JWTs, so it can not be used for local development
-//   See Warning here: Received a signed JWT. Auth Emulator does not validate JWTs and IS NOT SECURE
-//   connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
-
-//   connectFirestoreEmulator(db, 'localhost', 8080)
-//   connectStorageEmulator(storage, 'localhost', 9199)
-//   connectFunctionsEmulator(functions, 'localhost', 5001)
-// }
 
 const getFirebaseApp = () => {
   if (getApps().length) return getApp()
@@ -87,9 +57,22 @@ const getFirebaseFunctions = () => {
   return functions
 }
 
+const getFirebaseStorage = () => {
+  const storage = getStorage(getFirebaseApp())
+
+  if (process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST) {
+    const split = process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST.split(':')
+    const host = split[0] as string
+    const port = parseInt(split[1] as string, 10)
+    connectStorageEmulator(storage, host, port)
+  }
+
+  return storage
+}
+
 
 export {
   getFirebaseAuth,
-  getFirebaseFunctions
-  // analytics, db, storage, ai, appCheck, functions
+  getFirebaseFunctions,
+  getFirebaseStorage
 }
