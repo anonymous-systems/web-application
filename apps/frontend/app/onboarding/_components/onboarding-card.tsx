@@ -1,6 +1,6 @@
 'use client'
 
-import { JSX, useState } from 'react'
+import { JSX, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { BrandName } from '@workspace/ui/components/brand-name'
@@ -12,7 +12,7 @@ import { Transition } from 'motion'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 import { onboardUser } from '@/services/user-service'
 import { toast } from '@workspace/ui/components/sonner'
-import { useAuth } from '@/hooks/use-auth'
+import { refreshCookies } from '@/app/_actions/refresh-cookies'
 
 const Spinner = (): JSX.Element => (
   <div className="flex flex-col items-center justify-center h-60" aria-busy="true" aria-label="Loading">
@@ -33,17 +33,14 @@ export const OnboardingCard = (): JSX.Element => {
   const [transitionDirection, setTransitionDirection] = useState<Direction>('forward')
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const { redirectAfterSignIn } = useAuth()
+  const [isRefreshingCookies, startRefreshCookiesTransition] = useTransition()
 
   const handleFinishOnboarding = async (userProfile: UserProfile): Promise<void> => {
-    // send request to backend to mark onboarding as complete
     setIsLoading(true)
     const success = await onboardUser(userProfile)
     if (success) {
       toast.success('Onboarding completed successfully!')
-      redirectAfterSignIn()
-    } else {
-      toast.error('Something went wrong while finishing onboarding.')
+      startRefreshCookiesTransition(() => refreshCookies())
     }
     setIsLoading(false)
   }
@@ -72,7 +69,7 @@ export const OnboardingCard = (): JSX.Element => {
         <BrandName className='text-center' />
       </Link>
 
-      {isLoading
+      {(isRefreshingCookies || isLoading)
         ? <Spinner />
         : (
           <AnimatePresence mode='wait'>

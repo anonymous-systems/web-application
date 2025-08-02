@@ -5,7 +5,7 @@ import { AppRoutes, AuthRoutes, PrivateRoutes, PublicRoutes } from '@/lib/app-ro
 
 const AUTH_PATHS = Object.values(AuthRoutes)
 const PUBLIC_PATHS = Object.values(PublicRoutes)
-const PRIVATE_PATHS = Object.values(PrivateRoutes)
+const PRIVATE_PATHS = [...Object.values(PrivateRoutes), AppRoutes.onboarding]
 
 export const middleware = async (request: NextRequest) => {
   return authMiddleware(request, {
@@ -20,20 +20,27 @@ export const middleware = async (request: NextRequest) => {
     enableCustomToken: authConfig.enableCustomToken,
     serviceAccount: authConfig.serviceAccount,
     handleValidToken: async ({ decodedToken }, headers) => {
-      // remove onboarding path from auth paths
-      const AuthPathsWithoutOnboarding = AUTH_PATHS
-        .filter((path) => path !== AppRoutes.onboarding)
-      if (AuthPathsWithoutOnboarding.includes(request.nextUrl.pathname)) {
+      const userCompletedOnboarding = decodedToken.onboardingComplete || false
+
+      // removes onboarding path from auth paths if onboarding is completed
+      const authPaths = userCompletedOnboarding
+        ? AUTH_PATHS
+        : AUTH_PATHS.filter((path) => path !== AppRoutes.onboarding)
+
+      const accessingAuthPath = authPaths.includes(request.nextUrl.pathname)
+
+      if (accessingAuthPath) {
         console.debug('User is authenticated, redirecting to home page')
         return redirectToHome(request)
       }
 
-      // const userCompletedOnboarding = decodedToken.onboardingComplete || false
-      // if (PRIVATE_PATHS.includes(request.nextUrl.pathname) && !userCompletedOnboarding) {
-      //   const userId = decodedToken.uid
-      //   console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
-      //   return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
-      // }
+      const accessingPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname)
+
+      if (accessingPublicPath && !userCompletedOnboarding) {
+        const userId = decodedToken.uid
+        console.debug('User has not completed onboarding, redirecting to onboarding page', { userId })
+        return redirectToLogin(request, { path: AppRoutes.onboarding, publicPaths: PUBLIC_PATHS })
+      }
 
       return NextResponse.next({ request: { headers } })
     },
