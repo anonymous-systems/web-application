@@ -6,8 +6,12 @@ import { UserAvatar } from '@/components/user-avatar'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@workspace/ui/components/button'
 import { ArrowRight } from 'lucide-react'
+import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 
-export const ProfilePage = (): JSX.Element => {
+interface Props {
+  userProfile: UserProfile
+}
+export const ProfilePage = (props: Props): JSX.Element => {
   const { user } = useAuth()
 
   if (user == null) return <></>
@@ -54,11 +58,11 @@ export const ProfilePage = (): JSX.Element => {
 
           <div className='mt-[125px] flex items-center z-50'>
             <picture className='p-2 block bg-background rounded-full'>
-              <UserAvatar user={user} className='aspect-square w-[112px] h-[112px]' />
+              <UserAvatar user={user} className='aspect-square w-[112px] h-[112px] text-5xl' />
             </picture>
             <div>
               <h2 className='title-lg'>{user.displayName}</h2>
-              <p className='body-md'>@username</p>
+              <p className='body-md'>@{props.userProfile.username}</p>
             </div>
           </div>
         </section>

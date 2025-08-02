@@ -24,10 +24,9 @@ const getUserProfile = async (): Promise<UserProfile> => {
 }
 const Page = async (): Promise<JSX.Element> => {
   const userProfile = await getUserProfile()
-  console.debug('User profile:', { userProfile })
 
   return (
-    <ProfilePage />
+    <ProfilePage userProfile={userProfile} />
   )
 }
 
