@@ -13,15 +13,11 @@ import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 import { onboardUser } from '@/services/user-service'
 import { toast } from '@workspace/ui/components/sonner'
 import { refreshCookies } from '@/app/_actions/refresh-cookies'
+import { LoadingSpinner } from '@workspace/ui/components/loading-spinner'
 
 const Spinner = (): JSX.Element => (
   <div className="flex flex-col items-center justify-center h-60" aria-busy="true" aria-label="Loading">
-    <motion.div
-      className="rounded-full border-4 border-primary/60 border-t-transparent w-12 h-12"
-      animate={{ rotate: 360 }}
-      transition={{ repeat: Infinity, duration: 0.85, ease: 'linear' }}
-      style={{ borderTopColor: 'transparent' }}
-    />
+    <LoadingSpinner />
     <span className="mt-4 text-lg text-muted-foreground animate-pulse">Loading, please wait…</span>
   </div>
 )
