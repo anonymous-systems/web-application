@@ -90,7 +90,7 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
                         <motion.picture
                           key={index}
                           className={[
-                            'rounded-full',
+                            'rounded-full overflow-hidden',
                             selectedAvatar === avatar
                               ? 'outline-4 outline-primary/60 transition-transform scale-110'
                               : 'cursor-pointer'
