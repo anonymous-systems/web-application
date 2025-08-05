@@ -45,3 +45,4 @@ pglite-debug.log
 seed
 firestore-debug.log
 firebase-debug.log
+firebase-export*
