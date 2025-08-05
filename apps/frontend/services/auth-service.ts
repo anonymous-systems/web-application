@@ -1,7 +1,8 @@
 import { GoogleAuthProvider, signInWithPopup, UserCredential, signOut as _signOut } from 'firebase/auth'
-import { getFirebaseAuth as auth } from '@workspace/firebase-config/client'
+import { getFirebaseAuth as auth, getAppCheck } from '@workspace/firebase-config/client'
+import { getToken } from 'firebase/app-check'
 
-export const signInWithGoogle = async (): Promise<UserCredential | null> => {
+const signInWithGoogle = async (): Promise<UserCredential | null> => {
   try {
     const provider = new GoogleAuthProvider()
 
@@ -22,7 +23,16 @@ export const signIn = async (): Promise<boolean> => {
     const idToken = await credential.user.getIdToken()
       .catch(error => { throw error })
 
-    await fetch('/api/login', { headers: { Authorization: `Bearer ${idToken}` } })
+    const headers: HeadersInit = { Authorization: `Bearer ${idToken}` }
+
+
+    if (process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY) {
+      const appCheckTokenResponse = await getToken(getAppCheck(), false)
+      headers["X-Firebase-AppCheck"] = appCheckTokenResponse.token
+    }
+
+
+    await fetch('/api/login', { method: 'GET', headers })
       .catch(error => { throw error })
     return true
   } catch (error) {

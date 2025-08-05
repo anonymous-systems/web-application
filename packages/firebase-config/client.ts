@@ -1,7 +1,8 @@
-import { getApp, getApps, initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp, FirebaseApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
+import { AppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check'
 
 export const firebaseClientConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,9 +20,9 @@ const getFirebaseApp = () => {
 
   const app = initializeApp(firebaseClientConfig)
 
-  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+  if (process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY) {
     console.debug('⮑ Initializing Firebase App Check with reCAPTCHA v3.')
-    // getOrInitializeAppCheck(app)
+    getOrInitializeAppCheck(app)
   }
 
   return app
@@ -70,9 +71,43 @@ const getFirebaseStorage = () => {
   return storage
 }
 
+let appCheck: AppCheck | null = null
+
+const getOrInitializeAppCheck = (app: FirebaseApp): AppCheck => {
+  if (appCheck != null) return appCheck
+
+  if (process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN) {
+    Object.assign(
+      window,
+      {
+        FIREBASE_APPCHECK_DEBUG_TOKEN: process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN
+      }
+    )
+  }
+
+  appCheck = initializeAppCheck(
+    app,
+    {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true
+    }
+  )
+
+  return appCheck
+}
+
+const getAppCheck = () => {
+  const app = getFirebaseApp()
+
+  return getOrInitializeAppCheck(app)
+}
+
 
 export {
   getFirebaseAuth,
   getFirebaseFunctions,
-  getFirebaseStorage
+  getFirebaseStorage,
+  getAppCheck
 }
