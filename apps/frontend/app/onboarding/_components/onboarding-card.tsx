@@ -30,8 +30,11 @@ export const OnboardingCard = (): JSX.Element => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isRefreshingCookies, startRefreshCookiesTransition] = useTransition()
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
 
-  const handleFinishOnboarding = async (userProfile: UserProfile): Promise<void> => {
+  const handleFinishOnboarding = async (): Promise<void> => {
+    if (userProfile == null) return
+
     setIsLoading(true)
     const success = await onboardUser(userProfile)
     if (success) {
@@ -80,6 +83,8 @@ export const OnboardingCard = (): JSX.Element => {
                   transition={transition}
                 >
                   <ProfileSetup
+                    userProfile={userProfile}
+                    setUserProfile={setUserProfile}
                     onBack={handlePreviousStep}
                     onFinish={handleFinishOnboarding}
                   />

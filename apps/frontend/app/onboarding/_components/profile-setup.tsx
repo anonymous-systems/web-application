@@ -3,7 +3,7 @@
 import {
   ChangeEvent,
   FormEvent,
-  JSX,
+  JSX, useEffect,
   useRef,
   useState
 } from 'react'
@@ -25,8 +25,10 @@ import { Label } from '@workspace/ui/components/label'
 import { useAuth } from '@/hooks/use-auth'
 
 interface Props {
-  onBack?: () => void
-  onFinish?: (userProfile: UserProfile) => void
+  onBack: () => void
+  onFinish: () => void
+  userProfile: UserProfile | null
+  setUserProfile: (profile: UserProfile) => void
 }
 export const ProfileSetup = (props: Props): JSX.Element => {
   const { user } = useAuth()
@@ -43,11 +45,18 @@ export const ProfileSetup = (props: Props): JSX.Element => {
   const hiddenInputRef = useRef<HTMLInputElement>(null)
   const [submitted, setSubmitted] = useState(false)
 
+  useEffect(() => {
+    if (props.userProfile != null) {
+      setForm(props.userProfile)
+      setSubmitted(true)
+    }
+  }, [])
+
   const validators: Record<keyof UserProfile, FormValueValidator> = {
     avatar: { required: false, isValid: true },
     firstName: { required: true, isValid: form.firstName !== '' && /^[a-zA-Z]+$/.test(form.firstName) },
     lastName: { required: true, isValid: form.lastName !== '' && /^[a-zA-Z]+$/.test(form.lastName) },
-    username: { required: true, isValid: form.username !== '' && /^[a-z0-9-]+$/.test(form.username) }
+    username: { required: true, isValid: form.username !== '' && /^[a-z0-9_-]+$/.test(form.username) }
   }
   const formValid = Object.values(validators).every(validator => validator.isValid)
 
@@ -66,6 +75,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
 
   const updateForm = <K extends keyof UserProfile>(key: K, value: UserProfile[K]): void => {
     setForm(prev => ({ ...prev, [key]: value }))
+    props.setUserProfile({ ...form, [key]: value })
   }
 
   const handleFieldUpdate = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -80,7 +90,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
       toast.error('Please fill in all required fields correctly.')
       return
     }
-    props.onFinish?.(form)
+    props.onFinish()
   }
 
   return (
@@ -212,7 +222,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
                 <Label htmlFor='username' className='px-2 text-destructive-foreground text-xs'>
-                  Username must be lowercase and can only contain letters, numbers, and hyphens.
+                  Username must be lowercase and can only contain letters, numbers, underscores, and hyphens.
                 </Label>
               </motion.div>
             )}
