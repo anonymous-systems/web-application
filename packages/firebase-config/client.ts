@@ -76,7 +76,7 @@ let appCheck: AppCheck | null = null
 const getOrInitializeAppCheck = (app: FirebaseApp): AppCheck => {
   if (appCheck != null) return appCheck
 
-  if (process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN) {
+  if (process.env.NODE_ENV !== 'production') {
     Object.assign(
       window,
       {

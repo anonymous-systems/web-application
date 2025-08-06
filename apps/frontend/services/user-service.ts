@@ -9,7 +9,7 @@ export const onboardUser = async (userProfile: UserProfile): Promise<boolean> =>
   const onboardUserFn = httpsCallable<typeof userProfile, boolean>(
     getFirebaseFunctions(),
     'user-onboard',
-    { limitedUseAppCheckTokens: false }
+    { limitedUseAppCheckTokens: true }
   )
   return onboardUserFn(userProfile)
     .then(res => res.data)

@@ -11,7 +11,7 @@ initializeApp()
 type UserOnboardRequest = UserProfile
 type UserOnboardResponse = Promise<boolean>
 const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
-  { enforceAppCheck: false, consumeAppCheckToken: false },
+  { enforceAppCheck: true, consumeAppCheckToken: true },
   async (request): UserOnboardResponse => {
     if (request.auth == null) {
       throw new HttpsError(
@@ -31,7 +31,7 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
       /^[a-zA-Z]+$/.test(lastName)
     const isUsernameValid = typeof username === 'string' &&
       username.trim() !== '' &&
-      /^[a-z0-9-]+$/.test(username)
+      /^[a-z0-9_-]+$/.test(username)
 
     if (
       !isAvatarValid ||
