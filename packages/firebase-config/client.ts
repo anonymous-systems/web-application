@@ -21,7 +21,7 @@ const getFirebaseApp = () => {
   const app = initializeApp(firebaseClientConfig)
 
   if (process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY) {
-    console.debug('⮑ Initializing Firebase App Check with reCAPTCHA v3.')
+    console.debug('⮑ FRONTEND: Initializing Firebase App Check with reCAPTCHA v3.')
     getOrInitializeAppCheck(app)
   }
 
