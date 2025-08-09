@@ -28,3 +28,10 @@ and Hosting: Firebase App Hosting
   of the terms of service and privacy policy, as well as providing a profile picture and
   username. Attempting to access private routes without completing onboarding will
   automatically redirect users to the onboarding page.
+
+## Cypress for E2E Testing
+- **Method**: Cypress for end-to-end testing
+- **Date**: 2025-08-06
+- **Reason**: Cypress is a powerful testing framework that allows for easy setup and
+  provides a rich set of features for testing web applications. It integrates well with
+  Next.js and Firebase, making it suitable for our project.

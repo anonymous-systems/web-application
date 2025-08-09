@@ -22,3 +22,26 @@ NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
 
 `NEXT_PUBLIC_AUTH_EMULATOR_HOST` is required for the Firebase Client SDK to connect to the emulator
 `NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST` is required for the Firebase Client SDK to connect to the emulator
+
+
+## Setup Cypress
+To run Cypress tests, you need to set up the environment variables in a `cypress.env.json` file.
+Copy the following template from cypress.env.example.json to cypress.env.json and fill in the values:
+```json
+{
+  "firebaseConfig": {
+    "apiKey": "api-key",
+    "authDomain": "auth-domain.firebaseapp.com",
+    "databaseURL": "database-url.firebaseio.com",
+    "projectId": "project-id",
+    "storageBucket": "storage-bucket.appspot.com",
+    "messagingSenderId": "messaging-sender-id",
+    "appId": "app-id",
+    "measurementId": "measurement-id"
+  },
+  "firebaseRecaptchaSiteKey": "reCAPTCHA_SITE_KEY",
+  "firebaseAppCheckDebugToken": "some-debug-token",
+  "firebaseAuthEmulatorHost": "localhost:9099"
+}
+```
+This ensures firebase is properly configured for Cypress tests.
