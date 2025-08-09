@@ -23,16 +23,16 @@ export const WelcomeCard = (): JSX.Element => {
         </picture>
         <div className='flex flex-col gap-4'>
           <div className='flex flex-col gap-2 text-center'>
-            <div className='text-3xl'>Welcome to {name}</div>
+            <div className='text-3xl' data-testid='pageTitle'>Welcome to {name}</div>
             <div className='text-sm text-muted-foreground'>{byline}</div>
           </div>
           <Link href={AppRoutes.signIn}>
-            <Button className='w-full'>Get started</Button>
+            <Button className='w-full' data-testid='getStartedButton'>Get Started</Button>
           </Link>
           <div className='flex justify-center align-items-center gap-1'>
             <p className='self-center'>You already have an account?</p>
             <Link href={AppRoutes.signIn}>
-              <Button variant='link'>Sign in</Button>
+              <Button variant='link' data-testid='signInButton'>Sign in</Button>
             </Link>
           </div>
         </div>
