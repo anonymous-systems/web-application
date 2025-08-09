@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { signInAnonymously, signOut, createUserWithEmailAndPassword, AuthErrorCodes, signInWithEmailAndPassword } from 'firebase/auth'
+import { signOut, createUserWithEmailAndPassword, AuthErrorCodes, signInWithEmailAndPassword } from 'firebase/auth'
 // @ts-ignore
 import { getFirebaseAppCheck, getFirebaseAuth } from './firebase'
 import { getToken } from 'firebase/app-check'
