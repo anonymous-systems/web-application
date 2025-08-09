@@ -39,9 +39,13 @@ export const SignInCard = (): JSX.Element => {
         <BrandName className='text-center' />
       </Link>
 
-      <h3 className='text-3xl'>Sign in</h3>
+      <h3 className='text-3xl' data-testid='pageTitle'>Sign in</h3>
       <p className='text-muted-foreground'>Sign in using your google account to continue</p>
-      <Button loading={isLoading} onClick={handleSignIn}>
+      <Button
+        data-testid='googleSignInButton'
+        loading={isLoading}
+        onClick={handleSignIn}
+      >
         <div className='mr-1'>
           {isLoading
           ? <Loader2Icon className="animate-spin" />
@@ -53,7 +57,7 @@ export const SignInCard = (): JSX.Element => {
       <div className='flex justify-center align-items-center gap-1'>
             <p className='self-center'>You don't have an account?</p>
             <Link href={AppRoutes.signUp}>
-              <Button variant='link'>Sign up</Button>
+              <Button variant='link' data-testid='signUpButton'>Sign up</Button>
             </Link>
           </div>
     </div>
