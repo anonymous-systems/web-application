@@ -14,20 +14,13 @@ const signInWithGoogle = async (): Promise<UserCredential | null> => {
   }
 }
 
-export const signIn = async (): Promise<boolean> => {
+export const login = async (idToken: string): Promise<boolean> => {
   try {
-    const credential = await signInWithGoogle()
-    if (credential == null) {
-      return false
-    }
-    const idToken = await credential.user.getIdToken()
-      .catch(error => { throw error })
-
     const headers: HeadersInit = { Authorization: `Bearer ${idToken}` }
-
 
     if (process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY) {
       const appCheckTokenResponse = await getToken(getAppCheck(), false)
+        .catch(error => { throw error })
       headers["X-Firebase-AppCheck"] = appCheckTokenResponse.token
     }
 
@@ -35,6 +28,30 @@ export const signIn = async (): Promise<boolean> => {
     await fetch('/api/login', { method: 'GET', headers })
       .catch(error => { throw error })
     return true
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}
+
+export const signInWithCredential = async (credential: UserCredential): Promise<boolean> => {
+  try {
+    const idToken = await credential.user.getIdToken()
+      .catch(error => { throw error })
+
+    return login(idToken)
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}
+
+export const signIn = async (): Promise<boolean> => {
+  try {
+    const credential = await signInWithGoogle()
+    if (credential == null) return false
+
+    return signInWithCredential(credential)
   } catch (error) {
     console.error(error)
     return false
