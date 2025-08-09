@@ -15,6 +15,7 @@ import { WelcomeCard } from '@/app/welcome/_components/WelcomeCard'
 
 interface Props {
   children: ReactNode
+  dataTestId?: string
 }
 export const Layout = (props: Props): JSX.Element => {
   const { user, signOut } = useAuth()
@@ -66,7 +67,7 @@ export const Layout = (props: Props): JSX.Element => {
         </>
       }
     >
-      <main>{props.children}</main>
+      <main data-testid={props.dataTestId}>{props.children}</main>
     </Nav>
   )
 }

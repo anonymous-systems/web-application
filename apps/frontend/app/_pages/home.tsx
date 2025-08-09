@@ -38,7 +38,7 @@ export const HomePage = (): JSX.Element => {
   ]
 
   return (
-    <Layout>
+    <Layout dataTestId='homePage'>
       <div className="flex flex-col items-center gap-8 p-4 pb-24">
         <section id='hero' className='flex flex-col items-center gap-4'>
           <ThreeDSphere/>

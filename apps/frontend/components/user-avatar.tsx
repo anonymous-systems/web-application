@@ -11,7 +11,7 @@ export const UserAvatar = (props: Props): JSX.Element => {
   const {user, className, ...restOfProps} = props
 
   return (
-    <Avatar className={cn(className, 'select-none')} {...restOfProps}>
+    <Avatar data-testid='userAvatar' className={cn(className, 'select-none')} {...restOfProps}>
       <AvatarImage
         src={user.photoURL ?? undefined}
         alt={user.displayName ?? undefined}

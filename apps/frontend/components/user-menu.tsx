@@ -22,7 +22,7 @@ export const UserMenu = (props: Props): JSX.Element => {
   if (props.user == null) {
     return (
       <Link href={AppRoutes.signIn}>
-        <Button variant='link'>Sign in</Button>
+        <Button variant='link' data-testid='signInButton'>Sign in</Button>
       </Link>
     )
   }

@@ -68,6 +68,7 @@ export const ThreeDSphere = ({
       style={{ width, height }}
       role='region'
       aria-label='3D Sphere Visualization'
+      data-testid='threeDSphere'
     >
       {spherePoints.map((point, index) => (
         <div
