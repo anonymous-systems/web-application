@@ -1,11 +1,11 @@
 'use client'
 
-import { JSX } from 'react'
+import { ElementType, JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { UserAvatar } from '@/components/user-avatar'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@workspace/ui/components/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, BookOpen, FolderOpen } from 'lucide-react'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 
 interface Props {
@@ -16,31 +16,15 @@ export const ProfilePage = (props: Props): JSX.Element => {
 
   if (user == null) return <></>
 
-  const projects = [
-    {
-      id: '1',
-      name: 'Project One',
-      description: 'Project Description'
-    },
-    {
-      id: '2',
-      name: 'Project Two',
-      description: 'Project Description'
-    }
-  ]
+  interface MockProject {
+    id: string
+    name: string
+    description: string
+  }
+  const projects: MockProject[] = []
 
-  const stories = [
-    {
-      id: '1',
-      name: 'Story One',
-      description: 'Story Description'
-    },
-    {
-      id: '2',
-      name: 'Story Two',
-      description: 'Story Description'
-    }
-  ]
+  interface MockStory extends MockProject {}
+  const stories: MockStory[] = []
 
   return (
     <Layout dataTestId='profilePage'>
@@ -69,10 +53,19 @@ export const ProfilePage = (props: Props): JSX.Element => {
 
         <section id='projects' className='flex flex-col gap-2 border rounded-2xl p-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='title-lg'>Recent Projects</h2>
+            <h2 className='title-lg'>Projects</h2>
 
-            <Button variant='ghost'>View all</Button>
+            <Button disabled variant='ghost'>View all</Button>
           </div>
+
+          {projects.length === 0 && (
+            // <p className='body-md text-muted-foreground'>No projects found.</p>
+            <ComingSoonPlaceholder
+              icon={FolderOpen}
+              title='Projects'
+              description='You will be able to create and manage your projects here soon. Stay tuned for updates!'
+            />
+          )}
 
           {projects.map(project => (
             <div
@@ -90,10 +83,19 @@ export const ProfilePage = (props: Props): JSX.Element => {
 
         <section id='stories' className='flex flex-col gap-2 border rounded-2xl p-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='title-lg'>Recent Stories</h2>
+            <h2 className='title-lg'>Stories</h2>
 
-            <Button variant='ghost'>View all</Button>
+            <Button disabled variant='ghost'>View all</Button>
           </div>
+
+          {stories.length === 0 && (
+            // <p className='body-md text-muted-foreground'>No stories found.</p>
+            <ComingSoonPlaceholder
+              icon={BookOpen}
+              title='Stories'
+              description='Stories will help you share progress and updates. This feature is coming soon!'
+            />
+          )}
 
           {stories.map(story => (
             <div key={story.id} className='border rounded-2xl py-2 pl-4 pr-6 flex items-center justify-between transition-colors hover:bg-accent cursor-pointer'>
@@ -109,3 +111,24 @@ export const ProfilePage = (props: Props): JSX.Element => {
     </Layout>
   )
 }
+
+const ComingSoonPlaceholder = ({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: ElementType
+  title: string
+  description: string
+}): JSX.Element => (
+  <div className='flex flex-col items-center justify-center py-8 gap-2'>
+    <span className='bg-accent rounded-full p-4'>
+      <Icon className='w-8 h-8 text-muted-foreground' aria-hidden='true' />
+    </span>
+    <span className='inline-flex items-center gap-2'>
+      <span className='font-semibold text-lg'>{title}</span>
+      <span className='bg-card text-card-foreground text-xs px-2 py-1 border-2 rounded-full'>Coming Soon</span>
+    </span>
+    <p className='body-md text-muted-foreground text-center max-w-xs'>{description}</p>
+  </div>
+)
