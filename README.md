@@ -1,6 +1,20 @@
-# shadcn/ui monorepo template
+# Anonymous Systems Web Application
 
-This template is for creating a monorepo with shadcn/ui.
+This repo contains the code for the Anonymous Systems' web application with
+a monorepo structure for both frontend and backend. Both
+applications are built using React, TypeScript, Tailwind CSS, shadcn/ui, and
+Firebase as the backend service. The frontend is customer-facing, while the
+backend is admin-facing.
+
+## Frontend
+
+Frontend code is located in the `apps/frontend` directory.
+The frontend is customer facing and contains all user interface code.
+
+## Backend
+
+Backend code is located in the `apps/admin` directory.
+The backend is admin facing and contains all backend services.
 
 ## Usage
 
@@ -33,3 +47,12 @@ To run the app, use the following command:
 ```bash
 pnpm dev
 ```
+
+
+## 🤝 Feedback & Support
+
+Have feedback, suggestions, or need help?
+Email me at [aaron.jones@anonsys.tech](mailto:aaron.jones@anonsys.tech)
+
+
+License: [MIT](https://choosealicense.com/licenses/mit/)
