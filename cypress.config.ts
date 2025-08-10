@@ -9,5 +9,6 @@ export default defineConfig({
     env: {
       adminUrl: 'http://localhost:3001',
     },
+    experimentalRunAllSpecs: true
   },
 });
