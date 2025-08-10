@@ -1,28 +1,19 @@
 # Anonymous Systems Web Application
 
-This repo contains the code for the Anonymous Systems' web application with
-a monorepo structure for both frontend and backend. Both
-applications are built using React, TypeScript, Tailwind CSS, shadcn/ui, and
-Firebase as the backend service. The frontend is customer-facing, while the
-backend is admin-facing.
 
-## Frontend
+This repository contains the codebase for the Anonymous Systems web application,
+organized as a monorepo with both frontend and backend projects.
+The stack includes React, TypeScript, Tailwind CSS, shadcn/ui, and Firebase.
+The frontend is customer-facing, while the backend serves administrative functions.
 
-Frontend code is located in the `apps/frontend` directory.
-The frontend is customer facing and contains all user interface code.
+## Project Structure
 
-## Backend
+- **Frontend:** Located in `apps/frontend`. Contains all customer-facing UI code.
+- **Backend:** Located in `apps/admin`. Contains admin-facing backend services.
 
-Backend code is located in the `apps/admin` directory.
-The backend is admin facing and contains all backend services.
+## Development Setup
 
-## Usage
-
-```bash
-pnpm dlx shadcn@latest init
-```
-
-## Adding components
+### Adding components
 
 To add components to your app, run the following command at the root of your `web` app:
 
@@ -33,7 +24,7 @@ pnpm dlx shadcn@latest add button -c packages/ui
 This will place the ui components in the `packages/ui/src/components` directory.
 But you may have to update the code to conform to eslint rules and TypeScript types.
 
-## Using components
+### Using components
 
 To use the components in your app, import them from the `ui` package.
 
@@ -41,7 +32,7 @@ To use the components in your app, import them from the `ui` package.
 import { Button } from "@workspace/ui/components/button"
 ```
 
-## Running the app
+### Running the app
 To run the app, use the following command:
 
 ```bash
