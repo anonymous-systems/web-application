@@ -14,6 +14,7 @@ describe('Sign-In Page', () => {
     cy.visit('/sign-in')
     cy.get('[data-testid="signInPage"]').should('not.exist')
     cy.get('[data-testid="homePage"]').should('exist')
+    cy.url().should('include', '/')
   })
 
   it('should initiate Google sign-in and disable the button during the process', () => {
