@@ -43,7 +43,7 @@ export const ProfilePage = (props: Props): JSX.Element => {
   ]
 
   return (
-    <Layout>
+    <Layout dataTestId='profilePage'>
       <div className='flex flex-col gap-4 p-4'>
         <section className='relative'>
           <div
@@ -61,8 +61,8 @@ export const ProfilePage = (props: Props): JSX.Element => {
               <UserAvatar user={user} className='aspect-square w-[112px] h-[112px] text-5xl' />
             </picture>
             <div>
-              <h2 className='title-lg'>{user.displayName}</h2>
-              <p className='body-md'>@{props.userProfile?.username}</p>
+              <h2 className='title-lg' data-testid='displayName'>{user.displayName}</h2>
+              <p className='body-md' data-testid='username'>@{props.userProfile?.username}</p>
             </div>
           </div>
         </section>
