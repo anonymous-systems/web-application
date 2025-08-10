@@ -1,0 +1,7 @@
+{
+  "name": "frontend",
+  "metadata": { "description": "This is the frontend web application." },
+  "targets": {
+    "build": { "cache": false }
+  }
+}
