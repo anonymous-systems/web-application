@@ -12,6 +12,7 @@ import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
 import { UserMenu } from '@/components/user-menu'
 import { MainNavigation } from '@/components/main-navigation'
 import { WelcomeCard } from '@/app/welcome/_components/WelcomeCard'
+import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 
 interface Props {
   children: ReactNode
@@ -68,6 +69,8 @@ export const Layout = (props: Props): JSX.Element => {
       }
     >
       <main data-testid={props.dataTestId}>{props.children}</main>
+
+      <ThemeToggle className='fixed bottom-6 right-4' />
     </Nav>
   )
 }
