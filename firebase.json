@@ -49,7 +49,7 @@
   ],
   "apphosting": {
     "backendId": "frontend-web-application",
-    "rootDir": "apps/frontend",
+    "rootDir": "./apps/frontend",
     "ignore": [
       "node_modules",
       ".git",
