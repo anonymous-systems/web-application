@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "nx build",
+    "build": "nx build --skipNxCache",
     "dev": "nx dev",
     "dev:emulators": "firebase emulators:exec \"pnpm dev\" --ui",
     "dev:seed": "firebase emulators:exec \"pnpm dev\" --import=seed --export-on-exit=seed --ui",
