@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@workspace/ui/components/dropdown-menu'
-import { LogOut, MessageCircleQuestionMark, UserIcon } from 'lucide-react'
+import { LogOut, UserIcon } from 'lucide-react'
 import { UserAvatar } from '@/components/user-avatar'
 import { GithubIcon } from '@workspace/ui/assets/icons/github-icon'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
@@ -51,10 +51,10 @@ export const UserMenu = (props: Props): JSX.Element => {
             GitHub
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>
-          <MessageCircleQuestionMark className='mr-4' />
-          Support
-        </DropdownMenuItem>
+        {/*<DropdownMenuItem disabled>*/}
+        {/*  <MessageCircleQuestionMark className='mr-4' />*/}
+        {/*  Support*/}
+        {/*</DropdownMenuItem>*/}
 
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={props.onSignOut} disabled={props.isLoading}>
