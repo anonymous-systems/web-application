@@ -35,3 +35,10 @@ and Hosting: Firebase App Hosting
 - **Reason**: Cypress is a powerful testing framework that allows for easy setup and
   provides a rich set of features for testing web applications. It integrates well with
   Next.js and Firebase, making it suitable for our project.
+
+## Firebase App Hosting
+- **Method**: Firebase App Hosting for deployment
+- **Date**: 2025-08-09
+- **Reason**: Firebase App Hosting is a reliable and scalable hosting solution that
+  integrates seamlessly with Firebase services. It provides fast content delivery and
+  easy deployment, making it ideal for our Next.js application.
