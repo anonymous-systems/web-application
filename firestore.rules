@@ -57,11 +57,8 @@ service cloud.firestore {
     }
 
     /* users collection */
-    match /users/{userUID} {
-      allow read;
-      allow write: if request.auth != null && request.auth.uid == userUID;
-    }
-
+    match /users/{userUID} { allow read; }
+    
     /* projects collection */
     match /projects/{projectID} {
     allow read;

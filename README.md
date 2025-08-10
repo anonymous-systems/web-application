@@ -1,18 +1,44 @@
 # Anonymous Systems Web Application
 
-This repo contains the frontend and backend code for Anonymous Systems'
-web application in a single Angular workspace. The frontend and the backend
-are each their own project and using Firebase as the backend service.
 
-## Frontend
+This repository contains the codebase for the Anonymous Systems web application,
+organized as a monorepo with both frontend and backend projects.
+The stack includes React, TypeScript, Tailwind CSS, shadcn/ui, and Firebase.
+The frontend is customer-facing, while the backend serves administrative functions.
 
-Frontend code is located in the `projects/frontend` directory.
-The frontend is customer facing and contains all user interface code.
+## Project Structure
 
-## Backend
+- **Frontend:** Located in `apps/frontend`. Contains all customer-facing UI code.
+- **Backend:** Located in `apps/admin`. Contains admin-facing backend services.
 
-Backend code is located in the `projects/backend` directory.
-The backend is admin facing and contains all backend services.
+## Development Setup
+
+### Adding components
+
+To add components to your app, run the following command at the root of your `web` app:
+
+```bash
+pnpm dlx shadcn@latest add button -c packages/ui
+```
+
+This will place the ui components in the `packages/ui/src/components` directory.
+But you may have to update the code to conform to eslint rules and TypeScript types.
+
+### Using components
+
+To use the components in your app, import them from the `ui` package.
+
+```tsx
+import { Button } from "@workspace/ui/components/button"
+```
+
+### Running the app
+To run the app, use the following command:
+
+```bash
+pnpm dev
+```
+
 
 ## 🤝 Feedback & Support
 
@@ -21,4 +47,3 @@ Email me at [aaron.jones@anonsys.tech](mailto:aaron.jones@anonsys.tech)
 
 
 License: [MIT](https://choosealicense.com/licenses/mit/)
-

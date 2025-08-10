@@ -1,0 +1,1 @@
+// cy.visit(Cypress.env('adminUrl') + '/');
