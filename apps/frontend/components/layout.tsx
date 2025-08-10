@@ -11,7 +11,6 @@ import Link from 'next/link'
 import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
 import { UserMenu } from '@/components/user-menu'
 import { MainNavigation } from '@/components/main-navigation'
-import { WelcomeCard } from '@/app/welcome/_components/WelcomeCard'
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
 
 interface Props {
