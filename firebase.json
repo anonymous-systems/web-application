@@ -46,17 +46,5 @@
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
-  ],
-  "apphosting": {
-    "backendId": "frontend-web-application",
-    "rootDir": "./apps/frontend",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log",
-      "functions"
-    ],
-    "alwaysDeployFromSource": true
-  }
+  ]
 }
