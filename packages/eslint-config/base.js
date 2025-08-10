@@ -1,8 +1,8 @@
-import js from "@eslint/js"
-import eslintConfigPrettier from "eslint-config-prettier"
-import onlyWarn from "eslint-plugin-only-warn"
-import turboPlugin from "eslint-plugin-turbo"
-import tseslint from "typescript-eslint"
+import js from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import onlyWarn from 'eslint-plugin-only-warn'
+import tseslint from 'typescript-eslint'
+import nxPlugin from '@nx/eslint-plugin'
 
 /**
  * A shared ESLint configuration for the repository.
@@ -14,19 +14,9 @@ export const config = [
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
-    plugins: {
-      turbo: turboPlugin,
-    },
-    rules: {
-      "turbo/no-undeclared-env-vars": "warn",
-    },
+    plugins: { '@nx': nxPlugin },
+    rules: { '@nx/enforce-module-boundaries': 'warn' },
   },
-  {
-    plugins: {
-      onlyWarn,
-    },
-  },
-  {
-    ignores: ["dist/**"],
-  },
+  { plugins: { onlyWarn, } },
+  { ignores: ['dist/**'] },
 ]

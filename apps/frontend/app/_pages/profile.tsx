@@ -23,7 +23,7 @@ export const ProfilePage = (props: Props): JSX.Element => {
   }
   const projects: MockProject[] = []
 
-  interface MockStory extends MockProject {}
+  type MockStory = MockProject
   const stories: MockStory[] = []
 
   return (

@@ -45,12 +45,14 @@ export const ProfileSetup = (props: Props): JSX.Element => {
   const hiddenInputRef = useRef<HTMLInputElement>(null)
   const [submitted, setSubmitted] = useState(false)
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (props.userProfile != null) {
       setForm(props.userProfile)
       setSubmitted(true)
     }
   }, [])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const validators: Record<keyof UserProfile, FormValueValidator> = {
     avatar: { required: false, isValid: true },
@@ -65,11 +67,9 @@ export const ProfileSetup = (props: Props): JSX.Element => {
     if (file == null) return
     const reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.onload = (e) => {
-      const base64Image = e.target?.result ?? reader.result?.toString()
-      if (base64Image != null && typeof base64Image === 'string') {
-        updateForm('avatar', base64Image)
-      }
+    reader.onload = (e): void => {
+      const result = e.target?.result ?? reader.result
+      if (typeof result === 'string') updateForm('avatar', result)
     }
   }
 
@@ -211,7 +211,7 @@ export const ProfileSetup = (props: Props): JSX.Element => {
             autoComplete='username'
             value={form.username}
             aria-invalid={submitted && !validators.username.isValid}
-            onChange={({target}) => { updateForm('username', target.value.trim().toLowerCase()) }}
+            onChange={({ target }) => { updateForm('username', target.value.trim().toLowerCase()) }}
           />
           <AnimatePresence>
             {submitted && !validators.username.isValid && (

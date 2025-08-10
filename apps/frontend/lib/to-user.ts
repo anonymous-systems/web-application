@@ -11,9 +11,9 @@ export const toUser = ({ decodedToken }: Tokens): User => {
     phone_number: phoneNumber,
     name: displayName,
     source_sign_in_provider: signInProvider,
-  } = decodedToken;
+  } = decodedToken
 
-  const customClaims = filterStandardClaims(decodedToken);
+  const customClaims = filterStandardClaims(decodedToken)
 
   return {
     uid,
@@ -24,5 +24,5 @@ export const toUser = ({ decodedToken }: Tokens): User => {
     emailVerified: emailVerified ?? false,
     providerId: signInProvider,
     customClaims,
-  };
-};
+  }
+}

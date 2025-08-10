@@ -42,7 +42,7 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
     }
 
     void fetchAvatars()
-  }, [])
+  }, [props.selectedAvatar])
 
   const avatarListVariants: Variants = {
     visible: {
@@ -72,7 +72,8 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
                 props.onSelectAvatar(selectedAvatar)
                 props.onClose?.()
               }
-            }}>
+            }}
+            >
               {isLoading
                 ? <LoadingSpinner className='justify-self-center' />
                 : (

@@ -61,7 +61,7 @@ export const Agreements = (props: Props): JSX.Element => {
 
       <p className='text-muted-foreground'>
         By accessing this website we assume you accept these terms and conditions.
-        Do not continue to use {name}'s website if you do not agree with all of
+        Do not continue to use {name}&apos;s website if you do not agree with all of
         the terms and conditions stated on this page.
       </p>
 

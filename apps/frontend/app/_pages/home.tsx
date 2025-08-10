@@ -155,7 +155,7 @@ export const HomePage = (): JSX.Element => {
 
           <picture className='bg-card w-full h-[300px] rounded-2xl' />
         </section>
-v
+        v
         <section id='steps' className='flex flex-col items-center gap-4 bg-accent p-4 rounded-2xl'>
           <div className='flex flex-col gap-2'>
             <h2 className='title-lg'>Discover the benefits of working with us</h2>
@@ -165,13 +165,13 @@ v
           <picture className='bg-card w-full h-[300px] rounded-2xl'/>
 
           <div className='flex flex-col gap-2'>
-             <h2 className='headline-sm'>Step 1</h2>
-             <p className='body-lg'>Get in touch with us for a consultation.</p>
+            <h2 className='headline-sm'>Step 1</h2>
+            <p className='body-lg'>Get in touch with us for a consultation.</p>
 
             <Divider />
 
-             <h2 className='headline-sm'>Step 2</h2>
-             <p className='body-lg'>Our experts with assess your needs and provide personalized recommendations.</p>
+            <h2 className='headline-sm'>Step 2</h2>
+            <p className='body-lg'>Our experts with assess your needs and provide personalized recommendations.</p>
 
             <Divider />
 
@@ -200,7 +200,7 @@ v
                     <Star key={i} className='fill-card' strokeWidth={0} />
                   ))}
                   <div className='flex gap-2 absolute'>
-                    {[...Array(Math.floor(testimonial.rating))].map((_, i) => (
+                    {[...Array<unknown>(Math.floor(testimonial.rating))].map((_, i) => (
                       <Star key={i} className='fill-current' strokeWidth={0} />
                     ))}
                     {testimonial.rating % 1 !== 0 && (

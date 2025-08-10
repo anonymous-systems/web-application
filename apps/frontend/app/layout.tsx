@@ -7,7 +7,7 @@ import { CompanyInformation } from '@workspace/ui/lib/company-information'
 import { getTokens } from 'next-firebase-auth-edge'
 import { cookies, headers } from 'next/headers'
 import { toUser } from '@/lib/to-user'
-import { ReactNode } from 'react'
+import { JSX, ReactNode } from 'react'
 import { authConfig } from '@workspace/firebase-config/auth'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: CompanyInformation.byline,
 }
 
-export default async function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const tokens = await getTokens(
     await cookies(),
     { ...authConfig, headers: await headers() }

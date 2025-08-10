@@ -55,11 +55,11 @@ export const SignInCard = (): JSX.Element => {
       </Button>
 
       <div className='flex justify-center align-items-center gap-1'>
-            <p className='self-center'>You don't have an account?</p>
-            <Link href={AppRoutes.signUp}>
-              <Button variant='link' data-testid='signUpButton'>Sign up</Button>
-            </Link>
-          </div>
+        <p className='self-center'>You don&apos;t have an account?</p>
+        <Link href={AppRoutes.signUp}>
+          <Button variant='link' data-testid='signUpButton'>Sign up</Button>
+        </Link>
+      </div>
     </div>
   )
 }

@@ -51,11 +51,11 @@ export const SignUpCard = (): JSX.Element => {
       </Button>
 
       <div className='flex justify-center align-items-center gap-1'>
-            <p className='self-center'>You already have an account?</p>
-            <Link href={AppRoutes.signIn}>
-              <Button variant='link'>Sign in</Button>
-            </Link>
-          </div>
+        <p className='self-center'>You already have an account?</p>
+        <Link href={AppRoutes.signIn}>
+          <Button variant='link'>Sign in</Button>
+        </Link>
+      </div>
     </div>
   )
 }

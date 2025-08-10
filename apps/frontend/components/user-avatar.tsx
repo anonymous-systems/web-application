@@ -8,7 +8,7 @@ interface Props {
   className?: string
 }
 export const UserAvatar = (props: Props): JSX.Element => {
-  const {user, className, ...restOfProps} = props
+  const { user, className, ...restOfProps } = props
 
   return (
     <Avatar data-testid='userAvatar' className={cn(className, 'select-none')} {...restOfProps}>

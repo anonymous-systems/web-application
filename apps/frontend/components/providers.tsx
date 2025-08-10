@@ -4,12 +4,13 @@ import * as React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { User } from '@/interfaces/user'
 import { AuthProvider } from '@/providers/auth-provider'
+import { JSX } from 'react'
 
 interface Props {
   children: React.ReactNode
   user: User | null
 }
-export function Providers(props: Props) {
+export function Providers(props: Props): JSX.Element {
   return (
     <NextThemesProvider
       attribute="class"

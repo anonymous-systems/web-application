@@ -1,7 +1,8 @@
 import admin from 'firebase-admin'
 import { firebaseServerConfig } from '@workspace/firebase-config/server'
+import { App } from 'firebase-admin/app'
 
-const getFirebaseApp = () => {
+const getFirebaseApp = (): App => {
   if (!firebaseServerConfig.serviceAccount) return admin.initializeApp()
 
   if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
@@ -15,10 +16,8 @@ const getFirebaseApp = () => {
   })
 }
 
-const getFirebaseAdminApp = () => {
-  if (admin.apps.length > 0) {
-    return admin.apps[0] as admin.app.App
-  }
+const getFirebaseAdminApp = (): App => {
+  if (admin.apps.length > 0) return admin.apps[0] as admin.app.App
 
   // admin.firestore.setLogFunction(console.log)
 
