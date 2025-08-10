@@ -1,20 +1,22 @@
-:root {
-  --sphere-perspective: 10000px;
-  --animation-duration: 16s;
-}
+/*:root {*/
+/*  --sphere-perspective: 10000px;*/
+/*  --animation-duration: 16s;*/
+/*}*/
 
 .sphere {
   position: relative;
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  perspective: var(--sphere-perspective);
+  /*perspective: var(--sphere-perspective);*/
+  perspective: 10000px;
   transform-style: preserve-3d;
   will-change: transform;
   transform: translate3d(0,0,0);
 
   &.rotate {
-    animation: spin var(--animation-duration) linear infinite;
+    /*animation: spin var(--animation-duration) linear infinite;*/
+    animation: spin 16s linear infinite;
   }
 
   .point {

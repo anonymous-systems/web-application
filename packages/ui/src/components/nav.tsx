@@ -5,7 +5,6 @@ import { Button } from '@workspace/ui/components/button'
 import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
 import { MenuIcon } from '@workspace/ui/assets/icons/menu-icon'
 import { AnimatePresence, motion, stagger, Variants, resize } from 'motion/react'
-// @ts-expect-error Import not registering in this project properly
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { ThemeToggle } from '@workspace/ui/components/theme-toggle'

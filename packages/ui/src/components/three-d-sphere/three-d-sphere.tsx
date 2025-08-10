@@ -1,7 +1,6 @@
 'use client'
 
 import { JSX, useMemo } from 'react'
-// @ts-expect-error Importing styles
 import styles from './styles.module.css'
 import { SpherePoint } from '@workspace/ui/components/three-d-sphere/sphere-point'
 

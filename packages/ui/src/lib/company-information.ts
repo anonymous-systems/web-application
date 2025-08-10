@@ -1,3 +1,5 @@
+const domain = 'anonsys.tech'
+
 export const CompanyInformation = {
   acronym: 'AS',
   name: 'Anonymous Systems',
@@ -6,9 +8,9 @@ export const CompanyInformation = {
   title: 'Anonymous Systems Technology Consultants',
   byline: 'Michigan Technology Consultant: Helping Businesses Grow with Technology',
   missionStatement: 'To provide innovative and cutting-edge technology solutions to businesses',
-  email: 'info@anonsys.tech',
-  domain: 'anonsys.tech',
-  website: `https://${this.domain}`,
+  email: `info@${domain}`,
+  domain: domain,
+  website: `https://${domain}`,
   business: {
     hours: 'Monday - Friday: 9:00 AM - 5:00 PM',
     telephone: '(517) 798-1479',
