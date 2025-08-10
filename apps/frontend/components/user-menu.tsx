@@ -9,9 +9,10 @@ import {
   DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@workspace/ui/components/dropdown-menu'
-import { BadgeQuestionMark, LogOut, UserIcon } from 'lucide-react'
+import { BadgeQuestionMarkIcon, LogOut, UserIcon } from 'lucide-react'
 import { UserAvatar } from '@/components/user-avatar'
 import { GithubIcon } from '@workspace/ui/assets/icons/github-icon'
+import { CompanyInformation } from '@workspace/ui/lib/company-information'
 
 interface Props {
   user: User | null
@@ -26,6 +27,8 @@ export const UserMenu = (props: Props): JSX.Element => {
       </Link>
     )
   }
+
+  const gitHubUrl = `https://github.com/${CompanyInformation.socials.github}`
 
   return (
     <DropdownMenu modal={false}>
@@ -42,12 +45,14 @@ export const UserMenu = (props: Props): JSX.Element => {
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          <GithubIcon className='mr-4' />
-          GitHub
+        <DropdownMenuItem asChild>
+          <Link href={gitHubUrl} target='_blank' rel='noreferrer'>
+            <GithubIcon className='mr-4' />
+            GitHub
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
-          <BadgeQuestionMark className='mr-4' />
+          <BadgeQuestionMarkIcon className='mr-4' />
           Support
         </DropdownMenuItem>
 

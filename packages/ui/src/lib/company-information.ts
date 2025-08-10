@@ -17,6 +17,7 @@ export const CompanyInformation = {
     address: 'Anonymous Address',
   },
   socials: {
+    github: 'anonymous-systems',
     instagram: '#',
     facebook: '#',
     twitter: '@anonsystech',
