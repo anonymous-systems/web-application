@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authMiddleware, redirectToHome, redirectToLogin } from 'next-firebase-auth-edge'
 import { authConfig } from '@workspace/firebase-config/auth'
 import { AppRoutes, AuthRoutes, PrivateRoutes, PublicRoutes } from '@/lib/app-routes'
+import * as path from 'node:path'
 
 const AUTH_PATHS = Object.values(AuthRoutes)
 const PUBLIC_PATHS = Object.values(PublicRoutes)
@@ -20,9 +21,13 @@ export const middleware = async (request: NextRequest) => {
     enableCustomToken: authConfig.enableCustomToken,
     serviceAccount: authConfig.serviceAccount,
     handleValidToken: async ({ decodedToken }, headers) => {
-      const userCompletedOnboarding = decodedToken.onboardingComplete || false
       const pathname = request.nextUrl.pathname
 
+      if (pathname === AppRoutes.signOut) {
+        return NextResponse.next({ request: { headers } })
+      }
+
+      const userCompletedOnboarding = decodedToken.onboardingComplete || false
       // authenticated user tries to access onboarding page
       if (pathname === AppRoutes.onboarding) {
         // onboarding is completed, redirect to home page
@@ -47,6 +52,8 @@ export const middleware = async (request: NextRequest) => {
     },
     handleInvalidToken: async () => {
       const pathname = request.nextUrl.pathname
+
+      if (pathname === AppRoutes.signOut) return NextResponse.next()
 
       // unauthenticated user tries to access onboarding: redirect to sign-in
       if (pathname === AppRoutes.onboarding) {

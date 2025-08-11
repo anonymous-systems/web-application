@@ -8,8 +8,9 @@ export const PublicRoutes = {
   welcome: '/welcome',
   termsAndConditions: '/terms-and-conditions',
   privacyPolicy: '/privacy-policy',
+  signOut: '/sign-out',
 }
 export const PrivateRoutes = {
-  profile: '/profile'
+  profile: '/profile',
 }
 export const AppRoutes = { ...AuthRoutes, ...PublicRoutes, ...PrivateRoutes }
