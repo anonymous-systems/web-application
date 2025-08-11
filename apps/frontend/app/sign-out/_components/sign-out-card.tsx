@@ -6,16 +6,21 @@ import { AppRoutes } from '@/lib/app-routes'
 import { Logo } from '@/components/logo'
 import { Button } from '@workspace/ui/components/button'
 import { useAuth } from '@/hooks/use-auth'
+import { useRouter } from 'next/navigation'
 
 export const SignOutCard = (): JSX.Element => {
   const { signOut } = useAuth()
   const [isLoading, setIsLoading] = useState(true)
   const [isSignedOut, setIsSignedOut] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setIsLoading(true)
     signOut()
-      .then(() => setIsSignedOut(true))
+      .then(() => {
+        setIsSignedOut(true)
+        router.refresh()
+      })
       .catch(() => setIsSignedOut(false))
       .finally(() => setIsLoading(false))
   }, []) // only run on mount

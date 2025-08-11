@@ -1,9 +1,7 @@
 'use client'
 
-import { JSX, ReactNode, useState } from 'react'
+import { JSX, ReactNode } from 'react'
 import { useAuth } from '@/hooks/use-auth'
-import { toast } from '@workspace/ui/components/sonner'
-import { useRouter } from 'next/navigation'
 import { Nav } from '@workspace/ui/components/nav'
 import { AppRoutes } from '@/lib/app-routes'
 import { BrandName } from '@workspace/ui/components/brand-name'
@@ -18,21 +16,7 @@ interface Props {
   dataTestId?: string
 }
 export const Layout = (props: Props): JSX.Element => {
-  const { user, signOut } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-
-  const handleSignOut = async (): Promise<void> => {
-    setIsLoading(true)
-    const success = await signOut()
-    if (success) {
-      toast.success('You have been signed out successfully.')
-      router.refresh()
-    } else {
-      toast.error('Something went wrong while signing out.')
-    }
-    setIsLoading(false)
-  }
+  const { user } = useAuth()
 
   const navLinks: NavLink[] = [
     { id: 'home', name: 'Home', href: AppRoutes.home },
@@ -51,7 +35,7 @@ export const Layout = (props: Props): JSX.Element => {
           </Link>
 
           <div className='flex-grow flex justify-end'>
-            <UserMenu user={user} isLoading={isLoading} onSignOut={handleSignOut} />
+            <UserMenu user={user} />
           </div>
         </>
       }
@@ -63,7 +47,7 @@ export const Layout = (props: Props): JSX.Element => {
 
           <MainNavigation className='flex-grow max-w-none' viewport={false} navLinks={navLinks} />
 
-          <UserMenu user={user} isLoading={isLoading} onSignOut={handleSignOut} />
+          <UserMenu user={user} />
         </>
       }
     >

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authMiddleware, redirectToHome, redirectToLogin } from 'next-firebase-auth-edge'
 import { authConfig } from '@workspace/firebase-config/auth'
 import { AppRoutes, AuthRoutes, PrivateRoutes, PublicRoutes } from '@/lib/app-routes'
-import * as path from 'node:path'
 
 const AUTH_PATHS = Object.values(AuthRoutes)
 const PUBLIC_PATHS = Object.values(PublicRoutes)

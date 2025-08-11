@@ -16,8 +16,6 @@ import { CompanyInformation } from '@workspace/ui/lib/company-information'
 
 interface Props {
   user: User | null
-  isLoading?: boolean
-  onSignOut?: () => Promise<void>
 }
 export const UserMenu = (props: Props): JSX.Element => {
   if (props.user == null) {
@@ -32,12 +30,12 @@ export const UserMenu = (props: Props): JSX.Element => {
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild disabled={props.isLoading}>
+      <DropdownMenuTrigger asChild>
         <UserAvatar className='cursor-pointer' user={props.user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuItem asChild disabled={props.isLoading}>
+        <DropdownMenuItem asChild>
           <Link href={AppRoutes.profile}>
             <UserIcon className='mr-4' />
             Profile
@@ -57,9 +55,11 @@ export const UserMenu = (props: Props): JSX.Element => {
         {/*</DropdownMenuItem>*/}
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={props.onSignOut} disabled={props.isLoading}>
-          <LogOut className='mr-4' />
-          Sign Out
+        <DropdownMenuItem asChild>
+          <Link href={AppRoutes.signOut}>
+            <LogOut className='mr-4' />
+            Sign Out
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
