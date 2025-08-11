@@ -14,6 +14,7 @@ export const SignOutCard = (): JSX.Element => {
   const [isSignedOut, setIsSignedOut] = useState(false)
   const router = useRouter()
 
+  /* eslint-disable  react-hooks/exhaustive-deps */
   useEffect(() => {
     setIsLoading(true)
     signOut()
@@ -24,6 +25,7 @@ export const SignOutCard = (): JSX.Element => {
       .catch(() => setIsSignedOut(false))
       .finally(() => setIsLoading(false))
   }, []) // only run on mount
+  /* eslint-enable  react-hooks/exhaustive-deps */
 
   const getSignOutMessage = (isLoading: boolean, isSignedOut: boolean): string => {
     if (isLoading) return 'Signing Out...'
