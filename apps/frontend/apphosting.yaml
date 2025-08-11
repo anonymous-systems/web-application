@@ -8,16 +8,38 @@ runConfig:
   # memoryMiB: 512
 
 # Environment variables and secrets.
-# env:
-  # Configure environment variables.
-  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
+env:
+  - variable: FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: anonymous-systems-dev.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+    value: https://anonymous-systems-dev-default-rtdb.firebaseio.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: anonymous-systems-dev.appspot.com
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: 160347575398
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:160347575398:web:a29a7b932649cae54749a7
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-ZXCJBFNDCG
+  - variable: NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY
+    value: 6LeEV7shAAAAAA1Fs_bc2EjoLMOKhVjs6b7pKhaL
+  - variable: USE_SECURE_COOKIES
+    value: true
+  - variable: COOKIE_SECRET_CURRENT
+    value: YD3ETDpMJNM1YlLyMUZmRA3yz+SwWcEJJEhJf9G9WqA=
+  - variable: COOKIE_SECRET_PREVIOUS
+    value: uf15a2kYk8fiNM4VtDe5NkRHdePDthGUbUFAW/n93fA=
 
   # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+  - variable: FIREBASE_API_KEY
+    secret: APPHOSTING_FIREBASE_API_KEY
+  - variable: FIREBASE_ADMIN_PRIVATE_KEY
+    secret: APPHOSTING_FIREBASE_ADMIN_PRIVATE_KEY
+  - variable: FIREBASE_ADMIN_CLIENT_EMAIL
+    secret: APPHOSTING_FIREBASE_ADMIN_CLIENT_EMAIL
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: APPHOSTING_FIREBASE_API_KEY
