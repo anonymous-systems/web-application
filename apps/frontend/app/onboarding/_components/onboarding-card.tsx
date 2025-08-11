@@ -14,6 +14,7 @@ import { onboardUser } from '@/services/user-service'
 import { toast } from '@workspace/ui/components/sonner'
 import { refreshCookies } from '@/app/_actions/refresh-cookies'
 import { LoadingSpinner } from '@workspace/ui/components/loading-spinner'
+import { useAuth } from '@/hooks/use-auth'
 
 const Spinner = (): JSX.Element => (
   <div className="flex flex-col items-center justify-center h-60" aria-busy="true" aria-label="Loading">
@@ -31,9 +32,12 @@ export const OnboardingCard = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false)
   const [isRefreshingCookies, startRefreshCookiesTransition] = useTransition()
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const { user, clientUser } = useAuth()
 
   const handleFinishOnboarding = async (): Promise<void> => {
     if (userProfile == null) return
+
+    console.debug('Onboarding user:', {userProfile, user, clientUser})
 
     setIsLoading(true)
     const success = await onboardUser(userProfile)
