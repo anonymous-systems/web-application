@@ -26,7 +26,7 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: G-ZXCJBFNDCG
   - variable: NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY
-    value: 6LeEV7shAAAAAA1Fs_bc2EjoLMOKhVjs6b7pKhaL
+    value: 6Ldo-aArAAAAAE0G5z4SrejilzW3aL-RZaEOgXUu
   - variable: USE_SECURE_COOKIES
     value: true
   - variable: COOKIE_SECRET_CURRENT
