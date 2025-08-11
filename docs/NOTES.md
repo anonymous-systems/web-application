@@ -45,3 +45,11 @@ Copy the following template from cypress.env.example.json to cypress.env.json an
 }
 ```
 This ensures firebase is properly configured for Cypress tests.
+
+## Firebase App Hosting
+To deploy to Firebase App Hosting properly, you need to add the environment variables to the yaml file.
+
+## Firebase App Check
+Ensure the service account you are using has the `firebaseappcheck.appCheckTokens.verify` permission.
+Add the `Firebase App Check Token Verifier` permission to the service account you are
+using to run the application.
