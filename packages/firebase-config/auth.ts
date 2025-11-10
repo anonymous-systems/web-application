@@ -1,4 +1,4 @@
-import { firebaseServerConfig } from '@workspace/firebase-config/server'
+import { firebaseServerConfig } from './server'
 
 export const authConfig = {
   apiKey: firebaseServerConfig.apiKey!,
