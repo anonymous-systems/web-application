@@ -132,6 +132,7 @@ export const Nav = (props: Props): JSX.Element => {
         className={[
           'z-10 fixed w-full transition-colors',
           'max-w-[1024px] mx-auto align-self-center',
+          'place-self-center',
           isOpen ? 'bg-background' : 'bg-background/20',
           isOpen ? 'flex flex-col' : '',
           props.headerClassName || ''
