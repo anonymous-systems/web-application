@@ -22,7 +22,7 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
 
     const { avatar, firstName, lastName, username } = request.data
     const isAvatarValid = avatar == null ||
-       (typeof avatar === 'string' && avatar.trim() !== '')
+      (typeof avatar === 'string' && avatar.trim() !== '')
     const isFirstNameValid = typeof firstName === 'string' &&
       firstName.trim() !== '' &&
       /^[a-zA-Z]+$/.test(firstName)
@@ -113,7 +113,7 @@ const getValidAvatar = async (
 
   if (avatar.startsWith('data:image')) {
     const matches = avatar.match(/^data:(image\/\w+);base64,(.+)$/)
-    if (!matches) return null
+    if (!matches || !matches[1] || !matches[2]) return null
     const contentType = matches[1]
     const base64Data = matches[2]
     const buffer = Buffer.from(base64Data, 'base64')
