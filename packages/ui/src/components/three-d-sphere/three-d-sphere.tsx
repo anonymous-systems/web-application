@@ -2,7 +2,7 @@
 
 import { JSX, useMemo } from 'react'
 import styles from './styles.module.css'
-import { SpherePoint } from '@workspace/ui/components/three-d-sphere/sphere-point'
+import { SpherePoint } from './sphere-point'
 
 interface Props {
   /** The number of points to distribute on the sphere. */

@@ -1,13 +1,13 @@
 'use client'
 
 import { JSX, ReactNode, useEffect, useState } from 'react'
-import { Button } from '@workspace/ui/components/button'
-import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
-import { MenuIcon } from '@workspace/ui/assets/icons/menu-icon'
+import { Button } from './button'
+import { NavLink } from '../models/interfaces/nav-link'
+import { MenuIcon } from '../assets/icons/menu-icon'
 import { AnimatePresence, motion, stagger, Variants, resize } from 'motion/react'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
-import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
+import { ThemeToggle } from './theme-toggle'
 
 const SMALL_SCREEN_MAX_WIDTH = 834
 

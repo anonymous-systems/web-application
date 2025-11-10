@@ -14,8 +14,8 @@ import {
   type UseFormGetFieldState
 } from 'react-hook-form'
 
-import { cn } from '@workspace/ui/lib/utils'
-import { Label } from '@workspace/ui/components/label'
+import { cn } from '../lib/utils'
+import { Label } from './label'
 import { JSX } from 'react'
 
 const Form = FormProvider
