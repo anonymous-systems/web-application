@@ -56,6 +56,61 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
     visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   }
 
+  const AvatarList = ({isLoading}: {
+    isLoading: boolean,
+    avatars: string[]
+  }): JSX.Element => {
+    if (isLoading) return <LoadingSpinner className='justify-self-center' />
+
+    if (avatars.length === 0) {
+      return (
+        <div className='my-8 flex flex-col items-center justify-center'>
+          <h3 className='text-center text-muted-foreground'>
+            No avatars available at the moment. Please try again later.
+          </h3>
+        </div>
+      )
+    }
+
+    return (
+      <motion.div
+        className={[
+          'flex flex-wrap justify-center gap-4',
+          'py-4 px-0 max-h-[40vh] overflow-y-auto'
+        ].join(' ')}
+        variants={avatarListVariants}
+        initial='hidden'
+        animate='visible'
+      >
+        <AnimatePresence>
+          {avatars.map((avatar, index) => (
+            <motion.picture
+              key={index}
+              className={[
+                'rounded-full overflow-hidden',
+                selectedAvatar === avatar
+                  ? 'outline-4 outline-primary/60 transition-transform scale-110'
+                  : 'cursor-pointer'
+              ].join(' ')}
+              onClick={() => { setSelectedAvatar(avatar) }}
+              variants={avatarItemVariants}
+              initial='hidden'
+              animate='visible'
+              exit='hidden'
+            >
+              <Image
+                src={avatar}
+                alt={`Avatar ${index}`}
+                width={100}
+                height={100}
+              />
+            </motion.picture>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    )
+  }
+
   return (
     <Dialog open={props.open}>
       <DialogPortal>
@@ -74,45 +129,7 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
               }
             }}
             >
-              {isLoading
-                ? <LoadingSpinner className='justify-self-center' />
-                : (
-                  <motion.div
-                    className={[
-                      'flex flex-wrap justify-center gap-4',
-                      'py-4 px-0 max-h-[40vh] overflow-y-auto'
-                    ].join(' ')}
-                    variants={avatarListVariants}
-                    initial='hidden'
-                    animate='visible'
-                  >
-                    <AnimatePresence>
-                      {avatars.map((avatar, index) => (
-                        <motion.picture
-                          key={index}
-                          className={[
-                            'rounded-full overflow-hidden',
-                            selectedAvatar === avatar
-                              ? 'outline-4 outline-primary/60 transition-transform scale-110'
-                              : 'cursor-pointer'
-                          ].join(' ')}
-                          onClick={() => { setSelectedAvatar(avatar) }}
-                          variants={avatarItemVariants}
-                          initial='hidden'
-                          animate='visible'
-                          exit='hidden'
-                        >
-                          <Image
-                            src={avatar}
-                            alt={`Avatar ${index}`}
-                            width={100}
-                            height={100}
-                          />
-                        </motion.picture>
-                      ))}
-                    </AnimatePresence>
-                  </motion.div>
-                )}
+              <AvatarList isLoading={isLoading} avatars={avatars} />
 
               <DialogFooter>
                 <Button type="button" variant="secondary" onClick={props.onClose}>
