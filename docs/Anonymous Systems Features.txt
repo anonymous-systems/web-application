@@ -1,0 +1,7 @@
+Anonymous Systems Features
+
+Portfolio - Display all projects worked on, ability to add and manage projects shown
+Posts - Ability for users to post different types of posts, such as Article, Blog, Problem, or Snippet and more that I have not thought of yet, they will even have comments on each post
+Store - Minimal store to sell templates of projects using Stripe
+Profile - Ability to view profiles of users to see their posts
+Admin - Admin section to manage different sections of the app: categories, comments, file manager, tags, stories, users and will be even more that i have not thought of yet
