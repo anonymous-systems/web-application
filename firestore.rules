@@ -12,6 +12,9 @@ service cloud.firestore {
     /* function to check if admin */
     function isAdmin() { return request.auth.token.admin == true; }
 
+    /* function to check if creator (admins are implicitly creators) */
+    function isCreator() { return isAdmin() || request.auth.token.creator == true; }
+
     /* stories collection */
     match /stories/{storyID} {
       /* function to get role of signed in user */
@@ -29,7 +32,7 @@ service cloud.firestore {
       /* function to tell if story comments are enabled */
       function commentsEnabled(rsc) { return rsc.data.allowComments; }
 
-      allow create: if isSignedIn() && isValidNewStory();
+      allow create: if isCreator() && isValidNewStory();
       allow update: if isOneOfRoles(resource, ['owner', 'writer']);
       allow delete: if isOneOfRoles(resource, ['owner']);
       allow read: if isOneOfRoles(resource, ['owner', 'writer', 'reader']) || publicStory(resource) || isAdmin() || resource == null;
@@ -43,12 +46,16 @@ service cloud.firestore {
 
     /* categories collection */
     match /categories/{categoryID} {
-      allow read; allow write: if isSignedIn();
+      allow read;
+      allow create, update: if isCreator();
+      allow delete: if isAdmin();
     }
 
     /* tags collection */
     match /tags/{tagID} {
-      allow read; allow write: if isSignedIn();
+      allow read;
+      allow create, update: if isCreator();
+      allow delete: if isAdmin();
     }
 
     /* comments collection group */
@@ -57,7 +64,10 @@ service cloud.firestore {
     }
 
     /* users collection */
-    match /users/{userUID} { allow read; }
+    match /users/{userUID} {
+      allow read;
+      allow write: if request.auth.uid == userUID || isAdmin();
+    }
     
     /* projects collection */
     match /projects/{projectID} {
