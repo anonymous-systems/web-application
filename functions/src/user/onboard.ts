@@ -117,7 +117,12 @@ const getValidAvatar = async (
     const contentType = matches[1]
     const base64Data = matches[2]
     const buffer = Buffer.from(base64Data, 'base64')
-
+    if (buffer.length > 5 * 1024 * 1024) {
+      throw new HttpsError(
+        'invalid-argument',
+        'Avatar image must be 5MB or less.',
+      )
+    }
 
     const storageBucket = getStorage().bucket()
     const filePath = `users/${userId}/avatar.webp`
