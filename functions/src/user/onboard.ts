@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { HttpsError, onCall } from 'firebase-functions/https'
 import { UserProfile } from '../interfaces/user-profile'
 import { getFirestore } from 'firebase-admin/firestore'
@@ -9,7 +10,7 @@ import { getStorage } from 'firebase-admin/storage'
 initializeApp()
 
 type UserOnboardRequest = UserProfile
-type UserOnboardResponse = Promise<boolean>
+type UserOnboardResponse = Promise<true>
 const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
   { enforceAppCheck: true, consumeAppCheckToken: true },
   async (request): UserOnboardResponse => {
@@ -95,8 +96,13 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
       return true
     } catch (error) {
       if (error instanceof HttpsError) throw error
-      logger.error(error)
-      return false
+      const errorId = randomUUID().slice(0, 8).toUpperCase()
+      logger.error({ errorId, error })
+      throw new HttpsError(
+        'internal',
+        'An unexpected error occurred. Please try again.',
+        { errorId },
+      )
     }
   }
 )
