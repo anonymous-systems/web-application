@@ -6,9 +6,9 @@ import {
   DropdownMenu,
   DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger
-} from '@workspace/ui/components/dropdown-menu'
+} from '../components/dropdown-menu'
 import { Moon, Sun } from 'lucide-react'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '../components/button'
 
 enum THEMES {
   Light = 'light',

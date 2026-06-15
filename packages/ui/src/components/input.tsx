@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '../lib/utils'
 import { ComponentProps, JSX } from 'react'
 
 type Props = ComponentProps<'input'>
