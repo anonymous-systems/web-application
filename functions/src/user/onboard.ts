@@ -31,7 +31,8 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
       /^[a-zA-Z]+$/.test(lastName)
     const isUsernameValid = typeof username === 'string' &&
       username.trim() !== '' &&
-      /^[a-z0-9_-]+$/.test(username)
+      /^[a-z0-9_-]+$/.test(username) &&
+      !/^__.*__$/.test(username)
 
     if (
       !isAvatarValid ||
@@ -58,41 +59,42 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
     }
 
     const db = getFirestore()
-    const userQuery = await db.collection('users')
-      .where('username', '==', username)
-      .get()
-    if (!userQuery.empty) {
-      throw new HttpsError(
-        'already-exists',
-        'The username is already taken. Please choose a different username.',
-      )
+
+    const userProfile: UserProfile = {
+      avatar: validAvatar || null,
+      firstName,
+      lastName,
+      username,
     }
 
     try {
-      const userProfile: UserProfile = {
-        avatar: validAvatar || null,
-        firstName,
-        lastName,
-        username,
-      }
-      const updatedClaims = { ...user.customClaims, onboardingComplete: true }
+      await db.runTransaction(async (transaction) => {
+        const usernameRef = db.collection('usernames').doc(username)
+        const usernameSnap = await transaction.get(usernameRef)
 
-      await Promise.all([
-        db.collection('users').doc(userId).set(userProfile),
-        auth.updateUser(
-          userId,
-          {
-            displayName: `${firstName} ${lastName}`,
-            photoURL: validAvatar ?? null,
-          }
-        ),
-        auth.setCustomUserClaims(userId, updatedClaims),
-      ]).catch((error) => {
-        throw error
+        if (usernameSnap.exists) {
+          throw new HttpsError(
+            'already-exists',
+            'The username is already taken. Please choose a different one.',
+          )
+        }
+
+        transaction.set(usernameRef, { userId })
+        transaction.set(db.collection('users').doc(userId), userProfile)
       })
+
+      const updatedClaims = { ...user.customClaims, onboardingComplete: true }
+      await Promise.all([
+        auth.updateUser(userId, {
+          displayName: `${firstName} ${lastName}`,
+          photoURL: validAvatar ?? null,
+        }),
+        auth.setCustomUserClaims(userId, updatedClaims),
+      ])
 
       return true
     } catch (error) {
+      if (error instanceof HttpsError) throw error
       logger.error(error)
       return false
     }
