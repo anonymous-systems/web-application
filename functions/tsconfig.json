@@ -1,13 +1,14 @@
 {
+  "extends": "@workspace/typescript-config/base.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "esModuleInterop": true,
-    "moduleResolution": "nodenext",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "lib",
     "sourceMap": true,
-    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
     "target": "es2017"
   },
   "compileOnSave": true,

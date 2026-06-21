@@ -1,13 +1,13 @@
 'use client'
 
 import { JSX, ReactNode, useEffect, useState } from 'react'
-import { Button } from '../components/button'
+import { Button } from './button'
 import { NavLink } from '../models/interfaces/nav-link'
 import { MenuIcon } from '../assets/icons/menu-icon'
 import { AnimatePresence, motion, stagger, Variants, resize } from 'motion/react'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
-import { ThemeToggle } from '../components/theme-toggle'
+import { ThemeToggle } from './theme-toggle'
 
 const SMALL_SCREEN_MAX_WIDTH = 834
 
@@ -132,6 +132,7 @@ export const Nav = (props: Props): JSX.Element => {
         className={[
           'z-10 fixed w-full transition-colors',
           'max-w-[1024px] mx-auto align-self-center',
+          'place-self-center',
           isOpen ? 'bg-background' : 'bg-background/20',
           isOpen ? 'flex flex-col' : '',
           props.headerClassName || ''
