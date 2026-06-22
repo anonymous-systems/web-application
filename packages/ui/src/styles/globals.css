@@ -82,6 +82,10 @@
 }
 
 @theme inline {
+  --color-brand-primary: var(--primary-color);
+  --color-brand-secondary: var(--secondary-color);
+  --color-brand-tertiary: var(--teritary-color);
+  --color-brand-neutral: var(--neutral-color);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
