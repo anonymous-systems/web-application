@@ -68,6 +68,11 @@ To start the development servers for all applications and the Firebase emulators
 pnpm dev:emulators
 ```
 
+This starts:
+*   **Frontend** (`apps/frontend`): [http://localhost:3000](http://localhost:3000)
+*   **Admin** (`apps/admin`): [http://localhost:3001](http://localhost:3001)
+*   **Firebase Emulator UI**: [http://localhost:4000](http://localhost:4000)
+
 
 ## 🤝 Feedback & Support
 
