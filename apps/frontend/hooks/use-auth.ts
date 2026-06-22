@@ -1,8 +1,7 @@
 import { User, AuthUser } from '@/interfaces/user'
-import { useContext } from 'react'
-import { AuthContext } from '@/contexts/auth-context'
-import { signIn , signOut } from '@/services/auth-service'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuthContext } from '@/hooks/use-auth-context'
+import { useAuthService } from '@/hooks/use-auth-service'
+import { useAuthNavigation } from '@/hooks/use-auth-navigation'
 
 interface AuthType {
   user: User | null
@@ -12,24 +11,9 @@ interface AuthType {
   signOut: () => Promise<boolean>
   redirectAfterSignIn: () => void
 }
-export const useAuth = (): AuthType => {
-  const auth = useContext(AuthContext)
-  const params = useSearchParams()
-  const redirectPath = params.get('redirect')
-  const router = useRouter()
 
-  const redirectAfterSignIn = () => {
-    if (redirectPath != null) router.push(redirectPath)
-
-    router.refresh()
-  }
-
-  return {
-    user: auth.user,
-    clientUser: auth.clientUser,
-    isLoadingClientUser: auth.isLoadingClientUser,
-    signIn,
-    signOut,
-    redirectAfterSignIn
-  }
-}
+export const useAuth = (): AuthType => ({
+  ...useAuthContext(),
+  ...useAuthService(),
+  ...useAuthNavigation(),
+})
