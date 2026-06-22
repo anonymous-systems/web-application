@@ -74,8 +74,11 @@ export const ProfileSetup = (props: Props): JSX.Element => {
   }
 
   const updateForm = <K extends keyof UserProfile>(key: K, value: UserProfile[K]): void => {
-    setForm(prev => ({ ...prev, [key]: value }))
-    props.setUserProfile({ ...form, [key]: value })
+    setForm(prev => {
+      const updated = { ...prev, [key]: value }
+      props.setUserProfile(updated)
+      return updated
+    })
   }
 
   const handleFieldUpdate = (e: ChangeEvent<HTMLInputElement>): void => {
