@@ -1,5 +1,5 @@
 import { JSX } from 'react'
-import { SignInCard } from '@/app/sign-in/_components/SignInCard'
+import { AuthCard } from '@/components/auth-card'
 
 export const SignInPage = (): JSX.Element => {
   return (
@@ -7,7 +7,7 @@ export const SignInPage = (): JSX.Element => {
       data-testid='signInPage'
       className='grid place-items-center h-screen bg-background p-8 pb-22'
     >
-      <SignInCard />
+      <AuthCard mode='sign-in' />
     </main>
   )
 }
