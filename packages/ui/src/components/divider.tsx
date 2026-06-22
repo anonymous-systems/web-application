@@ -15,7 +15,7 @@ export const Divider = (props: Props): JSX.Element => {
       role='separator'
       aria-orientation={orientation}
       className={[
-        'bg-gray-300 rounded-xl border-none',
+        'bg-muted-foreground rounded-xl border-none',
         orientationClass,
         className
       ].join(' ')}

@@ -10,11 +10,8 @@ export const BrandName = (props: Props): JSX.Element => {
 
   return (
     <h2
-      className={`text-2xl font-nunito ${props.className}`}
-      style={{
-        color: 'var(--secondary-color)',
-        ...props.style
-      }}
+      className={`text-2xl font-nunito text-brand-secondary ${props.className}`}
+      style={props.style}
     >
       {name}
     </h2>
