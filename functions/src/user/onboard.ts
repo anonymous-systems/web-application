@@ -76,7 +76,7 @@ const onboard = onCall<UserOnboardRequest, UserOnboardResponse>(
         if (usernameSnap.exists) {
           throw new HttpsError(
             'already-exists',
-            'The username is already taken. Please choose a different one.',
+            'Unable to complete profile setup. Please try a different username.',
           )
         }
 
