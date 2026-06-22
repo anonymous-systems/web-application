@@ -3,18 +3,18 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "nx build",
-    "dev": "nx dev",
-    "dev:emulators": "firebase emulators:exec \"pnpm dev\" --ui",
-    "dev:seed": "firebase emulators:exec \"pnpm dev\" --import=seed --export-on-exit=seed --ui",
-    "lint": "nx lint",
-    "lint:fix": "nx lint -- --fix",
+    "build": "nx run-many --target=build",
+    "dev": "nx run-many --target=dev --projects=frontend,admin",
+    "dev:emulators": "firebase emulators:exec \"pnpm dev\" --ui --only auth,firestore,storage,functions",
+    "dev:seed": "firebase emulators:exec \"pnpm dev\" --import=seed --export-on-exit=seed --ui --only auth,firestore,storage,functions",
+    "lint": "nx run-many --target=lint",
+    "lint:fix": "nx run-many --target=lint -- --fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "firebase:emulators": "firebase emulators:start",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test:e2e": "firebase emulators:exec \"concurrently --kill-others \\\"pnpm dev\\\" \\\"pnpm cypress:run\\\"\" --import=test-seed --export-on-exit=test-seed",
-    "test:ui": "firebase emulators:exec \"concurrently \\\"pnpm dev\\\" \\\"pnpm cypress:open\\\"\" --import=test-seed --export-on-exit=test-seed --ui"
+    "test:e2e": "firebase emulators:exec \"concurrently --kill-others \\\"pnpm dev\\\" \\\"pnpm cypress:run\\\"\" --import=test-seed --export-on-exit=test-seed --only auth,firestore,storage,functions",
+    "test:ui": "firebase emulators:exec \"concurrently \\\"pnpm dev\\\" \\\"pnpm cypress:open\\\"\" --import=test-seed --export-on-exit=test-seed --ui --only auth,firestore,storage,functions"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
