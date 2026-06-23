@@ -9,6 +9,8 @@
     "dev:seed": "firebase emulators:exec \"pnpm dev\" --import=seed --export-on-exit=seed --ui --only auth,firestore,storage,functions",
     "lint": "nx run-many --target=lint",
     "lint:fix": "nx run-many --target=lint -- --fix",
+    "typecheck": "nx run-many --target=typecheck",
+    "test": "nx run-many --target=test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "firebase:emulators": "firebase emulators:start",
     "cypress:open": "cypress open",
