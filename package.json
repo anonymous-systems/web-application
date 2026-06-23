@@ -15,7 +15,7 @@
     "firebase:emulators": "firebase emulators:start",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test:e2e": "firebase emulators:exec \"concurrently --kill-others \\\"pnpm dev\\\" \\\"pnpm cypress:run\\\"\" --import=test-seed --export-on-exit=test-seed --only auth,firestore,storage,functions",
+    "test:e2e": "firebase emulators:exec \"concurrently --kill-others --names dev,e2e --success command-e2e \\\"pnpm dev\\\" \\\"pnpm cypress:run\\\"\" --import=test-seed --export-on-exit=test-seed --only auth,firestore,storage,functions",
     "test:ui": "firebase emulators:exec \"concurrently \\\"pnpm dev\\\" \\\"pnpm cypress:open\\\"\" --import=test-seed --export-on-exit=test-seed --ui --only auth,firestore,storage,functions"
   },
   "devDependencies": {
