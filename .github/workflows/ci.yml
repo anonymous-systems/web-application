@@ -70,13 +70,14 @@ jobs:
 
       - name: Write frontend emulator env
         working-directory: apps/frontend
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
           cat <<'EOF' > .env
           FIREBASE_PROJECT_ID=anonymous-systems-dev
           FIREBASE_API_KEY=api-key
           FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
           FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
-          FIREBASE_APPCHECK_DEBUG_TOKEN=some-debug-token
 
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=auth-domain.firebaseapp.com
           NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://database-url-default-rtdb.firebaseio.com
@@ -85,20 +86,28 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=messaging-sender-id
           NEXT_PUBLIC_FIREBASE_APP_ID=app-id
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=measurement-id
-          NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY=firebase-recaptcha-site-key
           NEXT_PUBLIC_FIREBASE_API_KEY=api-key
           NEXT_PUBLIC_AUTH_EMULATOR_HOST=localhost:9099
           NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
-          NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN=some-debug-token
           NEXT_PUBLIC_FUNCTIONS_EMULATOR_HOST=localhost:5001
 
           USE_SECURE_COOKIES=false
           COOKIE_SECRET_CURRENT=Rb3lajdH1r9xy5nPV8CF3B8OAsXDcAkrgCl/VL7lKA0=
           COOKIE_SECRET_PREVIOUS=21fhP3vxZRt/HFzpP1JIZ6RsXg6wXwoAhRU3lf0/Y3k=
-
-          FIREBASE_ADMIN_PRIVATE_KEY=
-          FIREBASE_ADMIN_CLIENT_EMAIL=
           EOF
+
+          # App Check has no emulator and is intentionally disabled here: with
+          # NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY unset, the client skips App Check init.
+
+          # next-firebase-auth-edge resolves the project ID from the service account.
+          # In emulator mode the private key is never used to sign or verify tokens, but
+          # the admin credentials must be present for the project ID to be determined.
+          # jq without -r keeps the key JSON-quoted with literal \n escapes, i.e. a
+          # single-line value that .env parsers read correctly.
+          {
+            echo "FIREBASE_ADMIN_CLIENT_EMAIL=$(echo "$GCP_SA_KEY" | jq -r '.client_email')"
+            echo "FIREBASE_ADMIN_PRIVATE_KEY=$(echo "$GCP_SA_KEY" | jq '.private_key')"
+          } >> .env
 
       - name: Write Cypress emulator env
         run: |
@@ -114,8 +123,6 @@ jobs:
               "appId": "app-id",
               "measurementId": "measurement-id"
             },
-            "firebaseRecaptchaSiteKey": "firebase-recaptcha-site-key",
-            "firebaseAppCheckDebugToken": "some-debug-token",
             "firebaseAuthEmulatorHost": "localhost:9099"
           }
           EOF
