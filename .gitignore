@@ -46,6 +46,8 @@ seed
 firestore-debug.log
 firebase-debug.log
 firebase-export*
+# Keep the committed e2e seed's import metadata (needed for --import=test-seed)
+!test-seed/firebase-export-metadata.json
 
 # Cypress
 cypress.env.json
