@@ -7,8 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
@@ -34,6 +34,7 @@
     "@workspace/eslint-config": "workspace:^",
     "@workspace/firebase-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.20.1",
     "jsdom": "^29.1.1",
     "typescript": "^5.7.3",
     "vitest": "^4.1.9"

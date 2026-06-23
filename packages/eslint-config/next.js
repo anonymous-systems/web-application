@@ -14,6 +14,9 @@ import {reactAndNextJsConfig} from "./react-and-next.js";
  * @type {import("eslint").Linter.Config}
  * */
 export const nextJsConfig = [
+  {
+    ignores: [".next/**", "next-env.d.ts", "*.config.{js,cjs,mjs}"],
+  },
   ...baseConfig,
   js.configs.recommended,
   eslintConfigPrettier,
