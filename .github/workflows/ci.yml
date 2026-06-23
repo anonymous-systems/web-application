@@ -57,6 +57,22 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
+      - name: Cache Firebase emulators
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-emulators-
+
       - name: Build Cloud Functions
         run: pnpm --filter @workspace/functions build
 
