@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Write frontend emulator env
+        working-directory: apps/frontend
+        run: |
+          cat <<'EOF' > .env
+          FIREBASE_PROJECT_ID=anonymous-systems-dev
+          FIREBASE_API_KEY=api-key
+          FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+          FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+          FIREBASE_APPCHECK_DEBUG_TOKEN=some-debug-token
+
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=auth-domain.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://database-url-default-rtdb.firebaseio.com
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID=anonymous-systems-dev
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=storage-bucket.appspot.com
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=messaging-sender-id
+          NEXT_PUBLIC_FIREBASE_APP_ID=app-id
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=measurement-id
+          NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY=firebase-recaptcha-site-key
+          NEXT_PUBLIC_FIREBASE_API_KEY=api-key
+          NEXT_PUBLIC_AUTH_EMULATOR_HOST=localhost:9099
+          NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
+          NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN=some-debug-token
+          NEXT_PUBLIC_FUNCTIONS_EMULATOR_HOST=localhost:5001
+
+          USE_SECURE_COOKIES=false
+          COOKIE_SECRET_CURRENT=Rb3lajdH1r9xy5nPV8CF3B8OAsXDcAkrgCl/VL7lKA0=
+          COOKIE_SECRET_PREVIOUS=21fhP3vxZRt/HFzpP1JIZ6RsXg6wXwoAhRU3lf0/Y3k=
+
+          FIREBASE_ADMIN_PRIVATE_KEY=
+          FIREBASE_ADMIN_CLIENT_EMAIL=
+          EOF
+
+      - name: Write Cypress emulator env
+        run: |
+          cat <<'EOF' > cypress.env.json
+          {
+            "firebaseConfig": {
+              "apiKey": "api-key",
+              "authDomain": "auth-domain.firebaseapp.com",
+              "databaseURL": "https://database-url-default-rtdb.firebaseio.com",
+              "projectId": "anonymous-systems-dev",
+              "storageBucket": "storage-bucket.appspot.com",
+              "messagingSenderId": "messaging-sender-id",
+              "appId": "app-id",
+              "measurementId": "measurement-id"
+            },
+            "firebaseRecaptchaSiteKey": "firebase-recaptcha-site-key",
+            "firebaseAppCheckDebugToken": "some-debug-token",
+            "firebaseAuthEmulatorHost": "localhost:9099"
+          }
+          EOF
+
+      - run: pnpm test:e2e
