@@ -57,6 +57,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
+      - name: Build Cloud Functions
+        run: pnpm --filter @workspace/functions build
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
