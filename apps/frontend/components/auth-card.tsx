@@ -3,7 +3,7 @@
 import { JSX, useState } from 'react'
 import { BrandName } from '@workspace/ui/components/brand-name'
 import { Loader2Icon } from 'lucide-react'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { useAuth } from '@/hooks/use-auth'
 import { AppRoutes } from '@/lib/app-routes'
 import Link from 'next/link'

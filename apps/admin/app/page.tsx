@@ -4,7 +4,7 @@ import { cookies, headers } from 'next/headers'
 import { getTokens } from 'next-firebase-auth-edge'
 import { authConfig } from '@workspace/firebase-config/auth'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { toUser } from '@/lib/to-user'
 import { AppRoutes } from '@/lib/app-routes'
 

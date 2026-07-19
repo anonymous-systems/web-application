@@ -2,7 +2,7 @@ import { JSX } from 'react'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { Logo } from '@/components/logo'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
 
 export const WelcomeCard = (): JSX.Element => {

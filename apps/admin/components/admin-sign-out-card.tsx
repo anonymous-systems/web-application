@@ -4,7 +4,7 @@ import { JSX, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { BrandName } from '@workspace/ui/components/brand-name'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { signOut } from '@/services/auth-service'
 import { AppRoutes } from '@/lib/app-routes'
 

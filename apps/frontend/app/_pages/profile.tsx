@@ -4,7 +4,7 @@ import { ElementType, JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { UserAvatar } from '@/components/user-avatar'
 import { useAuth } from '@/hooks/use-auth'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { ArrowRight, BookOpen, FolderOpen } from 'lucide-react'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 

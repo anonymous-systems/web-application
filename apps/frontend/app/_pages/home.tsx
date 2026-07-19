@@ -1,7 +1,7 @@
 import { JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { ThreeDSphere } from '@workspace/ui/components/three-d-sphere/three-d-sphere'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { CalendarDays, Mail, Star, StarHalf } from 'lucide-react'
 import {
   Carousel,
