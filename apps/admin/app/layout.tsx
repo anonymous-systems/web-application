@@ -8,8 +8,8 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: CompanyInformation.name,
-  description: CompanyInformation.byline,
+  title: `${CompanyInformation.name} Admin`,
+  description: `Admin dashboard for managing ${CompanyInformation.name}.`,
 }
 
 const inter = Inter({ subsets: ['latin'] })

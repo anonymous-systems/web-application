@@ -49,6 +49,46 @@ This ensures firebase is properly configured for Cypress tests.
 ## Firebase App Hosting
 To deploy to Firebase App Hosting properly, you need to add the environment variables to the yaml file.
 
+## Firebase App Hosting Secrets
+Non-public values (API keys, service-account credentials, cookie signing keys) live in Cloud
+Secret Manager and are referenced from each backend's `apphosting.yaml` with `secret:` — never
+committed as a plaintext `value:`.
+
+### Cookie signing secrets
+`next-firebase-auth-edge` signs the auth cookie with `cookieSignatureKeys: [CURRENT, PREVIOUS]`
+(see `packages/firebase-config/auth.ts`). Each App Hosting app gets its own distinct pair so
+sessions stay isolated per app. The admin app uses `APPHOSTING_ADMIN_COOKIE_SECRET_CURRENT`
+and `APPHOSTING_ADMIN_COOKIE_SECRET_PREVIOUS`.
+
+1. Generate two *different* strong random values (run twice):
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   # or: openssl rand -base64 32
+   ```
+2. Store each in Secret Manager (paste the value at the hidden prompt):
+   ```bash
+   firebase apphosting:secrets:set APPHOSTING_ADMIN_COOKIE_SECRET_CURRENT --project <project-id>
+   firebase apphosting:secrets:set APPHOSTING_ADMIN_COOKIE_SECRET_PREVIOUS --project <project-id>
+   ```
+   When prompted:
+   - Grant access to a backend → **yes**, select the app's backend (e.g. `web-application`).
+   - Add to `apphosting.yaml` → **no** (already referenced there; avoids a duplicate entry).
+
+Both must exist or cookie signing fails (`auth.ts` reads them with non-null assertions).
+`PREVIOUS` is only exercised during rotation: move `CURRENT` → `PREVIOUS`, then set a new `CURRENT`.
+
+### Reusing existing shared secrets
+Genuinely project-wide secrets (e.g. the Admin SDK service account) are reused by granting the
+new backend access — no new value needed:
+```bash
+firebase apphosting:secrets:grantaccess APPHOSTING_FIREBASE_ADMIN_PRIVATE_KEY --backend <backend-id>
+firebase apphosting:secrets:grantaccess APPHOSTING_FIREBASE_ADMIN_CLIENT_EMAIL --backend <backend-id>
+```
+Per-app values are **not** shared — each Firebase web app has its own browser API key (plus its
+own `appId`, `measurementId`, and reCAPTCHA key). Create a separate secret for each app's API
+key (e.g. `APPHOSTING_ADMIN_FIREBASE_API_KEY`) with `apphosting:secrets:set`, like the cookie
+secrets above.
+
 ## Firebase App Check
 Ensure the service account you are using has the `firebaseappcheck.appCheckTokens.verify` permission.
 Add the `Firebase App Check Token Verifier` permission to the service account you are
