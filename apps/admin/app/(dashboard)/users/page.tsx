@@ -17,6 +17,7 @@ import {
 } from '@workspace/ui/components/avatar'
 import { listUsers } from '@/services/user-service'
 import { UserAdminToggle } from '@/components/users/user-admin-toggle'
+import { RefreshButton } from '@/components/users/refresh-button'
 import { AdminUser } from '@/interfaces/admin-user'
 
 const fullName = (user: AdminUser): string => {
@@ -50,16 +51,19 @@ export default async function Page(): Promise<JSX.Element> {
   const users = await listUsers()
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-2xl font-bold">Users</h1>
-        <p className="text-muted-foreground">
-          {users.length} {users.length === 1 ? 'user' : 'users'}
-        </p>
+    <div className="flex flex-col gap-4" data-testid="usersPage">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Users</h1>
+          <p className="text-muted-foreground" data-testid="usersCount">
+            {users.length} {users.length === 1 ? 'user' : 'users'}
+          </p>
+        </div>
+        <RefreshButton />
       </div>
 
       <div className="rounded-lg border">
-        <Table>
+        <Table data-testid="usersTable">
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
@@ -81,7 +85,11 @@ export default async function Page(): Promise<JSX.Element> {
               const photo = user.avatar ?? user.photoURL
 
               return (
-                <TableRow key={user.uid}>
+                <TableRow
+                  key={user.uid}
+                  data-testid="userRow"
+                  data-email={user.email ?? ''}
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar>

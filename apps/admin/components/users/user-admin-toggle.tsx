@@ -46,6 +46,7 @@ export const UserAdminToggle = ({ uid, isAdmin, isSelf }: Props): JSX.Element =>
           size="icon"
           loading={isPending}
           aria-label="User actions"
+          data-testid="userActionsTrigger"
         >
           {isPending
             ? <Loader2Icon className="animate-spin" />
@@ -53,7 +54,11 @@ export const UserAdminToggle = ({ uid, isAdmin, isSelf }: Props): JSX.Element =>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem disabled={isSelf || isPending} onClick={handleToggle}>
+        <DropdownMenuItem
+          disabled={isSelf || isPending}
+          onClick={handleToggle}
+          data-testid="toggleAdminItem"
+        >
           {isAdmin ? <ShieldOffIcon /> : <ShieldCheckIcon />}
           {isAdmin ? 'Revoke admin' : 'Grant admin'}
         </DropdownMenuItem>
