@@ -93,3 +93,12 @@ secrets above.
 Ensure the service account you are using has the `firebaseappcheck.appCheckTokens.verify` permission.
 Add the `Firebase App Check Token Verifier` permission to the service account you are
 using to run the application.
+
+## shadcn/ui tips
+
+### Check if component is different from latest version
+```bash
+pnpm dlx shadcn@latest diff [component-name] -c packages/ui
+# example:
+pnpm dlx shadcn@latest diff button -c packages/ui
+```
