@@ -22,6 +22,12 @@ const apiLogout = (headers: HeadersInit) => {
   cy.request({ method: 'GET', headers, url: '/api/logout' })
 }
 
+// The admin app runs on its own origin with its own cookie secret, so admin
+// sessions must be established against the admin app's /api/login.
+const apiLoginAdmin = (headers: HeadersInit) => {
+  cy.request({ method: 'GET', headers, url: `${Cypress.env('adminUrl')}/api/login` })
+}
+
 const getOrCreateCypressUser = async (asOnboardingUser: boolean): Promise<string> => {
   const auth: Auth = getFirebaseAuth()
   const { email, password } = asOnboardingUser ? USERS.onboarding : USERS.default
@@ -55,6 +61,10 @@ export const cypressSignIn = (asOnboardingUser: boolean): Promise<void> => getOr
 
     return apiLogin(headers)
   })
+
+export const cypressSignInAdmin = (asOnboardingUser = false): Promise<void> =>
+  getOrCreateCypressUser(asOnboardingUser)
+    .then(idToken => apiLoginAdmin({ Authorization: `Bearer ${idToken}` }))
 
 export const cypressSignOut = (): Promise<void> => signOut(getFirebaseAuth())
   .then(() => {
