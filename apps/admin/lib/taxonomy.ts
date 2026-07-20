@@ -1,7 +1,7 @@
 export const MAX_NAME_LENGTH = 60
 export const MAX_DESCRIPTION_LENGTH = 200
 
-/** Builds a URL-safe slug from a category name. */
+/** Builds a URL-safe slug from a term name. */
 export const slugify = (value: string): string =>
   value
     .trim()
@@ -9,21 +9,21 @@ export const slugify = (value: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-export interface CategoryInput {
+export interface TaxonomyInput {
   name: string
   description?: string | null
 }
 
-export interface CategoryValidation {
+export interface TaxonomyValidation {
   valid: boolean
   error?: string
 }
 
 /**
- * Validates category input before it reaches Firestore. Kept pure so both the
+ * Validates taxonomy term input before it reaches Firestore. Kept pure so both the
  * server action and its tests share exactly the same rules.
  */
-export const validateCategoryInput = (input: CategoryInput): CategoryValidation => {
+export const validateTaxonomyInput = (input: TaxonomyInput): TaxonomyValidation => {
   const name = input.name?.trim() ?? ''
 
   if (name === '') {

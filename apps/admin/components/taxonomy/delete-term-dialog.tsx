@@ -13,27 +13,35 @@ import {
 } from '@workspace/ui/components/dialog'
 import { Button } from '@workspace/ui/components/custom/button'
 import { toast } from '@workspace/ui/components/sonner'
-import { deleteCategory } from '@/app/(dashboard)/categories/actions'
-import { Category } from '@/interfaces/category'
+import { TaxonomyTerm } from '@/interfaces/taxonomy'
+import { ActionResult } from '@/interfaces/action-result'
 
 interface Props {
-  category: Category
+  term: TaxonomyTerm
+  /** Lower-case singular noun, e.g. "category" or "tag". */
+  singular: string
+  deleteAction: (id: string) => Promise<ActionResult>
 }
 
-export const DeleteCategoryDialog = ({ category }: Props): JSX.Element => {
+/** Destructive confirm shared by the taxonomy sections. */
+export const DeleteTermDialog = ({
+  term,
+  singular,
+  deleteAction,
+}: Props): JSX.Element => {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = (): void => {
     startTransition(async () => {
-      const result = await deleteCategory(category.id)
+      const result = await deleteAction(term.id)
 
       if (!result.ok) {
         toast.error(result.error ?? 'Something went wrong.')
         return
       }
 
-      toast.success('Category deleted.')
+      toast.success(`${singular} deleted.`)
       setOpen(false)
     })
   }
@@ -44,18 +52,18 @@ export const DeleteCategoryDialog = ({ category }: Props): JSX.Element => {
         <Button
           variant="ghost"
           size="icon"
-          aria-label={`Delete ${category.name}`}
-          data-testid="deleteCategoryTrigger"
+          aria-label={`Delete ${term.name}`}
+          data-testid="deleteTermTrigger"
         >
           <Trash2Icon />
         </Button>
       </DialogTrigger>
 
-      <DialogContent data-testid="deleteCategoryDialog">
+      <DialogContent data-testid="deleteTermDialog">
         <DialogHeader>
-          <DialogTitle>Delete category</DialogTitle>
+          <DialogTitle>Delete {singular}</DialogTitle>
           <DialogDescription>
-            “{category.name}” will be permanently removed. This can’t be undone.
+            “{term.name}” will be permanently removed. This can’t be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -71,7 +79,7 @@ export const DeleteCategoryDialog = ({ category }: Props): JSX.Element => {
             variant="destructive"
             loading={isPending}
             onClick={handleDelete}
-            data-testid="confirmDeleteCategory"
+            data-testid="confirmDeleteTerm"
           >
             Delete
           </Button>

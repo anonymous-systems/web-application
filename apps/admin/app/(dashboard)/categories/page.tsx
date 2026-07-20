@@ -17,13 +17,16 @@ import {
   EmptyTitle,
 } from '@workspace/ui/components/empty'
 import { Button } from '@workspace/ui/components/custom/button'
-import { listCategories } from '@/services/category-service'
+import { listTerms } from '@/services/taxonomy-service'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
-import { CategoryFormDialog } from '@/components/categories/category-form-dialog'
-import { DeleteCategoryDialog } from '@/components/categories/delete-category-dialog'
+import { TaxonomyFormDialog } from '@/components/taxonomy/taxonomy-form-dialog'
+import { DeleteTermDialog } from '@/components/taxonomy/delete-term-dialog'
+import { createCategory, deleteCategory, updateCategory } from './actions'
+
+const SINGULAR = 'category'
 
 export default async function Page(): Promise<JSX.Element> {
-  const categories = await listCategories()
+  const categories = await listTerms('categories')
 
   return (
     <div className="flex flex-col gap-4" data-testid="categoriesPage">
@@ -36,7 +39,10 @@ export default async function Page(): Promise<JSX.Element> {
         </div>
         <div className="flex items-center gap-2">
           <RefreshButton />
-          <CategoryFormDialog
+          <TaxonomyFormDialog
+            singular={SINGULAR}
+            createAction={createCategory}
+            updateAction={updateCategory}
             trigger={
               <Button data-testid="newCategoryButton">
                 <PlusIcon />
@@ -73,7 +79,10 @@ export default async function Page(): Promise<JSX.Element> {
                       </EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                      <CategoryFormDialog
+                      <TaxonomyFormDialog
+                        singular={SINGULAR}
+                        createAction={createCategory}
+                        updateAction={updateCategory}
                         trigger={
                           <Button data-testid="emptyNewCategoryButton">
                             <PlusIcon />
@@ -104,20 +113,27 @@ export default async function Page(): Promise<JSX.Element> {
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
-                    <CategoryFormDialog
-                      category={category}
+                    <TaxonomyFormDialog
+                      term={category}
+                      singular={SINGULAR}
+                      createAction={createCategory}
+                      updateAction={updateCategory}
                       trigger={
                         <Button
                           variant="ghost"
                           size="icon"
                           aria-label={`Edit ${category.name}`}
-                          data-testid="editCategoryTrigger"
+                          data-testid="editTermTrigger"
                         >
                           <PencilIcon />
                         </Button>
                       }
                     />
-                    <DeleteCategoryDialog category={category} />
+                    <DeleteTermDialog
+                      term={category}
+                      singular={SINGULAR}
+                      deleteAction={deleteCategory}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

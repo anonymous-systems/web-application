@@ -6,15 +6,15 @@ import { createTerm, deleteTerm, updateTerm } from '@/services/taxonomy-service'
 import { AppRoutes } from '@/lib/app-routes'
 import { ActionResult } from '@/interfaces/action-result'
 
-const COLLECTION = 'categories'
-const NOT_ADMIN = 'You must be an admin to manage categories.'
+const COLLECTION = 'tags'
+const NOT_ADMIN = 'You must be an admin to manage tags.'
 
 const revalidate = (result: ActionResult): ActionResult => {
-  if (result.ok) revalidatePath(AppRoutes.categories)
+  if (result.ok) revalidatePath(AppRoutes.tags)
   return result
 }
 
-export const createCategory = async (
+export const createTag = async (
   name: string,
   description: string
 ): Promise<ActionResult> => {
@@ -24,7 +24,7 @@ export const createCategory = async (
   return revalidate(await createTerm(COLLECTION, name, description))
 }
 
-export const updateCategory = async (
+export const updateTag = async (
   id: string,
   name: string,
   description: string
@@ -35,7 +35,7 @@ export const updateCategory = async (
   return revalidate(await updateTerm(COLLECTION, id, name, description))
 }
 
-export const deleteCategory = async (id: string): Promise<ActionResult> => {
+export const deleteTag = async (id: string): Promise<ActionResult> => {
   const caller = await getAdminCaller()
   if (!caller?.isAdmin) return { ok: false, error: NOT_ADMIN }
 

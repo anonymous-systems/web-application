@@ -29,36 +29,36 @@ describe('Admin Categories section', () => {
 
   it('rejects a category with no name', () => {
     cy.get('[data-testid="newCategoryButton"]').click()
-    cy.get('[data-testid="categoryFormDialog"]').should('be.visible')
+    cy.get('[data-testid="termFormDialog"]').should('be.visible')
 
-    cy.get('[data-testid="categorySubmit"]').click()
+    cy.get('[data-testid="termSubmit"]').click()
 
     cy.contains('Name is required').should('exist')
     // The dialog stays open so the mistake can be corrected.
-    cy.get('[data-testid="categoryFormDialog"]').should('be.visible')
+    cy.get('[data-testid="termFormDialog"]').should('be.visible')
   })
 
   it('creates, edits, and deletes a category', () => {
     // Create
     cy.get('[data-testid="newCategoryButton"]').click()
-    cy.get('[data-testid="categoryNameInput"]').type(NAME)
-    cy.get('[data-testid="categoryDescriptionInput"]').type('Created by Cypress')
-    cy.get('[data-testid="categorySubmit"]').click()
+    cy.get('[data-testid="termNameInput"]').type(NAME)
+    cy.get('[data-testid="termDescriptionInput"]').type('Created by Cypress')
+    cy.get('[data-testid="termSubmit"]').click()
 
     categoryRow(SLUG).should('contain', NAME).and('contain', SLUG)
 
     // Edit — the slug is regenerated from the new name
-    categoryRow(SLUG).find('[data-testid="editCategoryTrigger"]').click()
-    cy.get('[data-testid="categoryNameInput"]').clear()
-    cy.get('[data-testid="categoryNameInput"]').type(RENAMED)
-    cy.get('[data-testid="categorySubmit"]').click()
+    categoryRow(SLUG).find('[data-testid="editTermTrigger"]').click()
+    cy.get('[data-testid="termNameInput"]').clear()
+    cy.get('[data-testid="termNameInput"]').type(RENAMED)
+    cy.get('[data-testid="termSubmit"]').click()
 
     categoryRow(RENAMED_SLUG).should('contain', RENAMED)
     categoryRow(SLUG).should('not.exist')
 
     // Delete — restores the original state so the test is idempotent
-    categoryRow(RENAMED_SLUG).find('[data-testid="deleteCategoryTrigger"]').click()
-    cy.get('[data-testid="confirmDeleteCategory"]').click()
+    categoryRow(RENAMED_SLUG).find('[data-testid="deleteTermTrigger"]').click()
+    cy.get('[data-testid="confirmDeleteTerm"]').click()
 
     categoryRow(RENAMED_SLUG).should('not.exist')
   })

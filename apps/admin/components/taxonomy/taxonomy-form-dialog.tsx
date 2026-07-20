@@ -14,20 +14,38 @@ import { Button } from '@workspace/ui/components/custom/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { toast } from '@workspace/ui/components/sonner'
-import { createCategory, updateCategory } from '@/app/(dashboard)/categories/actions'
-import { Category } from '@/interfaces/category'
+import { TaxonomyTerm } from '@/interfaces/taxonomy'
+import { ActionResult } from '@/interfaces/action-result'
 
 interface Props {
   /** Present when editing; omitted when creating. */
-  category?: Category
+  term?: TaxonomyTerm
   trigger: ReactNode
+  /** Lower-case singular noun, e.g. "category" or "tag". */
+  singular: string
+  createAction: (name: string, description: string) => Promise<ActionResult>
+  updateAction: (
+    id: string,
+    name: string,
+    description: string
+  ) => Promise<ActionResult>
 }
 
-export const CategoryFormDialog = ({ category, trigger }: Props): JSX.Element => {
-  const isEdit = category != null
+/**
+ * Create/edit dialog shared by the taxonomy sections (categories, tags). The
+ * owning section supplies its own server actions and label.
+ */
+export const TaxonomyFormDialog = ({
+  term,
+  trigger,
+  singular,
+  createAction,
+  updateAction,
+}: Props): JSX.Element => {
+  const isEdit = term != null
   const [open, setOpen] = useState(false)
-  const [name, setName] = useState(category?.name ?? '')
-  const [description, setDescription] = useState(category?.description ?? '')
+  const [name, setName] = useState(term?.name ?? '')
+  const [description, setDescription] = useState(term?.description ?? '')
   const [isPending, startTransition] = useTransition()
 
   // Reset to the current values each time the dialog opens so a cancelled edit
@@ -35,8 +53,8 @@ export const CategoryFormDialog = ({ category, trigger }: Props): JSX.Element =>
   const handleOpenChange = (next: boolean): void => {
     setOpen(next)
     if (next) {
-      setName(category?.name ?? '')
-      setDescription(category?.description ?? '')
+      setName(term?.name ?? '')
+      setDescription(term?.description ?? '')
     }
   }
 
@@ -45,15 +63,15 @@ export const CategoryFormDialog = ({ category, trigger }: Props): JSX.Element =>
 
     startTransition(async () => {
       const result = isEdit
-        ? await updateCategory(category.id, name, description)
-        : await createCategory(name, description)
+        ? await updateAction(term.id, name, description)
+        : await createAction(name, description)
 
       if (!result.ok) {
         toast.error(result.error ?? 'Something went wrong.')
         return
       }
 
-      toast.success(isEdit ? 'Category updated.' : 'Category created.')
+      toast.success(isEdit ? `${singular} updated.` : `${singular} created.`)
       setOpen(false)
     })
   }
@@ -61,9 +79,11 @@ export const CategoryFormDialog = ({ category, trigger }: Props): JSX.Element =>
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent data-testid="categoryFormDialog">
+      <DialogContent data-testid="termFormDialog">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit category' : 'New category'}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? `Edit ${singular}` : `New ${singular}`}
+          </DialogTitle>
           <DialogDescription>
             The slug is generated from the name and is used in public URLs.
           </DialogDescription>
@@ -71,30 +91,30 @@ export const CategoryFormDialog = ({ category, trigger }: Props): JSX.Element =>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="category-name">Name</Label>
+            <Label htmlFor="term-name">Name</Label>
             <Input
-              id="category-name"
+              id="term-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="Web Development"
-              data-testid="categoryNameInput"
+              data-testid="termNameInput"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="category-description">Description</Label>
+            <Label htmlFor="term-description">Description</Label>
             <Input
-              id="category-description"
+              id="term-description"
               value={description ?? ''}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Optional"
-              data-testid="categoryDescriptionInput"
+              data-testid="termDescriptionInput"
             />
           </div>
 
           <DialogFooter>
-            <Button type="submit" loading={isPending} data-testid="categorySubmit">
-              {isEdit ? 'Save changes' : 'Create category'}
+            <Button type="submit" loading={isPending} data-testid="termSubmit">
+              {isEdit ? 'Save changes' : `Create ${singular}`}
             </Button>
           </DialogFooter>
         </form>
