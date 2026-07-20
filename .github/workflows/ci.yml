@@ -125,6 +125,44 @@ jobs:
             echo "FIREBASE_ADMIN_PRIVATE_KEY=$(echo "$GCP_SA_KEY" | jq '.private_key')"
           } >> .env
 
+      - name: Write admin emulator env
+        working-directory: apps/admin
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          cat <<'EOF' > .env
+          FIREBASE_PROJECT_ID=anonymous-systems-dev
+          FIREBASE_API_KEY=api-key
+          FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+          FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=auth-domain.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://database-url-default-rtdb.firebaseio.com
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID=anonymous-systems-dev
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=storage-bucket.appspot.com
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=messaging-sender-id
+          NEXT_PUBLIC_FIREBASE_APP_ID=app-id
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=measurement-id
+          NEXT_PUBLIC_FIREBASE_API_KEY=api-key
+          NEXT_PUBLIC_AUTH_EMULATOR_HOST=localhost:9099
+          NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
+
+          USE_SECURE_COOKIES=false
+          COOKIE_SECRET_CURRENT=8Qm2rC7wZs1kTt5yXb9eLd3vNf6hJp0aGu4iOc8lRkM=
+          COOKIE_SECRET_PREVIOUS=Yx4nB7vQz2mK9wT5rE1cH6sJ3pL8dF0gA5uI7oZ4kNs=
+          EOF
+
+          # Distinct cookie secrets from the frontend, mirroring production: each app
+          # signs its own session cookie. App Check is disabled here (no reCAPTCHA key).
+
+          # The admin app uses the Admin SDK (listUsers / setCustomUserClaims), which
+          # needs the service account to resolve the project ID. In emulator mode the
+          # private key is never used to sign or verify tokens.
+          {
+            echo "FIREBASE_ADMIN_CLIENT_EMAIL=$(echo "$GCP_SA_KEY" | jq -r '.client_email')"
+            echo "FIREBASE_ADMIN_PRIVATE_KEY=$(echo "$GCP_SA_KEY" | jq '.private_key')"
+          } >> .env
+
       - name: Write Cypress emulator env
         run: |
           cat <<'EOF' > cypress.env.json

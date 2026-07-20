@@ -39,7 +39,7 @@ export const UserAdminToggle = ({ uid, isAdmin, isSelf }: Props): JSX.Element =>
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"

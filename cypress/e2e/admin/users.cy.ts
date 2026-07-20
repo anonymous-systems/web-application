@@ -27,6 +27,17 @@ describe('Admin Users section', () => {
     cy.get('[data-testid="toggleAdminItem"]').should('have.attr', 'data-disabled')
   })
 
+  // Runs before the grant/revoke test so it never depends on that test's cleanup.
+  it('redirects a signed-in non-admin away from the users section', () => {
+    cy.loginAdmin(true) // onboarding@user.com — authenticated but not an admin
+
+    cy.visit(`${ADMIN_URL}/users`)
+
+    cy.get('[data-testid="usersPage"]').should('not.exist')
+    cy.url().should('include', '/sign-in')
+    cy.get('[data-testid="adminUnauthorizedCard"]').should('exist')
+  })
+
   it('grants and revokes admin access for another user', () => {
     cy.loginAdmin()
     cy.visit(`${ADMIN_URL}/users`)
@@ -42,15 +53,5 @@ describe('Admin Users section', () => {
     userRow(MEMBER_EMAIL).find('[data-testid="userActionsTrigger"]').click()
     cy.get('[data-testid="toggleAdminItem"]').should('contain', 'Revoke admin').click()
     userRow(MEMBER_EMAIL).should('not.contain', 'Admin')
-  })
-
-  it('redirects a signed-in non-admin away from the users section', () => {
-    cy.loginAdmin(true) // onboarding@user.com — authenticated but not an admin
-
-    cy.visit(`${ADMIN_URL}/users`)
-
-    cy.get('[data-testid="usersPage"]').should('not.exist')
-    cy.url().should('include', '/sign-in')
-    cy.get('[data-testid="adminUnauthorizedCard"]').should('exist')
   })
 })
