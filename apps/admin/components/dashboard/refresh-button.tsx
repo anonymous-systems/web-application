@@ -22,7 +22,7 @@ export const RefreshButton = (): JSX.Element => {
       size="sm"
       loading={isPending}
       onClick={handleRefresh}
-      data-testid="refreshUsersButton"
+      data-testid="refreshButton"
     >
       <RefreshCwIcon className={isPending ? 'animate-spin' : undefined} />
       Refresh

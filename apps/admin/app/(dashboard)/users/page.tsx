@@ -1,7 +1,12 @@
 import { JSX } from 'react'
-import { cookies, headers } from 'next/headers'
-import { getTokens } from 'next-firebase-auth-edge'
-import { authConfig } from '@workspace/firebase-config/auth'
+import { UsersIcon } from 'lucide-react'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@workspace/ui/components/empty'
 import {
   Table,
   TableBody,
@@ -16,8 +21,9 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { listUsers } from '@/services/user-service'
+import { getAdminCaller } from '@/lib/admin-caller'
 import { UserAdminToggle } from '@/components/users/user-admin-toggle'
-import { RefreshButton } from '@/components/users/refresh-button'
+import { RefreshButton } from '@/components/dashboard/refresh-button'
 import { AdminUser } from '@/interfaces/admin-user'
 
 const fullName = (user: AdminUser): string => {
@@ -43,11 +49,8 @@ const AccessBadge = ({ label }: { label: string }): JSX.Element => (
 )
 
 export default async function Page(): Promise<JSX.Element> {
-  const tokens = await getTokens(
-    await cookies(),
-    { ...authConfig, headers: await headers() }
-  )
-  const currentUid = tokens?.decodedToken.uid ?? null
+  const caller = await getAdminCaller()
+  const currentUid = caller?.uid ?? null
   const users = await listUsers()
 
   return (
@@ -75,9 +78,19 @@ export default async function Page(): Promise<JSX.Element> {
           </TableHeader>
           <TableBody>
             {users.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  No users found.
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={5}>
+                  <Empty data-testid="usersEmpty">
+                    <EmptyHeader>
+                      <EmptyMedia variant="icon">
+                        <UsersIcon />
+                      </EmptyMedia>
+                      <EmptyTitle>No users found</EmptyTitle>
+                      <EmptyDescription>
+                        Users appear here once they sign up.
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
                 </TableCell>
               </TableRow>
             )}

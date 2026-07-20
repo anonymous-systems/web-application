@@ -7,6 +7,14 @@ const MEMBER_EMAIL = 'onboarding@user.com'
 const userRow = (email: string) =>
   cy.get(`[data-testid="userRow"][data-email="${email}"]`)
 
+// The trigger is disabled while a toggle is in flight, so wait for it to settle
+// before opening the menu — otherwise the click lands on a disabled button.
+const openRowActions = (email: string) =>
+  userRow(email)
+    .find('[data-testid="userActionsTrigger"]')
+    .should('not.be.disabled')
+    .click()
+
 describe('Admin Users section', () => {
   it('lists users and flags admins', () => {
     cy.loginAdmin()
@@ -23,7 +31,7 @@ describe('Admin Users section', () => {
     cy.loginAdmin()
     cy.visit(`${ADMIN_URL}/users`)
 
-    userRow(ADMIN_EMAIL).find('[data-testid="userActionsTrigger"]').click()
+    openRowActions(ADMIN_EMAIL)
     cy.get('[data-testid="toggleAdminItem"]').should('have.attr', 'data-disabled')
   })
 
@@ -45,12 +53,18 @@ describe('Admin Users section', () => {
     userRow(MEMBER_EMAIL).should('not.contain', 'Admin')
 
     // Grant
-    userRow(MEMBER_EMAIL).find('[data-testid="userActionsTrigger"]').click()
+    openRowActions(MEMBER_EMAIL)
     cy.get('[data-testid="toggleAdminItem"]').should('contain', 'Grant admin').click()
     userRow(MEMBER_EMAIL).should('contain', 'Admin')
 
+    // Reload before the next interaction: it proves the claim actually persisted
+    // server-side, and avoids clicking into a row that is still re-rendering
+    // from the action's revalidation.
+    cy.reload()
+    userRow(MEMBER_EMAIL).should('contain', 'Admin')
+
     // Revoke — restores the original state so the test is idempotent
-    userRow(MEMBER_EMAIL).find('[data-testid="userActionsTrigger"]').click()
+    openRowActions(MEMBER_EMAIL)
     cy.get('[data-testid="toggleAdminItem"]').should('contain', 'Revoke admin').click()
     userRow(MEMBER_EMAIL).should('not.contain', 'Admin')
   })
