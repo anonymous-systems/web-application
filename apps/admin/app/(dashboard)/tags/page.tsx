@@ -30,7 +30,7 @@ export default async function Page(): Promise<JSX.Element> {
 
   return (
     <div className="flex flex-col gap-4" data-testid="tagsPage">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Tags</h1>
           <p className="text-muted-foreground" data-testid="tagsCount">
@@ -58,9 +58,9 @@ export default async function Page(): Promise<JSX.Element> {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Updated</TableHead>
+              <TableHead className="hidden md:table-cell">Slug</TableHead>
+              <TableHead className="hidden lg:table-cell">Description</TableHead>
+              <TableHead className="hidden sm:table-cell">Updated</TableHead>
               <TableHead className="w-24" />
             </TableRow>
           </TableHeader>
@@ -97,12 +97,19 @@ export default async function Page(): Promise<JSX.Element> {
             )}
             {tags.map((tag) => (
               <TableRow key={tag.id} data-testid="tagRow" data-slug={tag.slug}>
-                <TableCell className="font-medium">{tag.name}</TableCell>
-                <TableCell className="text-muted-foreground">{tag.slug}</TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="font-medium">
+                  {tag.name}
+                  <span className="block text-xs font-normal text-muted-foreground md:hidden">
+                    {tag.slug}
+                  </span>
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-muted-foreground">
+                  {tag.slug}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell text-muted-foreground">
                   {tag.description ?? '—'}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden sm:table-cell text-muted-foreground">
                   {tag.updatedAt ? new Date(tag.updatedAt).toLocaleDateString() : '—'}
                 </TableCell>
                 <TableCell>

@@ -30,7 +30,7 @@ export default async function Page(): Promise<JSX.Element> {
 
   return (
     <div className="flex flex-col gap-4" data-testid="categoriesPage">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Categories</h1>
           <p className="text-muted-foreground" data-testid="categoriesCount">
@@ -58,9 +58,9 @@ export default async function Page(): Promise<JSX.Element> {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Updated</TableHead>
+              <TableHead className="hidden md:table-cell">Slug</TableHead>
+              <TableHead className="hidden lg:table-cell">Description</TableHead>
+              <TableHead className="hidden sm:table-cell">Updated</TableHead>
               <TableHead className="w-24" />
             </TableRow>
           </TableHeader>
@@ -101,12 +101,19 @@ export default async function Page(): Promise<JSX.Element> {
                 data-testid="categoryRow"
                 data-slug={category.slug}
               >
-                <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="font-medium">
+                  {category.name}
+                  <span className="block text-xs font-normal text-muted-foreground md:hidden">
+                    {category.slug}
+                  </span>
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-muted-foreground">
+                  {category.slug}
+                </TableCell>
+                <TableCell className="hidden lg:table-cell text-muted-foreground">
                   {category.description ?? '—'}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden sm:table-cell text-muted-foreground">
                   {category.updatedAt
                     ? new Date(category.updatedAt).toLocaleDateString()
                     : '—'}

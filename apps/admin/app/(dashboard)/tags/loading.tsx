@@ -14,7 +14,7 @@ const skeletonRows = Array.from({ length: 5 }, (_, index) => `skeleton-${index}`
 export default function Loading(): JSX.Element {
   return (
     <div className="flex flex-col gap-4" data-testid="tagsLoading">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
           <Skeleton className="h-7 w-32" />
           <Skeleton className="h-4 w-20" />
@@ -30,9 +30,9 @@ export default function Loading(): JSX.Element {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Updated</TableHead>
+              <TableHead className="hidden md:table-cell">Slug</TableHead>
+              <TableHead className="hidden lg:table-cell">Description</TableHead>
+              <TableHead className="hidden sm:table-cell">Updated</TableHead>
               <TableHead className="w-24" />
             </TableRow>
           </TableHeader>
@@ -42,13 +42,13 @@ export default function Loading(): JSX.Element {
                 <TableCell>
                   <Skeleton className="h-4 w-32" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden md:table-cell">
                   <Skeleton className="h-4 w-24" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden lg:table-cell">
                   <Skeleton className="h-4 w-48" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Skeleton className="h-4 w-20" />
                 </TableCell>
                 <TableCell>

@@ -55,7 +55,7 @@ export default async function Page(): Promise<JSX.Element> {
 
   return (
     <div className="flex flex-col gap-4" data-testid="usersPage">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Users</h1>
           <p className="text-muted-foreground" data-testid="usersCount">
@@ -70,9 +70,9 @@ export default async function Page(): Promise<JSX.Element> {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
-              <TableHead>Username</TableHead>
+              <TableHead className="hidden lg:table-cell">Username</TableHead>
               <TableHead>Access</TableHead>
-              <TableHead>Joined</TableHead>
+              <TableHead className="hidden md:table-cell">Joined</TableHead>
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
@@ -117,7 +117,7 @@ export default async function Page(): Promise<JSX.Element> {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden lg:table-cell text-muted-foreground">
                     {user.username ? `@${user.username}` : '—'}
                   </TableCell>
                   <TableCell>
@@ -129,7 +129,7 @@ export default async function Page(): Promise<JSX.Element> {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden md:table-cell text-muted-foreground">
                     {user.createdAt
                       ? new Date(user.createdAt).toLocaleDateString()
                       : '—'}
