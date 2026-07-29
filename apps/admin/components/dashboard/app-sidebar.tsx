@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { BrandName } from '@workspace/ui/components/brand-name'
 import { dashboardNav, isActiveNavItem } from '@/lib/dashboard-nav'
@@ -26,6 +27,10 @@ interface Props {
 
 export const AppSidebar = ({ email }: Props): JSX.Element => {
   const pathname = usePathname()
+  const { setOpenMobile } = useSidebar()
+
+  // Dismiss the mobile off-canvas sheet after navigating; a no-op on desktop.
+  const closeMobileSidebar = (): void => setOpenMobile(false)
 
   return (
     <Sidebar>
@@ -46,7 +51,7 @@ export const AppSidebar = ({ email }: Props): JSX.Element => {
                     isActive={isActiveNavItem(pathname, item.href)}
                     tooltip={item.label}
                   >
-                    <Link href={item.href}>
+                    <Link href={item.href} onClick={closeMobileSidebar}>
                       <item.icon />
                       <span>{item.label}</span>
                     </Link>
