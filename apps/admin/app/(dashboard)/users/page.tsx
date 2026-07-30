@@ -21,6 +21,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { listUsers } from '@/services/user-service'
+import { initialsFrom } from '@/lib/initials'
 import { getAdminCaller } from '@/lib/admin-caller'
 import { UserAdminToggle } from '@/components/users/user-admin-toggle'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
@@ -34,12 +35,7 @@ const fullName = (user: AdminUser): string => {
 const initials = (user: AdminUser): string => {
   const source = fullName(user)
   if (source === 'Unnamed user') return (user.email ?? '?').charAt(0).toUpperCase()
-  return source
-    .split(' ')
-    .map((part) => part.charAt(0))
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  return initialsFrom(source)
 }
 
 const AccessBadge = ({ label }: { label: string }): JSX.Element => (

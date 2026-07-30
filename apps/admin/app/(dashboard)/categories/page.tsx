@@ -20,7 +20,7 @@ import { Button } from '@workspace/ui/components/custom/button'
 import { listTerms } from '@/services/taxonomy-service'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
 import { TaxonomyFormDialog } from '@/components/taxonomy/taxonomy-form-dialog'
-import { DeleteTermDialog } from '@/components/taxonomy/delete-term-dialog'
+import { ConfirmDeleteDialog } from '@/components/dashboard/confirm-delete-dialog'
 import { createCategory, deleteCategory, updateCategory } from './actions'
 
 const SINGULAR = 'category'
@@ -136,10 +136,18 @@ export default async function Page(): Promise<JSX.Element> {
                         </Button>
                       }
                     />
-                    <DeleteTermDialog
-                      term={category}
-                      singular={SINGULAR}
-                      deleteAction={deleteCategory}
+                    <ConfirmDeleteDialog
+                      entity="Term"
+                      title={`Delete ${SINGULAR}`}
+                      triggerLabel={`Delete ${category.name}`}
+                      description={
+                        <>
+                          “{category.name}” will be permanently removed. This
+                          can't be undone.
+                        </>
+                      }
+                      successMessage={`${SINGULAR} deleted.`}
+                      onConfirm={deleteCategory.bind(null, category.id)}
                     />
                   </div>
                 </TableCell>

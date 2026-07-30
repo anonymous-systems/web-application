@@ -21,8 +21,9 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { listComments } from '@/services/comment-service'
+import { initialsFrom } from '@/lib/initials'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
-import { DeleteCommentDialog } from '@/components/comments/delete-comment-dialog'
+import { ConfirmDeleteDialog } from '@/components/dashboard/confirm-delete-dialog'
 import { AdminComment } from '@/interfaces/comment'
 import { deleteComment } from './actions'
 
@@ -32,13 +33,7 @@ const authorLabel = (comment: AdminComment): string =>
 
 const authorInitials = (comment: AdminComment): string => {
   const source = comment.authorName ?? comment.authorUsername
-  if (!source) return '?'
-  return source
-    .split(' ')
-    .map((part) => part.charAt(0))
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  return source ? initialsFrom(source) : '?'
 }
 
 // Falls back to the story id when the parent story has no title (or no longer
@@ -134,11 +129,22 @@ export default async function Page(): Promise<JSX.Element> {
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-end">
-                      <DeleteCommentDialog
-                        storyId={comment.storyId}
-                        commentId={comment.id}
-                        author={authorLabel(comment)}
-                        deleteAction={deleteComment}
+                      <ConfirmDeleteDialog
+                        entity="Comment"
+                        title="Delete comment"
+                        triggerLabel={`Delete comment by ${authorLabel(comment)}`}
+                        description={
+                          <>
+                            This comment by {authorLabel(comment)} will be
+                            permanently removed. This can’t be undone.
+                          </>
+                        }
+                        successMessage="Comment deleted."
+                        onConfirm={deleteComment.bind(
+                          null,
+                          comment.storyId,
+                          comment.id
+                        )}
                       />
                     </div>
                   </TableCell>

@@ -20,7 +20,7 @@ import { Button } from '@workspace/ui/components/custom/button'
 import { listTerms } from '@/services/taxonomy-service'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
 import { TaxonomyFormDialog } from '@/components/taxonomy/taxonomy-form-dialog'
-import { DeleteTermDialog } from '@/components/taxonomy/delete-term-dialog'
+import { ConfirmDeleteDialog } from '@/components/dashboard/confirm-delete-dialog'
 import { createTag, deleteTag, updateTag } from './actions'
 
 const SINGULAR = 'tag'
@@ -130,10 +130,18 @@ export default async function Page(): Promise<JSX.Element> {
                         </Button>
                       }
                     />
-                    <DeleteTermDialog
-                      term={tag}
-                      singular={SINGULAR}
-                      deleteAction={deleteTag}
+                    <ConfirmDeleteDialog
+                      entity="Term"
+                      title={`Delete ${SINGULAR}`}
+                      triggerLabel={`Delete ${tag.name}`}
+                      description={
+                        <>
+                          “{tag.name}” will be permanently removed. This can’t be
+                          undone.
+                        </>
+                      }
+                      successMessage={`${SINGULAR} deleted.`}
+                      onConfirm={deleteTag.bind(null, tag.id)}
                     />
                   </div>
                 </TableCell>
