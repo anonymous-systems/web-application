@@ -1,5 +1,6 @@
-import { CollectionReference, FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore'
+import { CollectionReference, FieldValue, getFirestore } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { toIsoString } from '@/lib/firestore'
 import { slugify, validateTaxonomyInput } from '@/lib/taxonomy'
 import { TaxonomyCollection, TaxonomyTerm } from '@/interfaces/taxonomy'
 import { ActionResult } from '@/interfaces/action-result'
@@ -13,9 +14,6 @@ const UNEXPECTED = 'Something went wrong. Please try again.'
 
 const terms = (collection: TaxonomyCollection): CollectionReference =>
   getFirestore(getFirebaseAdminApp()).collection(collection)
-
-const toIsoString = (value: unknown): string | null =>
-  value instanceof Timestamp ? value.toDate().toISOString() : null
 
 /** Slugs identify a term publicly, so they must stay unique within a collection. */
 const isSlugTaken = async (
