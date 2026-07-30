@@ -2,6 +2,7 @@ import { JSX } from 'react'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { Logo } from '@/components/logo'
+import { Magnetic } from '@/components/magnetic'
 import { Button } from '@workspace/ui/components/custom/button'
 import { CompanyInformation } from '@workspace/ui/lib/company-information'
 
@@ -27,7 +28,9 @@ export const WelcomeCard = (): JSX.Element => {
           <div className='text-sm text-muted-foreground'>{byline}</div>
         </div>
         <Link href={AppRoutes.signIn}>
-          <Button className='w-full' data-testid='getStartedButton'>Get Started</Button>
+          <Magnetic className='block w-full'>
+            <Button className='w-full' data-testid='getStartedButton'>Get Started</Button>
+          </Magnetic>
         </Link>
         <div className='flex justify-center align-items-center gap-1'>
           <p className='self-center'>You already have an account?</p>
