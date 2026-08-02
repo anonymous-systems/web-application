@@ -26,3 +26,22 @@ export const getAdminCaller = async (): Promise<AdminCaller | null> => {
     isAdmin: hasAdminClaim(tokens.decodedToken),
   }
 }
+
+type AdminGuard =
+  | { ok: true; caller: AdminCaller }
+  | { ok: false; error: string }
+
+/**
+ * Guards a server action to admins: returns the caller on success, or an
+ * ActionResult-shaped failure to hand straight back to the client. `resource`
+ * names what's being managed, e.g. "stories" → "You must be an admin to manage
+ * stories."
+ */
+export const ensureAdmin = async (resource: string): Promise<AdminGuard> => {
+  const caller = await getAdminCaller()
+  if (!caller?.isAdmin) {
+    return { ok: false, error: `You must be an admin to manage ${resource}.` }
+  }
+
+  return { ok: true, caller }
+}
