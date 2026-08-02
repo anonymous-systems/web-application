@@ -1,7 +1,8 @@
 import { CollectionReference, FieldValue, getFirestore } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { toIsoString } from '@/lib/firestore'
-import { slugify, validateTaxonomyInput } from '@/lib/taxonomy'
+import { slugify } from '@workspace/ui/lib/slug'
+import { validateTaxonomyInput } from '@/lib/taxonomy'
 import { TaxonomyCollection, TaxonomyTerm } from '@/interfaces/taxonomy'
 import { ActionResult } from '@/interfaces/action-result'
 

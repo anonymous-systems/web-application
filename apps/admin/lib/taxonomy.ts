@@ -1,13 +1,7 @@
+import { slugify } from '@workspace/ui/lib/slug'
+
 export const MAX_NAME_LENGTH = 60
 export const MAX_DESCRIPTION_LENGTH = 200
-
-/** Builds a URL-safe slug from a term name. */
-export const slugify = (value: string): string =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
 
 export interface TaxonomyInput {
   name: string
