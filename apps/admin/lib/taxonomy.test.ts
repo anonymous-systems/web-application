@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { slugify } from '@workspace/ui/lib/slug'
 import {
   MAX_DESCRIPTION_LENGTH,
   MAX_NAME_LENGTH,
-  slugify,
   validateTaxonomyInput,
 } from './taxonomy'
 
