@@ -1,6 +1,7 @@
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { toIsoString } from '@/lib/firestore'
+import { resolveAuthorName } from '@/lib/user-display'
 import { AdminComment } from '@/interfaces/comment'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
@@ -8,11 +9,6 @@ import { ActionResult } from '@/interfaces/action-result'
 const UNEXPECTED = 'Something went wrong. Please try again.'
 
 const db = () => getFirestore(getFirebaseAdminApp())
-
-// The author's real name; null when unknown, so the UI can fall back to the
-// @username or an "Unknown user" label without this layer knowing about them.
-const resolveAuthorName = (profile?: UserProfileDoc): string | null =>
-  [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') || null
 
 /**
  * Lists every comment across all stories for the moderation view. Server-only
