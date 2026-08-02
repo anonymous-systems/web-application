@@ -42,3 +42,16 @@ and Hosting: Firebase App Hosting
 - **Reason**: Firebase App Hosting is a reliable and scalable hosting solution that
   integrates seamlessly with Firebase services. It provides fast content delivery and
   easy deployment, making it ideal for our Next.js application.
+
+## Stories: authoring location, editor, model & migration
+- **Method**: Story authoring/management lives in the **admin app** for now (creators may author on
+  the frontend later — the `stories/{id}` rules already allow it, and the Story model + Zod schema
+  live in `packages/ui/src/models/` for reuse, so no rework). WYSIWYG via a **fresh, latest CKEditor 5
+  + @ckeditor/ckeditor5-react** integration (not the old v35 Angular build). A **clean, conventional
+  Story model** replaces the legacy `anonsys.tech` shape (`excerpt`, `coverImage`, single `category`
+  + `tags[]`, `createdAt/updatedAt/publishedAt`, author resolved from the `user` ref). Existing
+  legacy stories are converted by a **one-time idempotent migration before go-live**.
+- **Date**: 2026-08-02
+- **Reason**: Only the user authors today (YAGNI → admin-only now, designed so frontend authoring
+  needs no rework). The legacy model was written early "while learning"; a clean model + migration
+  beats carrying non-conventional fields forward.
