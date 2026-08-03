@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase-admin/app'
-import { FieldValue, getFirestore } from 'firebase-admin/firestore'
-import { planStoryMigration } from '../lib/story-migration'
+import { getFirestore } from 'firebase-admin/firestore'
+import { applyStoryMigrations } from '../lib/apply-story-migrations'
 
 /**
  * One-time migration of `stories` documents from the previous app's shape to the
@@ -45,33 +45,12 @@ const main = async (): Promise<void> => {
   )
 
   const db = getFirestore(initializeApp({ projectId }))
-  const snapshot = await db.collection('stories').get()
+  const { total, migrated, warnings } = await applyStoryMigrations(db, { dryRun })
 
-  let migrated = 0
-  for (const doc of snapshot.docs) {
-    const plan = planStoryMigration(doc.data())
-    if (!plan.changed) continue
-    migrated += 1
-
-    if (dryRun) {
-      console.log(
-        `  ${doc.id}: set ${Object.keys(plan.set).join(', ') || '—'}; drop ${plan.remove.join(', ')}`
-      )
-    } else {
-      const update: Record<string, unknown> = { ...plan.set }
-      for (const field of plan.remove) update[field] = FieldValue.delete()
-      await doc.ref.update(update)
-    }
-
-    if (plan.droppedCategories.length > 0) {
-      console.warn(
-        `  ${doc.id}: kept the first category, dropped ${plan.droppedCategories.join(', ')}`
-      )
-    }
-  }
-
-  const verb = dryRun ? 'Would migrate' : 'Migrated'
-  console.log(`Done. ${verb} ${migrated} of ${snapshot.size} stories.`)
+  for (const warning of warnings) console.warn(`  ${warning}`)
+  console.log(
+    `Done. ${dryRun ? 'Would migrate' : 'Migrated'} ${migrated} of ${total} stories.`
+  )
 }
 
 main()

@@ -79,6 +79,31 @@ describe('Admin Stories section', () => {
       .and('contain', 'No stories yet')
   })
 
+  it('renders a legacy-shape story (defensive reads, pre-migration)', () => {
+    // Old anonsys.tech shape: byline/image/categories/created, no new fields.
+    cy.request({
+      method: 'PATCH',
+      url: `${DOCS}/stories/${STORY_ID}`,
+      headers: OWNER,
+      body: {
+        fields: {
+          title: { stringValue: SEED_TITLE },
+          slug: { stringValue: 'e2e-seeded-story' },
+          type: { stringValue: 'article' },
+          status: { stringValue: 'published' },
+          visibility: { stringValue: 'public' },
+          byline: { stringValue: 'An old-style summary' },
+          image: { stringValue: 'http://example/cover.png' },
+          categories: { arrayValue: { values: [{ stringValue: 'react' }] } },
+          created: { timestampValue: now() },
+        },
+      },
+    })
+    cy.visit(`${ADMIN_URL}/stories`)
+
+    storyRow().should('contain', SEED_TITLE).and('contain', 'published')
+  })
+
   it('lists a seeded story and deletes it', () => {
     seedStory()
     cy.visit(`${ADMIN_URL}/stories`)
