@@ -21,7 +21,6 @@ const UNEXPECTED = 'Something went wrong. Please try again.'
 const db = () => getFirestore(getFirebaseAdminApp())
 const stories = (): CollectionReference => db().collection('stories')
 
-/** Reads each referenced author's `users/{uid}` profile once for a set of stories. */
 const resolveProfiles = async (
   docs: DocumentSnapshot[]
 ): Promise<Map<string, UserProfileDoc>> => {
