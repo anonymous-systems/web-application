@@ -3,6 +3,7 @@
 import { JSX, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { toast } from '@workspace/ui/components/sonner'
 import { Input } from '@workspace/ui/components/input'
 import { Textarea } from '@workspace/ui/components/textarea'
@@ -21,6 +22,17 @@ import {
 import { StoryInput } from '@workspace/ui/models/schemas/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
 import { createStory, updateStory } from '@/app/(dashboard)/stories/actions'
+
+// CKEditor touches `window`, so it's loaded client-only.
+const StoryEditor = dynamic(
+  () => import('./story-editor').then((module) => module.StoryEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-sm text-muted-foreground">Loading editor…</div>
+    ),
+  }
+)
 
 interface TermOption {
   name: string
@@ -216,14 +228,10 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="story-content">Content</Label>
-        <Textarea
-          id="story-content"
-          rows={10}
-          value={values.content}
-          onChange={(event) => setField('content', event.target.value)}
-          placeholder="Write your story…"
-          data-testid="storyContentInput"
+        <Label>Content</Label>
+        <StoryEditor
+          initialValue={story?.content ?? ''}
+          onChange={(html) => setField('content', html)}
         />
       </div>
 
