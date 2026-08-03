@@ -100,7 +100,13 @@ describe('Admin Stories section', () => {
     cy.url().should('include', '/stories/new')
     cy.get('[data-testid="storyTitleInput"]').type(CREATE_TITLE)
     cy.get('[data-testid="storyTypeSelect"]').select('blog')
-    cy.get('[data-testid="storyContentInput"]').type('Written in the admin form.')
+    // CKEditor loads client-side; wait for the editable, then write into it.
+    cy.get('[data-testid="storyContentEditor"] .ck-editor__editable', {
+      timeout: 20000,
+    })
+      .should('exist')
+      .click()
+      .type('Written in the admin editor.')
     cy.get('[data-testid="storyPublish"]').click()
 
     cy.url().should('match', /\/stories$/)
