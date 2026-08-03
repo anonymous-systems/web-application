@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "migrate:stories": "tsx scripts/migrate-stories.ts"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^11.2.0",
@@ -36,6 +37,7 @@
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.20.1",
     "jsdom": "^29.1.1",
+    "tsx": "^4.23.5",
     "typescript": "^5.7.3",
     "vitest": "^4.1.9"
   }
