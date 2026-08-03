@@ -128,4 +128,25 @@ describe('Admin Stories section', () => {
     cy.get('[data-testid="confirmDeleteStory"]').click()
     rowByTitle(EDIT_TITLE).should('not.exist')
   })
+
+  it('uploads a cover image to storage', () => {
+    cy.visit(`${ADMIN_URL}/stories/new`)
+
+    // A 1×1 PNG is enough to exercise the upload → storage → download-URL path.
+    const png =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+    cy.get('[data-testid="storyCoverFile"]').selectFile(
+      {
+        contents: Cypress.Buffer.from(png, 'base64'),
+        fileName: 'cover.png',
+        mimeType: 'image/png',
+      },
+      { force: true }
+    )
+
+    cy.get('[data-testid="storyCoverPreview"]', { timeout: 15000 })
+      .should('be.visible')
+      .and('have.attr', 'src')
+      .and('include', 'story-covers')
+  })
 })

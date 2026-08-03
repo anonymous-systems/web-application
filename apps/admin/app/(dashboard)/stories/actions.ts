@@ -7,6 +7,7 @@ import {
   deleteStory as deleteStoryDoc,
   updateStory as updateStoryDoc,
 } from '@/services/story-service'
+import { uploadStoryCover as uploadCoverToStorage } from '@/services/storage-service'
 import { AppRoutes } from '@/lib/app-routes'
 import { ActionResult } from '@/interfaces/action-result'
 import { StoryInput } from '@workspace/ui/models/schemas/story'
@@ -41,4 +42,16 @@ export const deleteStory = async (id: string): Promise<ActionResult> => {
   const result = await deleteStoryDoc(id)
   if (result.ok) revalidatePath(AppRoutes.stories)
   return result
+}
+
+export const uploadStoryCover = async (
+  formData: FormData
+): Promise<ActionResult & { url?: string }> => {
+  const guard = await ensureAdmin('stories')
+  if (!guard.ok) return guard
+
+  const file = formData.get('file')
+  if (!(file instanceof File)) return { ok: false, error: 'No file provided.' }
+
+  return uploadCoverToStorage(file)
 }

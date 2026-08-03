@@ -1,6 +1,6 @@
 'use client'
 
-import { JSX, useState, useTransition } from 'react'
+import { ChangeEvent, JSX, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -21,7 +21,11 @@ import {
 } from '@workspace/ui/models/story-constants'
 import { StoryInput } from '@workspace/ui/models/schemas/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
-import { createStory, updateStory } from '@/app/(dashboard)/stories/actions'
+import {
+  createStory,
+  updateStory,
+  uploadStoryCover,
+} from '@/app/(dashboard)/stories/actions'
 
 // CKEditor touches `window`, so it's loaded client-only.
 const StoryEditor = dynamic(
@@ -51,6 +55,7 @@ interface FormValues {
   type: StoryType
   excerpt: string
   content: string
+  coverImage: string
   category: string
   tags: string[]
   visibility: StoryVisibility
@@ -70,12 +75,14 @@ const titleCase = (value: string): string =>
 export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [isUploading, startUpload] = useTransition()
 
   const [values, setValues] = useState<FormValues>({
     title: story?.title ?? '',
     type: story?.type ?? 'article',
     excerpt: story?.excerpt ?? '',
     content: story?.content ?? '',
+    coverImage: story?.coverImage ?? '',
     category: story?.category ?? '',
     tags: story?.tags ?? [],
     visibility: story?.visibility ?? 'public',
@@ -97,6 +104,24 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         : [...current.tags, slug],
     }))
 
+  const uploadCover = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0]
+    event.target.value = '' // allow re-selecting the same file after removing
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+    startUpload(async () => {
+      const result = await uploadStoryCover(formData)
+      if (!result.ok || !result.url) {
+        toast.error(result.error ?? 'Something went wrong.')
+        return
+      }
+      setField('coverImage', result.url)
+      toast.success('Cover uploaded.')
+    })
+  }
+
   const submit = (status: StoryStatus): void => {
     startTransition(async () => {
       const input: StoryInput = {
@@ -106,7 +131,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         visibility: values.visibility,
         excerpt: values.excerpt || null,
         content: values.content || null,
-        coverImage: story?.coverImage ?? null,
+        coverImage: values.coverImage || null,
         category: values.category || null,
         tags: values.tags,
         allowComments: values.allowComments,
@@ -251,6 +276,50 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="story-cover">Cover image</Label>
+        {values.coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element -- dynamic external cover URL
+          <img
+            src={values.coverImage}
+            alt="Cover preview"
+            className="h-28 w-full max-w-xs rounded-md border object-cover"
+            data-testid="storyCoverPreview"
+          />
+        )}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Input
+            id="story-cover"
+            type="file"
+            accept="image/*"
+            onChange={uploadCover}
+            disabled={isUploading}
+            data-testid="storyCoverFile"
+          />
+          {values.coverImage && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setField('coverImage', '')}
+              data-testid="storyCoverRemove"
+            >
+              Remove
+            </Button>
+          )}
+        </div>
+        <Input
+          type="url"
+          value={values.coverImage}
+          onChange={(event) => setField('coverImage', event.target.value)}
+          placeholder="…or paste an image URL"
+          data-testid="storyCoverUrl"
+        />
+        {isUploading && (
+          <p className="text-xs text-muted-foreground">Uploading…</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
