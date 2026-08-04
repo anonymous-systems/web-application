@@ -1,19 +1,9 @@
-import { getStorage } from 'firebase-admin/storage'
 import { randomUUID } from 'node:crypto'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { storageBucket, storageDownloadUrl } from '@/lib/storage'
 import { ActionResult } from '@/interfaces/action-result'
 
-const BUCKET = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? ''
 const MAX_BYTES = 5 * 1024 * 1024
 const UNEXPECTED = 'Something went wrong. Please try again.'
-
-// Firebase download URL for a stored object, pointed at the emulator when one is configured.
-const downloadUrl = (path: string, token: string): string => {
-  const host = process.env.FIREBASE_STORAGE_EMULATOR_HOST
-    ? `http://${process.env.FIREBASE_STORAGE_EMULATOR_HOST}`
-    : 'https://firebasestorage.googleapis.com'
-  return `${host}/v0/b/${BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}`
-}
 
 /**
  * Uploads a story cover to Firebase Storage (Admin SDK) and returns its download
@@ -38,8 +28,7 @@ export const uploadStoryCover = async (
     const path = `story-covers/${randomUUID()}${extension}`
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    await getStorage(getFirebaseAdminApp())
-      .bucket(BUCKET)
+    await storageBucket()
       .file(path)
       .save(buffer, {
         metadata: {
@@ -48,7 +37,7 @@ export const uploadStoryCover = async (
         },
       })
 
-    return { ok: true, url: downloadUrl(path, token) }
+    return { ok: true, url: storageDownloadUrl(path, token) }
   } catch (error) {
     console.error('Failed to upload story cover', error)
     return { ok: false, error: UNEXPECTED }
