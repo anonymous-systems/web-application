@@ -143,7 +143,7 @@ export default async function Page(): Promise<JSX.Element> {
                       description={
                         <>
                           “{category.name}” will be permanently removed. This
-                          can't be undone.
+                          can’t be undone.
                         </>
                       }
                       successMessage={`${SINGULAR} deleted.`}
