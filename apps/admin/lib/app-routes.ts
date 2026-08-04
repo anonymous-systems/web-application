@@ -7,6 +7,7 @@ export const DashboardRoutes = {
   projects: '/projects',
   categories: '/categories',
   tags: '/tags',
+  technologies: '/technologies',
   comments: '/comments',
   stories: '/stories',
   users: '/users',

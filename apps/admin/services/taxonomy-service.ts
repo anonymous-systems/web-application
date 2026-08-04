@@ -9,6 +9,7 @@ import { ActionResult } from '@/interfaces/action-result'
 const SINGULAR: Record<TaxonomyCollection, string> = {
   categories: 'category',
   tags: 'tag',
+  technologies: 'technology',
 }
 
 const UNEXPECTED = 'Something went wrong. Please try again.'

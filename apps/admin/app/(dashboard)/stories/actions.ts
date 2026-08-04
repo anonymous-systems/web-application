@@ -7,7 +7,7 @@ import {
   deleteStory as deleteStoryDoc,
   updateStory as updateStoryDoc,
 } from '@/services/story-service'
-import { uploadStoryCover as uploadCoverToStorage } from '@/services/storage-service'
+import { uploadCover } from '@/services/storage-service'
 import { AppRoutes } from '@/lib/app-routes'
 import { ActionResult } from '@/interfaces/action-result'
 import { StoryInput } from '@workspace/ui/models/schemas/story'
@@ -53,5 +53,5 @@ export const uploadStoryCover = async (
   const file = formData.get('file')
   if (!(file instanceof File)) return { ok: false, error: 'No file provided.' }
 
-  return uploadCoverToStorage(file)
+  return uploadCover(file, 'story-covers')
 }

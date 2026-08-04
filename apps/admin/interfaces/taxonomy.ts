@@ -1,7 +1,7 @@
 /**
- * A term in a simple taxonomy collection (`categories`, `tags`). Both share the
- * same shape; timestamps are ISO strings so they can cross the server/client
- * boundary.
+ * A term in a simple taxonomy collection (`categories`, `tags`, `technologies`).
+ * They all share the same shape; timestamps are ISO strings so they can cross
+ * the server/client boundary.
  */
 export interface TaxonomyTerm {
   id: string
@@ -13,4 +13,4 @@ export interface TaxonomyTerm {
 }
 
 /** Firestore collections backed by the shared taxonomy layer. */
-export type TaxonomyCollection = 'categories' | 'tags'
+export type TaxonomyCollection = 'categories' | 'tags' | 'technologies'

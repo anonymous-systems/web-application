@@ -6,12 +6,14 @@ const MAX_BYTES = 5 * 1024 * 1024
 const UNEXPECTED = 'Something went wrong. Please try again.'
 
 /**
- * Uploads a story cover to Firebase Storage (Admin SDK) and returns its download
- * URL. Stored under a random path so it never collides and doesn't need the
- * story id — covers can be set before the story is created.
+ * Uploads a cover image to Firebase Storage (Admin SDK) and returns its download
+ * URL. `folder` is the storage prefix (e.g. `story-covers`, `project-covers`).
+ * Stored under a random path so it never collides and doesn't need the owning
+ * document's id — covers can be set before the document is created.
  */
-export const uploadStoryCover = async (
-  file: File
+export const uploadCover = async (
+  file: File,
+  folder: string
 ): Promise<ActionResult & { url?: string }> => {
   if (file.size === 0) return { ok: false, error: 'No file selected.' }
   if (!file.type.startsWith('image/')) {
@@ -25,7 +27,7 @@ export const uploadStoryCover = async (
     const token = randomUUID()
     const dot = file.name.lastIndexOf('.')
     const extension = dot >= 0 ? file.name.slice(dot) : ''
-    const path = `story-covers/${randomUUID()}${extension}`
+    const path = `${folder}/${randomUUID()}${extension}`
     const buffer = Buffer.from(await file.arrayBuffer())
 
     await storageBucket()
@@ -39,7 +41,7 @@ export const uploadStoryCover = async (
 
     return { ok: true, url: storageDownloadUrl(path, token) }
   } catch (error) {
-    console.error('Failed to upload story cover', error)
+    console.error('Failed to upload cover', error)
     return { ok: false, error: UNEXPECTED }
   }
 }

@@ -10,17 +10,16 @@ import {
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { toIsoString } from '@/lib/firestore'
 import { resolveAuthorName } from '@/lib/user-display'
-import { readTimeMinutes } from '@/lib/read-time'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
 import { slugify } from '@workspace/ui/lib/slug'
-import { Story } from '@workspace/ui/models/interfaces/story'
-import { StoryInput, storyInputSchema } from '@workspace/ui/models/schemas/story'
+import { Project } from '@workspace/ui/models/interfaces/project'
+import { ProjectInput, projectInputSchema } from '@workspace/ui/models/schemas/project'
 
 const UNEXPECTED = 'Something went wrong. Please try again.'
 
 const db = (): Firestore => getFirestore(getFirebaseAdminApp())
-const stories = (): CollectionReference => db().collection('stories')
+const projects = (): CollectionReference => db().collection('projects')
 
 const resolveProfiles = async (
   docs: DocumentSnapshot[]
@@ -42,10 +41,10 @@ const resolveProfiles = async (
 }
 
 // Every field is read defensively so legacy/partial documents never throw.
-const toStory = (
+const toProject = (
   doc: DocumentSnapshot,
   profiles: Map<string, UserProfileDoc>
-): Story => {
+): Project => {
   const data = doc.data() ?? {}
   const userRef = data.user as DocumentReference | undefined
   const profile = userRef?.id ? profiles.get(userRef.id) : undefined
@@ -54,18 +53,21 @@ const toStory = (
     id: doc.id,
     title: (data.title as string | undefined) ?? '',
     slug: (data.slug as string | undefined) ?? '',
-    type: (data.type as Story['type'] | undefined) ?? 'article',
-    status: (data.status as Story['status'] | undefined) ?? 'draft',
-    visibility: (data.visibility as Story['visibility'] | undefined) ?? 'public',
+    status: (data.status as Project['status'] | undefined) ?? 'draft',
+    visibility: (data.visibility as Project['visibility'] | undefined) ?? 'public',
     excerpt: (data.excerpt as string | undefined) ?? null,
     content: (data.content as string | undefined) ?? null,
     coverImage: (data.coverImage as string | undefined) ?? null,
     category: (data.category as string | undefined) ?? null,
     tags: (data.tags as string[] | undefined) ?? [],
-    allowComments: (data.allowComments as boolean | undefined) ?? true,
+    technologies: (data.technologies as string[] | undefined) ?? [],
+    sourceCodeLink: (data.sourceCodeLink as string | undefined) ?? null,
+    livePreviewLink: (data.livePreviewLink as string | undefined) ?? null,
+    figmaLink: (data.figmaLink as string | undefined) ?? null,
+    developmentStatus:
+      (data.developmentStatus as Project['developmentStatus'] | undefined) ?? null,
     featured: (data.featured as boolean | undefined) ?? false,
-    problemStatus: (data.problemStatus as Story['problemStatus'] | undefined) ?? null,
-    readTimeMinutes: (data.readTimeMinutes as number | undefined) ?? null,
+    allowComments: (data.allowComments as boolean | undefined) ?? true,
     authorUid: userRef?.id ?? null,
     authorName: resolveAuthorName(profile),
     authorAvatar: profile?.avatar ?? null,
@@ -75,30 +77,29 @@ const toStory = (
   }
 }
 
-export const listStories = async (): Promise<Story[]> => {
-  const snapshot = await stories().get()
+export const listProjects = async (): Promise<Project[]> => {
+  const snapshot = await projects().get()
   const profiles = await resolveProfiles(snapshot.docs)
 
   return snapshot.docs
-    .map((doc) => toStory(doc, profiles))
+    .map((doc) => toProject(doc, profiles))
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
-export const getStory = async (id: string): Promise<Story | null> => {
-  const doc = await stories().doc(id).get()
+export const getProject = async (id: string): Promise<Project | null> => {
+  const doc = await projects().doc(id).get()
   if (!doc.exists) return null
 
   const profiles = await resolveProfiles([doc])
-  return toStory(doc, profiles)
+  return toProject(doc, profiles)
 }
 
 // The document fields derived from validated user input. `slug` comes from the
-// title and `readTimeMinutes` from the content; `user`, `roles`, and timestamps
-// are owned by create/update, not the caller.
-const writableFields = (input: StoryInput) => ({
+// title; `user`, `roles`, and timestamps are owned by create/update, not the
+// caller.
+const writableFields = (input: ProjectInput) => ({
   title: input.title.trim(),
   slug: slugify(input.title),
-  type: input.type,
   status: input.status,
   visibility: input.visibility,
   excerpt: input.excerpt?.trim() || null,
@@ -106,25 +107,28 @@ const writableFields = (input: StoryInput) => ({
   coverImage: input.coverImage?.trim() || null,
   category: input.category?.trim() || null,
   tags: input.tags,
-  allowComments: input.allowComments,
+  technologies: input.technologies,
+  sourceCodeLink: input.sourceCodeLink ?? null,
+  livePreviewLink: input.livePreviewLink ?? null,
+  figmaLink: input.figmaLink ?? null,
+  developmentStatus: input.developmentStatus ?? null,
   featured: input.featured,
-  problemStatus: input.problemStatus ?? null,
-  readTimeMinutes: readTimeMinutes(input.content ?? null),
+  allowComments: input.allowComments,
 })
 
 const firstError = (issues: { message: string }[]): string =>
   issues[0]?.message ?? UNEXPECTED
 
-export const createStory = async (
-  input: StoryInput,
+export const createProject = async (
+  input: ProjectInput,
   ownerUid: string
 ): Promise<ActionResult & { id?: string }> => {
-  const parsed = storyInputSchema.safeParse(input)
+  const parsed = projectInputSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: firstError(parsed.error.issues) }
 
   try {
     const now = FieldValue.serverTimestamp()
-    const ref = await stories().add({
+    const ref = await projects().add({
       ...writableFields(parsed.data),
       user: db().doc(`users/${ownerUid}`),
       roles: { [ownerUid]: 'owner' },
@@ -135,22 +139,22 @@ export const createStory = async (
 
     return { ok: true, id: ref.id }
   } catch (error) {
-    console.error('Failed to create story', error)
+    console.error('Failed to create project', error)
     return { ok: false, error: UNEXPECTED }
   }
 }
 
-export const updateStory = async (
+export const updateProject = async (
   id: string,
-  input: StoryInput
+  input: ProjectInput
 ): Promise<ActionResult> => {
-  const parsed = storyInputSchema.safeParse(input)
+  const parsed = projectInputSchema.safeParse(input)
   if (!parsed.success) return { ok: false, error: firstError(parsed.error.issues) }
 
   try {
-    const ref = stories().doc(id)
+    const ref = projects().doc(id)
     const existing = await ref.get()
-    if (!existing.exists) return { ok: false, error: 'Story not found.' }
+    if (!existing.exists) return { ok: false, error: 'Project not found.' }
 
     // Stamp publishedAt on the first publish; keep the original thereafter.
     const existingPublishedAt =
@@ -168,18 +172,18 @@ export const updateStory = async (
 
     return { ok: true }
   } catch (error) {
-    console.error('Failed to update story', error)
+    console.error('Failed to update project', error)
     return { ok: false, error: UNEXPECTED }
   }
 }
 
-export const deleteStory = async (id: string): Promise<ActionResult> => {
+export const deleteProject = async (id: string): Promise<ActionResult> => {
   try {
-    // Recursive so the story's comments subcollection isn't orphaned.
-    await db().recursiveDelete(stories().doc(id))
+    // Recursive so the project's comments subcollection isn't orphaned.
+    await db().recursiveDelete(projects().doc(id))
     return { ok: true }
   } catch (error) {
-    console.error('Failed to delete story', error)
+    console.error('Failed to delete project', error)
     return { ok: false, error: UNEXPECTED }
   }
 }

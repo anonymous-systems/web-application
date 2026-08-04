@@ -1,5 +1,6 @@
 import {
   BookText,
+  Cpu,
   FolderGit2,
   FolderOpen,
   FolderTree,
@@ -22,6 +23,7 @@ export const dashboardNav: NavItem[] = [
   { label: 'Portfolio', href: DashboardRoutes.projects, icon: FolderGit2 },
   { label: 'Categories', href: DashboardRoutes.categories, icon: FolderTree },
   { label: 'Tags', href: DashboardRoutes.tags, icon: Tags },
+  { label: 'Technologies', href: DashboardRoutes.technologies, icon: Cpu },
   { label: 'Comments', href: DashboardRoutes.comments, icon: MessageSquare },
   { label: 'Stories', href: DashboardRoutes.stories, icon: BookText },
   { label: 'Users', href: DashboardRoutes.users, icon: Users },
