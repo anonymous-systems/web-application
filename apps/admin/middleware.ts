@@ -6,7 +6,9 @@ import { hasAdminClaim } from '@/lib/admin-access'
 
 const PUBLIC_PATHS = Object.values(PublicRoutes)
 
-export const middleware = async (request: NextRequest) => {
+export const middleware = async (
+  request: NextRequest
+): Promise<NextResponse> => {
   return authMiddleware(request, {
     loginPath: '/api/login',
     logoutPath: '/api/logout',

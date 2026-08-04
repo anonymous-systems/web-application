@@ -26,7 +26,7 @@ export const FilePreview = ({ file, onClose }: Props): JSX.Element => {
     void getDownloadUrl(file.fullPath).then((result) => {
       if (active && result.ok && result.url) setUrl(result.url)
     })
-    return () => {
+    return (): void => {
       active = false
     }
   }, [file.fullPath])

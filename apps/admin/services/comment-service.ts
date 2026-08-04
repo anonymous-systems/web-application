@@ -1,4 +1,4 @@
-import { DocumentReference, getFirestore } from 'firebase-admin/firestore'
+import { DocumentReference, Firestore, getFirestore } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { toIsoString } from '@/lib/firestore'
 import { resolveAuthorName } from '@/lib/user-display'
@@ -8,7 +8,7 @@ import { ActionResult } from '@/interfaces/action-result'
 
 const UNEXPECTED = 'Something went wrong. Please try again.'
 
-const db = () => getFirestore(getFirebaseAdminApp())
+const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 
 /**
  * Lists every comment across all stories for the moderation view. Server-only
