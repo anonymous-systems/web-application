@@ -8,7 +8,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@workspace/ui/components/empty'
-import { Button } from '@workspace/ui/components/custom/button'
 import {
   Table,
   TableBody,
@@ -17,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
+import { Checkbox } from '@workspace/ui/components/checkbox'
+import { Button } from '@workspace/ui/components/custom/button'
 import { cn } from '@workspace/ui/lib/utils'
 import { StorageItemIcon } from './storage-item-icon'
 import { formatBytes } from '@/lib/format-bytes'
@@ -26,6 +27,9 @@ interface Props {
   items: StorageItem[]
   onOpen: (item: StorageItem) => void
   selectedPath?: string | null
+  selectedPaths: Set<string>
+  onToggle: (item: StorageItem) => void
+  onToggleAll: (checked: boolean) => void
   onUploadClick?: () => void
 }
 
@@ -33,13 +37,29 @@ export const FileTable = ({
   items,
   onOpen,
   selectedPath,
+  selectedPaths,
+  onToggle,
+  onToggleAll,
   onUploadClick,
 }: Props): JSX.Element => {
+  const allSelected = items.length > 0 && selectedPaths.size === items.length
+
   return (
     <div className="rounded-lg border">
       <Table data-testid="filesTable">
         <TableHeader>
           <TableRow>
+            <TableHead className="w-10">
+              <Checkbox
+                checked={
+                  allSelected ? true : selectedPaths.size > 0 ? 'indeterminate' : false
+                }
+                onCheckedChange={(checked) => onToggleAll(checked === true)}
+                disabled={items.length === 0}
+                aria-label="Select all"
+                data-testid="fmSelectAll"
+              />
+            </TableHead>
             <TableHead>Name</TableHead>
             <TableHead className="hidden sm:table-cell">Size</TableHead>
             <TableHead className="hidden md:table-cell">Type</TableHead>
@@ -49,7 +69,7 @@ export const FileTable = ({
         <TableBody>
           {items.length === 0 && (
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={4}>
+              <TableCell colSpan={5}>
                 <Empty data-testid="filesEmpty">
                   <EmptyHeader>
                     <EmptyMedia variant="icon">
@@ -84,6 +104,14 @@ export const FileTable = ({
               )}
               onClick={() => onOpen(item)}
             >
+              <TableCell className="w-10" onClick={(event) => event.stopPropagation()}>
+                <Checkbox
+                  checked={selectedPaths.has(item.fullPath)}
+                  onCheckedChange={() => onToggle(item)}
+                  aria-label={`Select ${item.name}`}
+                  data-testid="fileCheckbox"
+                />
+              </TableCell>
               <TableCell className="font-medium">
                 <span className="flex items-center gap-2">
                   <StorageItemIcon

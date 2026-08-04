@@ -70,9 +70,27 @@ describe('Admin Files section', () => {
     cy.contains('nav button', ROOT_FOLDER).click()
     fileRow('hello.txt').should('exist')
 
-    // Selecting a file opens the metadata preview.
+    // Selecting a file opens the preview with a download link.
     fileRow('hello.txt').click()
     cy.get('[data-testid="filePreview"]').should('be.visible').and('contain', 'hello.txt')
+    cy.get('[data-testid="previewDownload"]')
+      .should('have.attr', 'href')
+      .and('include', 'hello.txt')
+    cy.get('[data-testid="previewCopy"]').should('exist')
+  })
+
+  it('selects and deletes files', () => {
+    putObject(`${ROOT_FOLDER}/hello.txt`, 'hello world')
+    cy.visit(`${ADMIN_URL}/files`)
+
+    fileRow(ROOT_FOLDER).click()
+    fileRow('hello.txt').find('[data-testid="fileCheckbox"]').click()
+    cy.get('[data-testid="fmSelectionToolbar"]').should('contain', '1 selected')
+
+    cy.get('[data-testid="fmDelete"]').click()
+    cy.get('[data-testid="confirmDeleteFiles"]').click()
+
+    fileRow('hello.txt').should('not.exist')
   })
 
   it('uploads a file via the Upload button', () => {
