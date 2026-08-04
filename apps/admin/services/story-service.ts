@@ -14,6 +14,7 @@ import { readTimeMinutes } from '@/lib/read-time'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
 import { slugify } from '@workspace/ui/lib/slug'
+import { StoryWriteFields } from '@/interfaces/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
 import { StoryInput, storyInputSchema } from '@workspace/ui/models/schemas/story'
 
@@ -92,10 +93,9 @@ export const getStory = async (id: string): Promise<Story | null> => {
   return toStory(doc, profiles)
 }
 
-// The document fields derived from validated user input. `slug` comes from the
-// title and `readTimeMinutes` from the content; `user`, `roles`, and timestamps
-// are owned by create/update, not the caller.
-const writableFields = (input: StoryInput) => ({
+// `slug` comes from the title and `readTimeMinutes` from the content; `user`,
+// `roles`, and timestamps are owned by create/update, not the caller.
+const writableFields = (input: StoryInput): StoryWriteFields => ({
   title: input.title.trim(),
   slug: slugify(input.title),
   type: input.type,

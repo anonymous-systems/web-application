@@ -12,6 +12,7 @@ import { toIsoString } from '@/lib/firestore'
 import { resolveAuthorName } from '@/lib/user-display'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
+import { ProjectWriteFields } from '@/interfaces/project'
 import { slugify } from '@workspace/ui/lib/slug'
 import { Project } from '@workspace/ui/models/interfaces/project'
 import { ProjectInput, projectInputSchema } from '@workspace/ui/models/schemas/project'
@@ -94,10 +95,9 @@ export const getProject = async (id: string): Promise<Project | null> => {
   return toProject(doc, profiles)
 }
 
-// The document fields derived from validated user input. `slug` comes from the
-// title; `user`, `roles`, and timestamps are owned by create/update, not the
-// caller.
-const writableFields = (input: ProjectInput) => ({
+// `slug` comes from the title; `user`, `roles`, and timestamps are owned by
+// create/update, not the caller.
+const writableFields = (input: ProjectInput): ProjectWriteFields => ({
   title: input.title.trim(),
   slug: slugify(input.title),
   status: input.status,
