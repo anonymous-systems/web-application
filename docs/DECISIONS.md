@@ -55,3 +55,14 @@ and Hosting: Firebase App Hosting
 - **Reason**: Only the user authors today (YAGNI → admin-only now, designed so frontend authoring
   needs no rework). The legacy model was written early "while learning"; a clean model + migration
   beats carrying non-conventional fields forward.
+
+## File Manager: Admin SDK server actions
+- **Method**: The admin Files section is a Firebase Storage browser built on **Admin SDK server
+  actions** (list / upload / new-folder / delete / rename / move / download-URL), guarded by
+  `ensureAdmin` — not the client SDK. Ported from the user's Angular
+  `angular-firebase-storage-manager` with improvements (single-call listing via `getFiles` inline
+  metadata, persistent empty folders via a `.keep` placeholder, rename/move, in-folder search + sort).
+- **Date**: 2026-08-02
+- **Reason**: Matches the app's server-action architecture (like the story cover upload), needs no
+  client storage-rules for admin access, and keeps the browser bundle lean. The Angular version was an
+  early-learning build, so rebuilding on the current stack modernizes and improves it.

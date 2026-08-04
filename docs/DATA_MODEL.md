@@ -60,3 +60,6 @@ Portfolio entries (admin-managed). Shape TBD as the Portfolio section is built.
 - **User avatars** — the user's uploaded avatar image.
 - **Story covers** — `story-covers/{uuid}.{ext}`, uploaded via the admin app
   (Admin SDK) and referenced by `stories.coverImage`.
+- The admin **Files** section browses and manages the whole bucket (list / upload /
+  rename / move / delete) via Admin SDK server actions. Folders are virtual (path
+  prefixes); empty ones are kept alive by a zero-byte `.keep` placeholder.
