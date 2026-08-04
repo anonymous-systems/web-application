@@ -13,15 +13,16 @@ To run the Firebase emulators, you must add the following to the environment var
 ```bash
 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+FIREBASE_STORAGE_EMULATOR_HOST=127.0.0.1:9199
 
 NEXT_PUBLIC_AUTH_EMULATOR_HOST=localhost:9099
 NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
+NEXT_PUBLIC_STORAGE_EMULATOR_HOST=localhost:9199
 ```
-`FIREBASE_AUTH_EMULATOR_HOST` is required for the Firebase Admin SDK to connect to the emulator
-`FIRESTORE_EMULATOR_HOST` is required for the Firebase Admin SDK to connect to the emulator
+`FIREBASE_AUTH_EMULATOR_HOST`, `FIRESTORE_EMULATOR_HOST`, and `FIREBASE_STORAGE_EMULATOR_HOST`
+connect the Firebase **Admin SDK** to the emulators (storage is needed for story cover uploads).
 
-`NEXT_PUBLIC_AUTH_EMULATOR_HOST` is required for the Firebase Client SDK to connect to the emulator
-`NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST` is required for the Firebase Client SDK to connect to the emulator
+The `NEXT_PUBLIC_*` equivalents connect the Firebase **Client SDK** to the emulators.
 
 
 ## Setup Cypress
@@ -93,6 +94,17 @@ secrets above.
 Ensure the service account you are using has the `firebaseappcheck.appCheckTokens.verify` permission.
 Add the `Firebase App Check Token Verifier` permission to the service account you are
 using to run the application.
+
+## Story migration (legacy → current shape)
+Existing `stories` from the previous app need a one-time conversion to the current model. The
+idempotent script `apps/admin/scripts/migrate-stories.ts` handles it — its header documents the full
+"export prod → dry-run against a local copy → run → production" runbook.
+```bash
+# dry-run against the local emulator
+DRY_RUN=yes pnpm --filter admin migrate:stories
+# production (after validating against a prod copy)
+CONFIRM_PROD=yes FIREBASE_PROJECT_ID=<prod-project> pnpm --filter admin exec tsx scripts/migrate-stories.ts
+```
 
 ## shadcn/ui tips
 
