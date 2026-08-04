@@ -14,6 +14,9 @@ const NEW_FOLDER = 'fm-newfolder'
 const CLEANUP = [
   `${ROOT_FOLDER}/hello.txt`,
   `${ROOT_FOLDER}/sub/inner.txt`,
+  `${ROOT_FOLDER}/world.txt`,
+  `${ROOT_FOLDER}/renamed.txt`,
+  `${ROOT_FOLDER}/moved/hello.txt`,
   UPLOAD_NAME,
   `${NEW_FOLDER}/.keep`,
 ]
@@ -116,5 +119,48 @@ describe('Admin Files section', () => {
     cy.get('[data-testid="folderSubmit"]').click()
 
     fileRow(NEW_FOLDER).should('have.attr', 'data-type', 'folder')
+  })
+
+  it('searches within the current folder', () => {
+    putObject(`${ROOT_FOLDER}/hello.txt`, 'hi')
+    putObject(`${ROOT_FOLDER}/world.txt`, 'yo')
+    cy.visit(`${ADMIN_URL}/files`)
+
+    fileRow(ROOT_FOLDER).click()
+    fileRow('hello.txt').should('exist')
+    fileRow('world.txt').should('exist')
+
+    cy.get('[data-testid="fmSearch"]').type('hello')
+    fileRow('hello.txt').should('exist')
+    fileRow('world.txt').should('not.exist')
+  })
+
+  it('renames a file', () => {
+    putObject(`${ROOT_FOLDER}/hello.txt`, 'hi')
+    cy.visit(`${ADMIN_URL}/files`)
+
+    fileRow(ROOT_FOLDER).click()
+    fileRow('hello.txt').find('[data-testid="fileCheckbox"]').click()
+    cy.get('[data-testid="fmRename"]').click()
+    cy.get('[data-testid="renameInput"]').clear()
+    cy.get('[data-testid="renameInput"]').type('renamed.txt')
+    cy.get('[data-testid="renameSubmit"]').click()
+
+    fileRow('renamed.txt').should('exist')
+    fileRow('hello.txt').should('not.exist')
+  })
+
+  it('moves a file into a subfolder', () => {
+    putObject(`${ROOT_FOLDER}/hello.txt`, 'hi')
+    cy.visit(`${ADMIN_URL}/files`)
+
+    fileRow(ROOT_FOLDER).click()
+    fileRow('hello.txt').find('[data-testid="fileCheckbox"]').click()
+    cy.get('[data-testid="fmMove"]').click()
+    cy.get('[data-testid="moveInput"]').type(`${ROOT_FOLDER}/moved`)
+    cy.get('[data-testid="moveSubmit"]').click()
+
+    fileRow('moved').should('have.attr', 'data-type', 'folder').click()
+    fileRow('hello.txt').should('exist')
   })
 })

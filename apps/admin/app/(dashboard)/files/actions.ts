@@ -7,6 +7,8 @@ import {
   deleteItems as deleteItemsInStorage,
   getDownloadUrl as getDownloadUrlFromStorage,
   listItems as listStorageItems,
+  moveItems as moveItemsInStorage,
+  renameItem as renameItemInStorage,
   uploadFiles as uploadFilesToStorage,
 } from '@/services/file-manager-service'
 import { AppRoutes } from '@/lib/app-routes'
@@ -75,4 +77,28 @@ export const getDownloadUrl = async (
   if (!guard.ok) return guard
 
   return getDownloadUrlFromStorage(fullPath)
+}
+
+export const renameFile = async (
+  item: StorageItem,
+  newName: string
+): Promise<ActionResult> => {
+  const guard = await ensureAdmin('files')
+  if (!guard.ok) return guard
+
+  const result = await renameItemInStorage(item, newName)
+  if (result.ok) revalidatePath(AppRoutes.files)
+  return result
+}
+
+export const moveFiles = async (
+  items: StorageItem[],
+  destFolder: string
+): Promise<ActionResult> => {
+  const guard = await ensureAdmin('files')
+  if (!guard.ok) return guard
+
+  const result = await moveItemsInStorage(items, destFolder)
+  if (result.ok) revalidatePath(AppRoutes.files)
+  return result
 }

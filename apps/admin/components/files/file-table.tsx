@@ -1,5 +1,10 @@
 import { JSX } from 'react'
-import { FolderOpenIcon, UploadIcon } from 'lucide-react'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  FolderOpenIcon,
+  UploadIcon,
+} from 'lucide-react'
 import {
   Empty,
   EmptyContent,
@@ -23,6 +28,12 @@ import { StorageItemIcon } from './storage-item-icon'
 import { formatBytes } from '@/lib/format-bytes'
 import { StorageItem } from '@/interfaces/storage-item'
 
+export type SortKey = 'name' | 'size' | 'updated'
+export interface Sort {
+  key: SortKey
+  dir: 'asc' | 'desc'
+}
+
 interface Props {
   items: StorageItem[]
   onOpen: (item: StorageItem) => void
@@ -30,6 +41,8 @@ interface Props {
   selectedPaths: Set<string>
   onToggle: (item: StorageItem) => void
   onToggleAll: (checked: boolean) => void
+  sort: Sort
+  onSort: (key: SortKey) => void
   onUploadClick?: () => void
 }
 
@@ -40,9 +53,34 @@ export const FileTable = ({
   selectedPaths,
   onToggle,
   onToggleAll,
+  sort,
+  onSort,
   onUploadClick,
 }: Props): JSX.Element => {
   const allSelected = items.length > 0 && selectedPaths.size === items.length
+
+  const SortHeader = ({
+    label,
+    sortKey,
+  }: {
+    label: string
+    sortKey: SortKey
+  }): JSX.Element => (
+    <button
+      type="button"
+      className="flex items-center gap-1 hover:text-foreground"
+      onClick={() => onSort(sortKey)}
+      data-testid={`sort-${sortKey}`}
+    >
+      {label}
+      {sort.key === sortKey &&
+        (sort.dir === 'asc' ? (
+          <ChevronUpIcon className="size-3.5" />
+        ) : (
+          <ChevronDownIcon className="size-3.5" />
+        ))}
+    </button>
+  )
 
   return (
     <div className="rounded-lg border">
@@ -60,10 +98,16 @@ export const FileTable = ({
                 data-testid="fmSelectAll"
               />
             </TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead className="hidden sm:table-cell">Size</TableHead>
+            <TableHead>
+              <SortHeader label="Name" sortKey="name" />
+            </TableHead>
+            <TableHead className="hidden sm:table-cell">
+              <SortHeader label="Size" sortKey="size" />
+            </TableHead>
             <TableHead className="hidden md:table-cell">Type</TableHead>
-            <TableHead className="hidden lg:table-cell">Modified</TableHead>
+            <TableHead className="hidden lg:table-cell">
+              <SortHeader label="Modified" sortKey="updated" />
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

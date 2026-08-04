@@ -138,6 +138,63 @@ export const deleteItems = async (
   }
 }
 
+const parentOf = (fullPath: string): string =>
+  fullPath.includes('/') ? fullPath.slice(0, fullPath.lastIndexOf('/')) : ''
+
+// Moves a file (or a folder + everything under it) to a new full path via
+// copy-then-delete. Firebase Storage has no native rename/move.
+export const moveItem = async (
+  item: StorageItem,
+  destFullPath: string
+): Promise<ActionResult> => {
+  if (item.fullPath === destFullPath) return { ok: true }
+
+  try {
+    const bucket = storageBucket()
+    if (item.type === 'file') {
+      await bucket.file(item.fullPath).move(destFullPath)
+    } else {
+      const oldPrefix = `${item.fullPath}/`
+      const newPrefix = `${destFullPath}/`
+      const [files] = await bucket.getFiles({ prefix: oldPrefix })
+      await Promise.all(
+        files.map((file) =>
+          file.move(`${newPrefix}${file.name.slice(oldPrefix.length)}`)
+        )
+      )
+    }
+    return { ok: true }
+  } catch (error) {
+    console.error('Failed to move item', error)
+    return { ok: false, error: UNEXPECTED }
+  }
+}
+
+export const renameItem = async (
+  item: StorageItem,
+  newName: string
+): Promise<ActionResult> => {
+  const clean = newName.trim().replace(/\//g, '')
+  if (!clean) return { ok: false, error: 'Name is required.' }
+  if (clean === item.name) return { ok: true }
+
+  const parent = parentOf(item.fullPath)
+  return moveItem(item, parent ? `${parent}/${clean}` : clean)
+}
+
+export const moveItems = async (
+  items: StorageItem[],
+  destFolder: string
+): Promise<ActionResult> => {
+  const dest = destFolder.trim().replace(/^\/+|\/+$/g, '')
+
+  for (const item of items) {
+    const result = await moveItem(item, dest ? `${dest}/${item.name}` : item.name)
+    if (!result.ok) return result
+  }
+  return { ok: true }
+}
+
 export const getDownloadUrl = async (
   fullPath: string
 ): Promise<ActionResult & { url?: string }> => {

@@ -1,16 +1,25 @@
 'use client'
 
 import { ChangeEvent, JSX, useRef, useState, useTransition } from 'react'
-import { DownloadIcon, RefreshCwIcon, UploadIcon, XIcon } from 'lucide-react'
+import {
+  DownloadIcon,
+  RefreshCwIcon,
+  SearchIcon,
+  UploadIcon,
+  XIcon,
+} from 'lucide-react'
 import { Button } from '@workspace/ui/components/custom/button'
+import { Input } from '@workspace/ui/components/input'
 import { toast } from '@workspace/ui/components/sonner'
 import { cn } from '@workspace/ui/lib/utils'
 import { Breadcrumbs } from './breadcrumbs'
-import { FileTable } from './file-table'
+import { FileTable, type Sort, type SortKey } from './file-table'
 import { FilePreview } from './file-preview'
 import { DropZone } from './upload-dropzone'
 import { NewFolderDialog } from './new-folder-dialog'
 import { DeleteFilesDialog } from './delete-files-dialog'
+import { RenameDialog } from './rename-dialog'
+import { MoveDialog } from './move-dialog'
 import { StorageFile, StorageItem } from '@/interfaces/storage-item'
 import {
   deleteFiles,
@@ -24,15 +33,34 @@ interface Props {
   initialItems: StorageItem[]
 }
 
+const compare = (a: StorageItem, b: StorageItem, sort: Sort): number => {
+  if (a.type !== b.type) return a.type === 'folder' ? -1 : 1
+  let cmp = 0
+  if (sort.key === 'name') cmp = a.name.localeCompare(b.name)
+  else if (sort.key === 'size')
+    cmp = (a.type === 'file' ? a.size : 0) - (b.type === 'file' ? b.size : 0)
+  else
+    cmp = ((a.type === 'file' ? a.updated : null) ?? '').localeCompare(
+      (b.type === 'file' ? b.updated : null) ?? ''
+    )
+  return sort.dir === 'asc' ? cmp : -cmp
+}
+
 export const FileManager = ({ initialPath, initialItems }: Props): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [path, setPath] = useState(initialPath)
   const [items, setItems] = useState(initialItems)
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set())
   const [preview, setPreview] = useState<StorageFile | null>(null)
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState<Sort>({ key: 'name', dir: 'asc' })
   const [isPending, startTransition] = useTransition()
   const [isUploading, startUpload] = useTransition()
 
+  const query = search.trim().toLowerCase()
+  const visible = (query ? items.filter((i) => i.name.toLowerCase().includes(query)) : items)
+    .slice()
+    .sort((a, b) => compare(a, b, sort))
   const selectedItems = items.filter((item) => selectedPaths.has(item.fullPath))
   const selectionHasFolder = selectedItems.some((item) => item.type === 'folder')
 
@@ -64,7 +92,14 @@ export const FileManager = ({ initialPath, initialItems }: Props): JSX.Element =
     })
 
   const toggleAll = (checked: boolean): void =>
-    setSelectedPaths(checked ? new Set(items.map((item) => item.fullPath)) : new Set())
+    setSelectedPaths(checked ? new Set(visible.map((item) => item.fullPath)) : new Set())
+
+  const toggleSort = (key: SortKey): void =>
+    setSort((prev) =>
+      prev.key === key
+        ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' }
+        : { key, dir: 'asc' }
+    )
 
   const upload = (files: File[]): void => {
     if (files.length === 0) return
@@ -123,7 +158,11 @@ export const FileManager = ({ initialPath, initialItems }: Props): JSX.Element =
             <XIcon />
           </Button>
           <span className="text-sm font-medium">{selectedPaths.size} selected</span>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            {selectedItems.length === 1 && selectedItems[0] && (
+              <RenameDialog item={selectedItems[0]} onRenamed={() => load(path)} />
+            )}
+            <MoveDialog items={selectedItems} onMoved={() => load(path)} />
             <Button
               variant="outline"
               size="sm"
@@ -177,20 +216,33 @@ export const FileManager = ({ initialPath, initialItems }: Props): JSX.Element =
         </div>
       )}
 
+      <div className="relative sm:max-w-xs">
+        <SearchIcon className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search this folder"
+          className="pl-8"
+          data-testid="fmSearch"
+        />
+      </div>
+
       <p className="text-xs text-muted-foreground">
         Drag and drop files anywhere below to upload, or use the Upload button.
       </p>
 
-      <DropZone onFiles={upload} disabled={isUploading}>
+      <DropZone onFiles={upload} disabled={isUploading} className="min-h-80">
         <div className={cn('grid gap-4', preview && 'lg:grid-cols-[1fr_20rem]')}>
           <div className={cn(isPending && 'opacity-60 transition-opacity')}>
             <FileTable
-              items={items}
+              items={visible}
               onOpen={open}
               selectedPath={preview?.fullPath}
               selectedPaths={selectedPaths}
               onToggle={toggle}
               onToggleAll={toggleAll}
+              sort={sort}
+              onSort={toggleSort}
               onUploadClick={() => inputRef.current?.click()}
             />
           </div>
