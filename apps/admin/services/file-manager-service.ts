@@ -1,11 +1,17 @@
 import { randomUUID } from 'node:crypto'
-import { storageBucket, storageDownloadUrl } from '@/lib/storage'
+import {
+  isStorageEmulator,
+  safeObjectName,
+  storageBucket,
+  storageDownloadUrl,
+} from '@/lib/storage'
+import { UNEXPECTED } from '@/lib/errors'
 import { ActionResult } from '@/interfaces/action-result'
 import { StorageFile, StorageItem } from '@/interfaces/storage-item'
 
-const UNEXPECTED = 'Something went wrong. Please try again.'
 // Zero-byte marker so empty folders persist and stay navigable.
 const PLACEHOLDER = '.keep'
+const DOWNLOAD_TTL_MS = 15 * 60 * 1000
 
 interface FileHandle {
   name: string
@@ -78,16 +84,25 @@ export const uploadFiles = async (
 ): Promise<ActionResult> => {
   if (files.length === 0) return { ok: false, error: 'No files selected.' }
 
+  // Sanitize up front so one unusable name fails the batch rather than
+  // half-uploading it.
+  const targets: { name: string; file: File }[] = []
+  for (const file of files) {
+    const name = safeObjectName(file.name)
+    if (!name) return { ok: false, error: `“${file.name}” isn’t a valid file name.` }
+    targets.push({ name, file })
+  }
+
   try {
     const bucket = storageBucket()
     await Promise.all(
-      files.map(async (file) => {
-        const target = `${prefixOf(path)}${file.name}`
+      targets.map(async ({ name, file }) => {
+        const target = `${prefixOf(path)}${name}`
         const buffer = Buffer.from(await file.arrayBuffer())
         await bucket.file(target).save(buffer, {
           metadata: {
             contentType: file.type || 'application/octet-stream',
-            contentDisposition: `attachment; filename="${file.name}"`,
+            contentDisposition: `attachment; filename="${name}"`,
             metadata: { firebaseStorageDownloadTokens: randomUUID() },
           },
         })
@@ -104,7 +119,7 @@ export const createFolder = async (
   path: string,
   name: string
 ): Promise<ActionResult> => {
-  const clean = name.trim().replace(/\//g, '')
+  const clean = safeObjectName(name)
   if (!clean) return { ok: false, error: 'Folder name is required.' }
 
   try {
@@ -174,7 +189,7 @@ export const renameItem = async (
   item: StorageItem,
   newName: string
 ): Promise<ActionResult> => {
-  const clean = newName.trim().replace(/\//g, '')
+  const clean = safeObjectName(newName)
   if (!clean) return { ok: false, error: 'Name is required.' }
   if (clean === item.name) return { ok: true }
 
@@ -195,13 +210,27 @@ export const moveItems = async (
   return { ok: true }
 }
 
+/**
+ * Signed and expiring, so previewing a file doesn't publish it — a Firebase
+ * download token would be a permanent public link to anything an admin clicked.
+ * The emulator can't sign (no credentials there), hence the token fallback.
+ */
 export const getDownloadUrl = async (
   fullPath: string
 ): Promise<ActionResult & { url?: string }> => {
   try {
     const file = storageBucket().file(fullPath)
-    const [metadata] = await file.getMetadata()
 
+    if (!isStorageEmulator()) {
+      const [url] = await file.getSignedUrl({
+        action: 'read',
+        expires: Date.now() + DOWNLOAD_TTL_MS,
+      })
+
+      return { ok: true, url }
+    }
+
+    const [metadata] = await file.getMetadata()
     let token = (
       metadata.metadata?.firebaseStorageDownloadTokens as string | undefined
     )?.split(',')[0]
