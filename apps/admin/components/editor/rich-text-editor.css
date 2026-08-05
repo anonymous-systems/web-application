@@ -1,0 +1,10 @@
+/*
+ * CKEditor paints the editable a fixed dark grey via its own `.ck`-scoped
+ * variables, so it vanishes on the app's dark background. Force it onto the
+ * theme's foreground on a transparent background instead (both flip with `.dark`),
+ * overriding CKEditor's rule.
+ */
+.rich-text-editor .ck-editor__editable {
+  color: var(--foreground) !important;
+  background: transparent !important;
+}

@@ -25,6 +25,7 @@ import {
   TableToolbar,
 } from 'ckeditor5'
 import 'ckeditor5/ckeditor5.css'
+import './rich-text-editor.css'
 
 interface Props {
   /** Initial HTML; the editor is uncontrolled after mount and reports changes via onChange. */
@@ -44,10 +45,11 @@ export const RichTextEditor = ({
   onChange,
   dataTestId: testId,
 }: Props): JSX.Element => {
+  // `rich-text-editor` scopes the dark-mode colour fix in rich-text-editor.css.
   return (
     <div
       data-testid={testId}
-      className="[&_.ck-editor__editable]:min-h-60 [&_.ck-editor__editable]:rounded-md [&_.ck-editor__editable]:border [&_.ck-editor__editable]:border-input [&_.ck-editor__editable]:px-3 [&_.ck-editor__editable]:py-2"
+      className="rich-text-editor [&_.ck-editor__editable]:min-h-60 [&_.ck-editor__editable]:rounded-md [&_.ck-editor__editable]:border [&_.ck-editor__editable]:border-input [&_.ck-editor__editable]:px-3 [&_.ck-editor__editable]:py-2"
     >
       <CKEditor
         editor={BalloonEditor}
