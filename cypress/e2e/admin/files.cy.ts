@@ -4,9 +4,13 @@ const ADMIN_URL = Cypress.env('adminUrl')
 
 // The storage emulator implements the GCS JSON API, so fixtures can be written
 // and cleaned up directly (this bypasses Firebase Storage rules like the Admin SDK).
-const BUCKET = 'anonymous-systems-dev.appspot.com'
-const OBJECTS = `http://127.0.0.1:9199/storage/v1/b/${BUCKET}/o`
-const UPLOAD = `http://127.0.0.1:9199/upload/storage/v1/b/${BUCKET}/o`
+//
+// From the same config the app is built with, not a literal: when the two
+// disagreed, this spec seeded one bucket while the app listed another.
+const BUCKET = Cypress.env('firebaseConfig').storageBucket
+const EMULATOR = Cypress.env('firebaseStorageEmulatorHost') ?? '127.0.0.1:9199'
+const OBJECTS = `http://${EMULATOR}/storage/v1/b/${BUCKET}/o`
+const UPLOAD = `http://${EMULATOR}/upload/storage/v1/b/${BUCKET}/o`
 
 const ROOT_FOLDER = 'fm-e2e'
 const UPLOAD_NAME = 'fm-upload.txt'
@@ -76,9 +80,13 @@ describe('Admin Files section', () => {
     // Selecting a file opens the preview with a download link.
     fileRow('hello.txt').click()
     cy.get('[data-testid="filePreview"]').should('be.visible').and('contain', 'hello.txt')
+    // The origin matters: a production URL would contain the file name too, and
+    // 404 on an object that exists only in the emulator.
     cy.get('[data-testid="previewDownload"]')
       .should('have.attr', 'href')
       .and('include', 'hello.txt')
+      .and('include', EMULATOR)
+      .and('not.include', 'firebasestorage.googleapis.com')
     cy.get('[data-testid="previewCopy"]').should('exist')
   })
 
