@@ -83,7 +83,6 @@ export const listComments = async (): Promise<AdminComment[]> => {
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
-/** Permanently removes a single comment from its story or project subcollection. */
 export const deleteComment = async (
   parentType: CommentParentType,
   parentId: string,

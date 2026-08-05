@@ -30,7 +30,6 @@ interface Props {
 // uses a sentinel that maps back to '' at the component boundary.
 const NONE = '__none__'
 
-/** A labelled shadcn Select over a flat option list, with an optional "none" entry. */
 export const SelectField = ({
   id,
   label,
