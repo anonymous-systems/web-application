@@ -19,3 +19,16 @@ export const PROJECT_DEVELOPMENT_STATUSES = [
 ] as const
 export type ProjectDevelopmentStatus =
   (typeof PROJECT_DEVELOPMENT_STATUSES)[number]
+
+// Display labels for the hyphenated slugs above (CSS capitalize can't title-case
+// multi-word values). Shared by the list badge and the form select.
+export const PROJECT_DEVELOPMENT_STATUS_LABELS: Record<
+  ProjectDevelopmentStatus,
+  string
+> = {
+  planned: 'Planned',
+  'in-development': 'In development',
+  complete: 'Complete',
+  'on-hold': 'On hold',
+  cancelled: 'Cancelled',
+}
