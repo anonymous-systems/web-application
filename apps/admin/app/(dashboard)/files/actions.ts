@@ -12,10 +12,9 @@ import {
   uploadFiles as uploadFilesToStorage,
 } from '@/services/file-manager-service'
 import { AppRoutes } from '@/lib/app-routes'
+import { UNEXPECTED } from '@/lib/errors'
 import { ActionResult } from '@/interfaces/action-result'
 import { StorageItem } from '@/interfaces/storage-item'
-
-const UNEXPECTED = 'Something went wrong. Please try again.'
 
 export const listFiles = async (
   path: string

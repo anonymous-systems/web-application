@@ -6,6 +6,7 @@ import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { canManageAdminAccess } from '@/lib/admin-access'
 import { getAdminCaller } from '@/lib/admin-caller'
 import { AppRoutes } from '@/lib/app-routes'
+import { UNEXPECTED } from '@/lib/errors'
 import { ActionResult } from '@/interfaces/action-result'
 
 /**
@@ -34,6 +35,6 @@ export const setAdminAccess = async (
     return { ok: true }
   } catch (error) {
     console.error('Failed to set admin access', error)
-    return { ok: false, error: 'Something went wrong. Please try again.' }
+    return { ok: false, error: UNEXPECTED }
   }
 }
