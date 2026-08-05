@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import Link from 'next/link'
 import { MessageSquareIcon } from 'lucide-react'
 import {
   Empty,
@@ -36,10 +37,14 @@ const authorInitials = (comment: AdminComment): string => {
   return source ? initialsFrom(source) : '?'
 }
 
-// Falls back to the story id when the parent story has no title (or no longer
+// Falls back to the parent id when the story/project has no title (or no longer
 // exists), so a comment is always traceable to where it was left.
-const storyLabel = (comment: AdminComment): string =>
-  comment.storyTitle ?? comment.storyId
+const parentLabel = (comment: AdminComment): string =>
+  comment.parentTitle ?? comment.parentId
+
+// Links to the parent's editor so a moderator can jump to the source.
+const parentHref = (comment: AdminComment): string =>
+  `/${comment.parentType === 'project' ? 'projects' : 'stories'}/${comment.parentId}/edit`
 
 export default async function Page(): Promise<JSX.Element> {
   const comments = await listComments()
@@ -61,7 +66,7 @@ export default async function Page(): Promise<JSX.Element> {
           <TableHeader>
             <TableRow>
               <TableHead>Comment</TableHead>
-              <TableHead className="hidden md:table-cell">Story</TableHead>
+              <TableHead className="hidden md:table-cell">Source</TableHead>
               <TableHead className="hidden md:table-cell">Posted</TableHead>
               <TableHead className="w-12" />
             </TableRow>
@@ -77,8 +82,8 @@ export default async function Page(): Promise<JSX.Element> {
                       </EmptyMedia>
                       <EmptyTitle>No comments yet</EmptyTitle>
                       <EmptyDescription>
-                        Comments people leave on stories show up here for
-                        moderation.
+                        Comments people leave on stories and projects show up
+                        here for moderation.
                       </EmptyDescription>
                     </EmptyHeader>
                   </Empty>
@@ -92,9 +97,10 @@ export default async function Page(): Promise<JSX.Element> {
 
               return (
                 <TableRow
-                  key={`${comment.storyId}/${comment.id}`}
+                  key={`${comment.parentType}-${comment.parentId}/${comment.id}`}
                   data-testid="commentRow"
                   data-comment-id={comment.id}
+                  data-parent-type={comment.parentType}
                 >
                   <TableCell>
                     <div className="flex items-start gap-3">
@@ -114,15 +120,20 @@ export default async function Page(): Promise<JSX.Element> {
                           {comment.content}
                         </p>
                         <span className="text-xs text-muted-foreground md:hidden">
-                          {storyLabel(comment)} · {posted}
+                          <span className="capitalize">{comment.parentType}</span>{' '}
+                          · {parentLabel(comment)} · {posted}
                         </span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground">
-                    <span className="block max-w-[16rem] truncate">
-                      {storyLabel(comment)}
-                    </span>
+                    <Link
+                      href={parentHref(comment)}
+                      className="block max-w-[16rem] truncate hover:underline"
+                    >
+                      {parentLabel(comment)}
+                    </Link>
+                    <span className="text-xs capitalize">{comment.parentType}</span>
                   </TableCell>
                   <TableCell className="hidden whitespace-nowrap md:table-cell text-muted-foreground">
                     {posted}
@@ -142,7 +153,8 @@ export default async function Page(): Promise<JSX.Element> {
                         successMessage="Comment deleted."
                         onConfirm={deleteComment.bind(
                           null,
-                          comment.storyId,
+                          comment.parentType,
+                          comment.parentId,
                           comment.id
                         )}
                       />

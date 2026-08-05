@@ -16,8 +16,13 @@ const AUTHOR = 'Ada Comment'
 const STORY_TITLE = 'E2E Story'
 const CONTENT = 'This is an E2E moderation comment.'
 
-const commentRow = () =>
-  cy.get(`[data-testid="commentRow"][data-comment-id="${COMMENT_ID}"]`)
+const PROJECT_ID = 'e2eCommentProject'
+const PROJECT_COMMENT_ID = 'e2eProjectComment'
+const PROJECT_TITLE = 'E2E Project'
+const PROJECT_CONTENT = 'This is an E2E project comment.'
+
+const commentRow = (id: string = COMMENT_ID) =>
+  cy.get(`[data-testid="commentRow"][data-comment-id="${id}"]`)
 
 const patchDoc = (path: string, fields: Record<string, unknown>) =>
   cy.request({ method: 'PATCH', url: `${DOCS}/${path}`, headers: OWNER, body: { fields } })
@@ -30,18 +35,32 @@ const deleteDoc = (path: string) =>
     failOnStatusCode: false,
   })
 
-const seedComment = (): void => {
+const authorRef = `projects/${PROJECT}/databases/(default)/documents/users/${AUTHOR_ID}`
+
+const seedAuthor = (): void => {
   patchDoc(`users/${AUTHOR_ID}`, {
     firstName: { stringValue: 'Ada' },
     lastName: { stringValue: 'Comment' },
     username: { stringValue: 'ada' },
   })
+}
+
+const seedComment = (): void => {
+  seedAuthor()
   patchDoc(`stories/${STORY_ID}`, { title: { stringValue: STORY_TITLE } })
   patchDoc(`stories/${STORY_ID}/comments/${COMMENT_ID}`, {
     content: { stringValue: CONTENT },
-    user: {
-      referenceValue: `projects/${PROJECT}/databases/(default)/documents/users/${AUTHOR_ID}`,
-    },
+    user: { referenceValue: authorRef },
+    createdAt: { timestampValue: new Date().toISOString() },
+  })
+}
+
+const seedProjectComment = (): void => {
+  seedAuthor()
+  patchDoc(`projects/${PROJECT_ID}`, { title: { stringValue: PROJECT_TITLE } })
+  patchDoc(`projects/${PROJECT_ID}/comments/${PROJECT_COMMENT_ID}`, {
+    content: { stringValue: PROJECT_CONTENT },
+    user: { referenceValue: authorRef },
     createdAt: { timestampValue: new Date().toISOString() },
   })
 }
@@ -49,6 +68,8 @@ const seedComment = (): void => {
 const removeFixtures = (): void => {
   deleteDoc(`stories/${STORY_ID}/comments/${COMMENT_ID}`)
   deleteDoc(`stories/${STORY_ID}`)
+  deleteDoc(`projects/${PROJECT_ID}/comments/${PROJECT_COMMENT_ID}`)
+  deleteDoc(`projects/${PROJECT_ID}`)
   deleteDoc(`users/${AUTHOR_ID}`)
 }
 
@@ -71,12 +92,13 @@ describe('Admin Comments section', () => {
       .and('contain', 'No comments yet')
   })
 
-  it('lists a comment and deletes it', () => {
+  it('lists a story comment and deletes it', () => {
     seedComment()
     cy.visit(`${ADMIN_URL}/comments`)
 
     commentRow()
-      .should('contain', CONTENT)
+      .should('have.attr', 'data-parent-type', 'story')
+      .and('contain', CONTENT)
       .and('contain', AUTHOR)
       .and('contain', STORY_TITLE)
 
@@ -85,6 +107,26 @@ describe('Admin Comments section', () => {
     cy.get('[data-testid="confirmDeleteComment"]').click()
 
     commentRow().should('not.exist')
+    cy.get('[data-testid="commentsEmpty"]').should('be.visible')
+  })
+
+  it('lists a project comment and deletes it', () => {
+    seedProjectComment()
+    cy.visit(`${ADMIN_URL}/comments`)
+
+    commentRow(PROJECT_COMMENT_ID)
+      .should('have.attr', 'data-parent-type', 'project')
+      .and('contain', PROJECT_CONTENT)
+      .and('contain', AUTHOR)
+      .and('contain', PROJECT_TITLE)
+
+    // Deleting routes to the projects subcollection, not stories.
+    commentRow(PROJECT_COMMENT_ID)
+      .find('[data-testid="deleteCommentTrigger"]')
+      .click()
+    cy.get('[data-testid="confirmDeleteComment"]').click()
+
+    commentRow(PROJECT_COMMENT_ID).should('not.exist')
     cy.get('[data-testid="commentsEmpty"]').should('be.visible')
   })
 })

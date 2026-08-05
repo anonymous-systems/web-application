@@ -2,40 +2,51 @@ import { DocumentReference, Firestore, getFirestore } from 'firebase-admin/fires
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { toIsoString } from '@/lib/firestore'
 import { resolveAuthorName } from '@/lib/user-display'
-import { AdminComment } from '@/interfaces/comment'
+import { AdminComment, CommentParentType } from '@/interfaces/comment'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
 
 const UNEXPECTED = 'Something went wrong. Please try again.'
 
+const COLLECTION_FOR: Record<CommentParentType, string> = {
+  story: 'stories',
+  project: 'projects',
+}
+
 const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 
+// A comment's parent is a story or project; its grandparent is the top-level
+// collection the comment was left under.
+const parentTypeOf = (parent: DocumentReference | null): CommentParentType =>
+  parent?.parent.id === COLLECTION_FOR.project ? 'project' : 'story'
+
 /**
- * Lists every comment across all stories for the moderation view. Server-only
- * (Admin SDK), which bypasses the collection-group read rules. Authors and
- * story titles are each resolved in a single batched read, and comments are
- * sorted newest-first in memory so no collection-group ordering index is
- * required.
+ * Lists every comment across all stories and projects for the moderation view.
+ * Server-only (Admin SDK), which bypasses the collection-group read rules.
+ * Authors and parent titles are each resolved in a single batched read, and
+ * comments are sorted newest-first in memory so no collection-group ordering
+ * index is required.
  */
 export const listComments = async (): Promise<AdminComment[]> => {
   const firestore = db()
   const snapshot = await firestore.collectionGroup('comments').get()
 
-  // Collect the unique author and story references so each is read only once.
+  // Collect the unique author and parent references (keyed by full path, since a
+  // story and project could share an id) so each is read only once.
   const userRefs = new Map<string, DocumentReference>()
-  const storyRefs = new Map<string, DocumentReference>()
+  const parentRefs = new Map<string, DocumentReference>()
 
   for (const doc of snapshot.docs) {
     const userRef = doc.data().user as DocumentReference | undefined
     if (userRef?.id) userRefs.set(userRef.id, userRef)
 
-    const storyRef = doc.ref.parent.parent
-    if (storyRef?.id) storyRefs.set(storyRef.id, storyRef)
+    const parentRef = doc.ref.parent.parent
+    if (parentRef) parentRefs.set(parentRef.path, parentRef)
   }
 
-  const [userSnaps, storySnaps] = await Promise.all([
+  const [userSnaps, parentSnaps] = await Promise.all([
     userRefs.size ? firestore.getAll(...userRefs.values()) : Promise.resolve([]),
-    storyRefs.size ? firestore.getAll(...storyRefs.values()) : Promise.resolve([]),
+    parentRefs.size ? firestore.getAll(...parentRefs.values()) : Promise.resolve([]),
   ])
 
   const profiles = new Map<string, UserProfileDoc>()
@@ -43,23 +54,24 @@ export const listComments = async (): Promise<AdminComment[]> => {
     if (snap.exists) profiles.set(snap.id, snap.data() as UserProfileDoc)
   })
 
-  const storyTitles = new Map<string, string>()
-  storySnaps.forEach((snap) => {
+  const parentTitles = new Map<string, string>()
+  parentSnaps.forEach((snap) => {
     const title = snap.data()?.title as string | undefined
-    if (title) storyTitles.set(snap.id, title)
+    if (title) parentTitles.set(snap.ref.path, title)
   })
 
   return snapshot.docs
     .map((doc): AdminComment => {
       const data = doc.data()
       const userRef = data.user as DocumentReference | undefined
-      const storyId = doc.ref.parent.parent?.id ?? ''
+      const parentRef = doc.ref.parent.parent
       const profile = userRef?.id ? profiles.get(userRef.id) : undefined
 
       return {
         id: doc.id,
-        storyId,
-        storyTitle: storyTitles.get(storyId) ?? null,
+        parentType: parentTypeOf(parentRef),
+        parentId: parentRef?.id ?? '',
+        parentTitle: parentRef ? (parentTitles.get(parentRef.path) ?? null) : null,
         content: (data.content as string | undefined) ?? '',
         authorUid: userRef?.id ?? null,
         authorName: resolveAuthorName(profile),
@@ -71,15 +83,16 @@ export const listComments = async (): Promise<AdminComment[]> => {
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
-/** Permanently removes a single comment from its story subcollection. */
+/** Permanently removes a single comment from its story or project subcollection. */
 export const deleteComment = async (
-  storyId: string,
+  parentType: CommentParentType,
+  parentId: string,
   id: string
 ): Promise<ActionResult> => {
   try {
     await db()
-      .collection('stories')
-      .doc(storyId)
+      .collection(COLLECTION_FOR[parentType])
+      .doc(parentId)
       .collection('comments')
       .doc(id)
       .delete()
