@@ -124,7 +124,8 @@ describe('Admin Stories section', () => {
     cy.get('[data-testid="newStoryButton"]').click()
     cy.url().should('include', '/stories/new')
     cy.get('[data-testid="storyTitleInput"]').type(CREATE_TITLE)
-    cy.get('[data-testid="storyTypeSelect"]').select('blog')
+    cy.get('[data-testid="storyTypeSelect"]').click()
+    cy.get('[data-value="blog"]').click()
     // CKEditor loads client-side; wait for the editable, then write into it.
     cy.get('[data-testid="storyContentEditor"] .ck-editor__editable', {
       timeout: 20000,

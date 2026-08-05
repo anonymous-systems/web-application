@@ -21,7 +21,8 @@ import {
 } from '@workspace/ui/models/story-constants'
 import { StoryInput } from '@workspace/ui/models/schemas/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
-import { SELECT_CONTROL_CLASS, titleCase } from '@/lib/form'
+import { titleCase } from '@/lib/text'
+import { SelectField } from '@/components/form/select-field'
 import {
   createStory,
   updateStory,
@@ -175,65 +176,46 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="story-type">Type</Label>
-          <select
-            id="story-type"
-            className={SELECT_CONTROL_CLASS}
-            value={values.type}
-            onChange={(event) =>
-              setField('type', event.target.value as StoryType)
-            }
-            data-testid="storyTypeSelect"
-          >
-            {STORY_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {titleCase(type)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          id="story-type"
+          label="Type"
+          value={values.type}
+          onChange={(value) => setField('type', value as StoryType)}
+          options={STORY_TYPES.map((type) => ({
+            value: type,
+            label: titleCase(type),
+          }))}
+          testId="storyTypeSelect"
+        />
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="story-visibility">Visibility</Label>
-          <select
-            id="story-visibility"
-            className={SELECT_CONTROL_CLASS}
-            value={values.visibility}
-            onChange={(event) =>
-              setField('visibility', event.target.value as StoryVisibility)
-            }
-            data-testid="storyVisibilitySelect"
-          >
-            {STORY_VISIBILITIES.map((visibility) => (
-              <option key={visibility} value={visibility}>
-                {titleCase(visibility)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          id="story-visibility"
+          label="Visibility"
+          value={values.visibility}
+          onChange={(value) => setField('visibility', value as StoryVisibility)}
+          options={STORY_VISIBILITIES.map((visibility) => ({
+            value: visibility,
+            label: titleCase(visibility),
+          }))}
+          testId="storyVisibilitySelect"
+        />
       </div>
 
       {values.type === 'problem' && (
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="story-problem-status">Problem status</Label>
-          <select
-            id="story-problem-status"
-            className={SELECT_CONTROL_CLASS}
-            value={values.problemStatus}
-            onChange={(event) =>
-              setField('problemStatus', event.target.value as '' | ProblemStatus)
-            }
-            data-testid="storyProblemStatusSelect"
-          >
-            <option value="">Not set</option>
-            {PROBLEM_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {titleCase(status)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          id="story-problem-status"
+          label="Problem status"
+          value={values.problemStatus}
+          onChange={(value) =>
+            setField('problemStatus', value as '' | ProblemStatus)
+          }
+          options={PROBLEM_STATUSES.map((status) => ({
+            value: status,
+            label: titleCase(status),
+          }))}
+          noneLabel="Not set"
+          testId="storyProblemStatusSelect"
+        />
       )}
 
       <div className="flex flex-col gap-2">
@@ -257,23 +239,18 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="story-category">Category</Label>
-        <select
-          id="story-category"
-          className={SELECT_CONTROL_CLASS}
-          value={values.category}
-          onChange={(event) => setField('category', event.target.value)}
-          data-testid="storyCategorySelect"
-        >
-          <option value="">No category</option>
-          {categories.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SelectField
+        id="story-category"
+        label="Category"
+        value={values.category}
+        onChange={(value) => setField('category', value)}
+        options={categories.map((category) => ({
+          value: category.slug,
+          label: category.name,
+        }))}
+        noneLabel="No category"
+        testId="storyCategorySelect"
+      />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="story-cover">Cover image</Label>

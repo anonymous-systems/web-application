@@ -144,7 +144,8 @@ describe('Admin Portfolio section', () => {
     cy.get('[data-testid="newProjectButton"]').click()
     cy.url().should('include', '/projects/new')
     cy.get('[data-testid="projectTitleInput"]').type(CREATE_TITLE)
-    cy.get('[data-testid="projectDevStatusSelect"]').select('in-development')
+    cy.get('[data-testid="projectDevStatusSelect"]').click()
+    cy.get('[data-value="in-development"]').click()
     // CKEditor loads client-side; wait for the editable, then write into it.
     cy.get('[data-testid="projectContentEditor"] .ck-editor__editable', {
       timeout: 20000,

@@ -20,7 +20,8 @@ import {
 } from '@workspace/ui/models/project-constants'
 import { ProjectInput } from '@workspace/ui/models/schemas/project'
 import { Project } from '@workspace/ui/models/interfaces/project'
-import { SELECT_CONTROL_CLASS, titleCase } from '@/lib/form'
+import { titleCase } from '@/lib/text'
+import { SelectField } from '@/components/form/select-field'
 import {
   createProject,
   updateProject,
@@ -233,47 +234,32 @@ export const ProjectForm = ({
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="project-visibility">Visibility</Label>
-          <select
-            id="project-visibility"
-            className={SELECT_CONTROL_CLASS}
-            value={values.visibility}
-            onChange={(event) =>
-              setField('visibility', event.target.value as ProjectVisibility)
-            }
-            data-testid="projectVisibilitySelect"
-          >
-            {PROJECT_VISIBILITIES.map((visibility) => (
-              <option key={visibility} value={visibility}>
-                {titleCase(visibility)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          id="project-visibility"
+          label="Visibility"
+          value={values.visibility}
+          onChange={(value) => setField('visibility', value as ProjectVisibility)}
+          options={PROJECT_VISIBILITIES.map((visibility) => ({
+            value: visibility,
+            label: titleCase(visibility),
+          }))}
+          testId="projectVisibilitySelect"
+        />
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="project-development-status">Development status</Label>
-          <select
-            id="project-development-status"
-            className={SELECT_CONTROL_CLASS}
-            value={values.developmentStatus}
-            onChange={(event) =>
-              setField(
-                'developmentStatus',
-                event.target.value as '' | ProjectDevelopmentStatus
-            )
-            }
-            data-testid="projectDevStatusSelect"
-          >
-            <option value="">Not set</option>
-            {PROJECT_DEVELOPMENT_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {PROJECT_DEVELOPMENT_STATUS_LABELS[status]}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          id="project-development-status"
+          label="Development status"
+          value={values.developmentStatus}
+          onChange={(value) =>
+            setField('developmentStatus', value as '' | ProjectDevelopmentStatus)
+          }
+          options={PROJECT_DEVELOPMENT_STATUSES.map((status) => ({
+            value: status,
+            label: PROJECT_DEVELOPMENT_STATUS_LABELS[status],
+          }))}
+          noneLabel="Not set"
+          testId="projectDevStatusSelect"
+        />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -297,23 +283,18 @@ export const ProjectForm = ({
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="project-category">Category</Label>
-        <select
-          id="project-category"
-          className={SELECT_CONTROL_CLASS}
-          value={values.category}
-          onChange={(event) => setField('category', event.target.value)}
-          data-testid="projectCategorySelect"
-        >
-          <option value="">No category</option>
-          {categories.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SelectField
+        id="project-category"
+        label="Category"
+        value={values.category}
+        onChange={(value) => setField('category', value)}
+        options={categories.map((category) => ({
+          value: category.slug,
+          label: category.name,
+        }))}
+        noneLabel="No category"
+        testId="projectCategorySelect"
+      />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="project-cover">Cover image</Label>
