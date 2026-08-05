@@ -18,11 +18,13 @@ Production environment setup for Firebase:
 ## Security Rules
 - Restrict everything not explicitly allowed (default deny).
 - `users`: a user reads/writes their own document; admins can read all.
-- `categories` / `tags`: public read; create/update by creators, delete by admins.
+- `categories` / `tags` / `technologies`: public read; create/update by creators, delete by admins.
 - `stories` (+ `comments` subcollection): role-based (`owner`/`writer`/`reader`), plus public read
   for published public stories and full read for admins; comments require a public story with
   comments enabled.
-- `projects`: public read; admin write.
+- `projects` (+ `comments` subcollection): role-based (`owner`/`writer`/`reader`), plus public read
+  for **published + public** projects and full read for admins; comments require a public project with
+  comments enabled.
 - The admin app uses the Firebase **Admin SDK** server-side, which bypasses these rules.
 
 ## Notes
