@@ -88,3 +88,19 @@ and Hosting: Firebase App Hosting
   mirrors Stories' role-based access, but public read is gated on **`published` AND `public`** (stricter than
   Stories, which gates on visibility only) so drafts/archived stay private; project comments mirror story
   comments.
+## Storage access: signed URLs for the file manager, download tokens for covers
+- **Method**: Two deliberately different link types. The **file manager** (`getDownloadUrl`) issues a
+  **signed URL with a 15-minute expiry**; **cover images** (`uploadCover`) keep a permanent Firebase
+  **download token** URL. `storage.rules` stays deny-all (except `avatars/`) because the admin app reaches
+  storage only through the Admin SDK, which bypasses rules. Client-supplied filenames are reduced to a
+  sanitized basename (`safeObjectName`) before reaching an object path or a `Content-Disposition` header;
+  cover paths keep only a sanitized extension (`extensionOf`) on an otherwise random name.
+- **Date**: 2026-08-05
+- **Reason**: A download token is a permanent, unauthenticated public link, so minting one to preview a file
+  meant opening the preview pane published that object forever — wrong for a manager holding arbitrary
+  uploads. Covers are the opposite case: the public frontend renders them, and a stable URL is what belongs
+  in a Firestore `coverImage` field, so tokens stay there.
+- **Caveat**: The emulator can't sign (no credentials there), so local and CI runs fall back to the token
+  URL. That fallback keys on the emulator host, read from **either** `FIREBASE_STORAGE_EMULATOR_HOST` or
+  `STORAGE_EMULATOR_HOST` — `emulators:exec` exports both, but a `next dev` outside that wrapper has only
+  what `.env.local` sets.
