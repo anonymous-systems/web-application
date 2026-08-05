@@ -84,3 +84,7 @@ and Hosting: Firebase App Hosting
   like Stories (`scripts/migrate-projects.ts`): `name→title`, `description→excerpt`, `images[0]→coverImage`,
   `link→livePreviewLink`, `github→sourceCodeLink`, `order` dropped, defaulting to published/public and
   adding timestamps + owner. Validate on a copy of prod first.
+- **Security rules** (`firestore.rules`): `technologies` mirrors Tags (public read, creator write). `projects`
+  mirrors Stories' role-based access, but public read is gated on **`published` AND `public`** (stricter than
+  Stories, which gates on visibility only) so drafts/archived stay private; project comments mirror story
+  comments.
