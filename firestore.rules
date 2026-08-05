@@ -58,6 +58,13 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    /* technologies collection */
+    match /technologies/{technologyID} {
+      allow read;
+      allow create, update: if isCreator();
+      allow delete: if isAdmin();
+    }
+
     /* comments collection group */
     match /{path=**}/comments/{commentID} {
       allow read: if isAdmin();
@@ -71,8 +78,31 @@ service cloud.firestore {
     
     /* projects collection */
     match /projects/{projectID} {
-    allow read;
-    allow write: if isAdmin();
+      /* function to get role of signed in user */
+      function getRole(rsc) { return rsc.data.roles[request.auth.uid]; }
+
+      /* function to tell if project has provided roles */
+      function isOneOfRoles(rsc, array) { return isSignedIn() && (getRole(rsc) in array); }
+
+      /* function to tell if project is publicly visible (published + public) */
+      function publicProject(rsc) { return rsc.data.visibility == 'public' && rsc.data.status == 'published'; }
+
+      /* function to validate new project owner */
+      function isValidNewProject() { return isOneOfRoles(request.resource, ["owner"]) && request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid); }
+
+      /* function to tell if project comments are enabled */
+      function commentsEnabled(rsc) { return rsc.data.allowComments; }
+
+      allow create: if isCreator() && isValidNewProject();
+      allow update: if isOneOfRoles(resource, ['owner', 'writer']);
+      allow delete: if isOneOfRoles(resource, ['owner']);
+      allow read: if isOneOfRoles(resource, ['owner', 'writer', 'reader']) || publicProject(resource) || isAdmin() || resource == null;
+
+      /* project comments collection */
+      match /comments/{commentID} {
+        allow create, update: if request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid) && publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID)));
+        allow read: if publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID))) || isOneOfRoles(get(/databases/$(database)/documents/projects/$(projectID)), ["owner", "writer", "reader"]);
+      }
     }
   }
 }
