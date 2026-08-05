@@ -21,6 +21,7 @@ import {
 } from '@workspace/ui/models/story-constants'
 import { StoryInput } from '@workspace/ui/models/schemas/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
+import { SELECT_CONTROL_CLASS, titleCase } from '@/lib/form'
 import {
   createStory,
   updateStory,
@@ -28,8 +29,11 @@ import {
 } from '@/app/(dashboard)/stories/actions'
 
 // CKEditor touches `window`, so it's loaded client-only.
-const StoryEditor = dynamic(
-  () => import('./story-editor').then((module) => module.StoryEditor),
+const RichTextEditor = dynamic(
+  () =>
+    import('../editor/rich-text-editor').then(
+      (module) => module.RichTextEditor
+    ),
   {
     ssr: false,
     loading: () => (
@@ -63,14 +67,6 @@ interface FormValues {
   featured: boolean
   problemStatus: '' | ProblemStatus
 }
-
-// Native <select> styled to match the shared Input; the OS picker it triggers is
-// the friendliest control on touch devices.
-const CONTROL =
-  'border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-xs outline-none md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50'
-
-const titleCase = (value: string): string =>
-  value.charAt(0).toUpperCase() + value.slice(1)
 
 export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
   const router = useRouter()
@@ -183,7 +179,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
           <Label htmlFor="story-type">Type</Label>
           <select
             id="story-type"
-            className={CONTROL}
+            className={SELECT_CONTROL_CLASS}
             value={values.type}
             onChange={(event) =>
               setField('type', event.target.value as StoryType)
@@ -202,7 +198,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
           <Label htmlFor="story-visibility">Visibility</Label>
           <select
             id="story-visibility"
-            className={CONTROL}
+            className={SELECT_CONTROL_CLASS}
             value={values.visibility}
             onChange={(event) =>
               setField('visibility', event.target.value as StoryVisibility)
@@ -223,7 +219,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
           <Label htmlFor="story-problem-status">Problem status</Label>
           <select
             id="story-problem-status"
-            className={CONTROL}
+            className={SELECT_CONTROL_CLASS}
             value={values.problemStatus}
             onChange={(event) =>
               setField('problemStatus', event.target.value as '' | ProblemStatus)
@@ -254,9 +250,10 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
 
       <div className="flex flex-col gap-2">
         <Label>Content</Label>
-        <StoryEditor
+        <RichTextEditor
           initialValue={story?.content ?? ''}
           onChange={(html) => setField('content', html)}
+          dataTestId="storyContentEditor"
         />
       </div>
 
@@ -264,7 +261,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         <Label htmlFor="story-category">Category</Label>
         <select
           id="story-category"
-          className={CONTROL}
+          className={SELECT_CONTROL_CLASS}
           value={values.category}
           onChange={(event) => setField('category', event.target.value)}
           data-testid="storyCategorySelect"

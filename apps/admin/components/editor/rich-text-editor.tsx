@@ -30,18 +30,23 @@ interface Props {
   /** Initial HTML; the editor is uncontrolled after mount and reports changes via onChange. */
   initialValue: string
   onChange: (html: string) => void
+  dataTestId?: string
 }
 
 /**
- * Balloon-block CKEditor 5 for story content, matching the editor style from the
+ * Balloon-block CKEditor 5 for rich content, matching the editor style from the
  * previous app: an inline balloon toolbar on selection plus the block toolbar on
  * the left margin. Loaded client-only (next/dynamic ssr:false in the form)
  * because CKEditor needs `window`. Emits HTML, which the `content` field stores.
  */
-export const StoryEditor = ({ initialValue, onChange }: Props): JSX.Element => {
+export const RichTextEditor = ({
+  initialValue,
+  onChange,
+  dataTestId: testId,
+}: Props): JSX.Element => {
   return (
     <div
-      data-testid="storyContentEditor"
+      data-testid={testId}
       className="[&_.ck-editor__editable]:min-h-60 [&_.ck-editor__editable]:rounded-md [&_.ck-editor__editable]:border [&_.ck-editor__editable]:border-input [&_.ck-editor__editable]:px-3 [&_.ck-editor__editable]:py-2"
     >
       <CKEditor
