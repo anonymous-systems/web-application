@@ -1,5 +1,4 @@
-import { Firestore, getFirestore } from 'firebase-admin/firestore'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { db } from '@/lib/firestore'
 
 export interface OverviewCounts {
   stories: number
@@ -9,8 +8,6 @@ export interface OverviewCounts {
   tags: number
   technologies: number
 }
-
-const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 
 // Server-only (Admin SDK). Uses count() aggregation so the dashboard reads a
 // single number per collection instead of pulling every document.

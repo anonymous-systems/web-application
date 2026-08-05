@@ -3,43 +3,19 @@ import {
   DocumentReference,
   DocumentSnapshot,
   FieldValue,
-  getFirestore,
   Timestamp,
-  Firestore
 } from 'firebase-admin/firestore'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
-import { toIsoString } from '@/lib/firestore'
+import { db, resolveProfiles, toIsoString } from '@/lib/firestore'
+import { availableSlug } from '@/lib/available-slug'
+import { UNEXPECTED } from '@/lib/errors'
 import { resolveAuthorName } from '@/lib/user-display'
 import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
 import { ProjectWriteFields } from '@/interfaces/project'
-import { slugify } from '@workspace/ui/lib/slug'
 import { Project } from '@workspace/ui/models/interfaces/project'
 import { ProjectInput, projectInputSchema } from '@workspace/ui/models/schemas/project'
 
-const UNEXPECTED = 'Something went wrong. Please try again.'
-
-const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 const projects = (): CollectionReference => db().collection('projects')
-
-const resolveProfiles = async (
-  docs: DocumentSnapshot[]
-): Promise<Map<string, UserProfileDoc>> => {
-  const refs = new Map<string, DocumentReference>()
-  for (const doc of docs) {
-    const userRef = doc.data()?.user as DocumentReference | undefined
-    if (userRef?.id) refs.set(userRef.id, userRef)
-  }
-
-  const profiles = new Map<string, UserProfileDoc>()
-  if (refs.size === 0) return profiles
-
-  const snaps = await db().getAll(...refs.values())
-  snaps.forEach((snap) => {
-    if (snap.exists) profiles.set(snap.id, snap.data() as UserProfileDoc)
-  })
-  return profiles
-}
 
 // Every field is read defensively so legacy/partial documents never throw.
 const toProject = (
@@ -95,11 +71,13 @@ export const getProject = async (id: string): Promise<Project | null> => {
   return toProject(doc, profiles)
 }
 
-// `slug` comes from the title; `user`, `roles`, and timestamps are owned by
-// create/update, not the caller.
-const writableFields = (input: ProjectInput): ProjectWriteFields => ({
+// `user`, `roles`, and timestamps are owned by create/update, not the caller.
+const writableFields = (
+  input: ProjectInput,
+  slug: string
+): ProjectWriteFields => ({
   title: input.title.trim(),
-  slug: slugify(input.title),
+  slug,
   status: input.status,
   visibility: input.visibility,
   excerpt: input.excerpt?.trim() || null,
@@ -129,7 +107,10 @@ export const createProject = async (
   try {
     const now = FieldValue.serverTimestamp()
     const ref = await projects().add({
-      ...writableFields(parsed.data),
+      ...writableFields(
+        parsed.data,
+        await availableSlug(projects(), parsed.data.title)
+      ),
       user: db().doc(`users/${ownerUid}`),
       roles: { [ownerUid]: 'owner' },
       createdAt: now,
@@ -165,7 +146,10 @@ export const updateProject = async (
         : existingPublishedAt
 
     await ref.update({
-      ...writableFields(parsed.data),
+      ...writableFields(
+        parsed.data,
+        await availableSlug(projects(), parsed.data.title, id)
+      ),
       updatedAt: FieldValue.serverTimestamp(),
       publishedAt,
     })

@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto'
-import { storageBucket, storageDownloadUrl } from '@/lib/storage'
+import { extensionOf, storageBucket, storageDownloadUrl } from '@/lib/storage'
+import { UNEXPECTED } from '@/lib/errors'
 import { ActionResult } from '@/interfaces/action-result'
 
 const MAX_BYTES = 5 * 1024 * 1024
-const UNEXPECTED = 'Something went wrong. Please try again.'
 
 /**
  * Uploads a cover image to Firebase Storage (Admin SDK) and returns its download
@@ -25,9 +25,7 @@ export const uploadCover = async (
 
   try {
     const token = randomUUID()
-    const dot = file.name.lastIndexOf('.')
-    const extension = dot >= 0 ? file.name.slice(dot) : ''
-    const path = `${folder}/${randomUUID()}${extension}`
+    const path = `${folder}/${randomUUID()}${extensionOf(file.name)}`
     const buffer = Buffer.from(await file.arrayBuffer())
 
     await storageBucket()

@@ -1,6 +1,6 @@
-import { CollectionReference, FieldValue, getFirestore } from 'firebase-admin/firestore'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
-import { toIsoString } from '@/lib/firestore'
+import { CollectionReference, FieldValue } from 'firebase-admin/firestore'
+import { db, toIsoString } from '@/lib/firestore'
+import { UNEXPECTED } from '@/lib/errors'
 import { slugify } from '@workspace/ui/lib/slug'
 import { validateTaxonomyInput } from '@/lib/taxonomy'
 import { TaxonomyCollection, TaxonomyTerm } from '@/interfaces/taxonomy'
@@ -12,10 +12,8 @@ const SINGULAR: Record<TaxonomyCollection, string> = {
   technologies: 'technology',
 }
 
-const UNEXPECTED = 'Something went wrong. Please try again.'
-
 const terms = (collection: TaxonomyCollection): CollectionReference =>
-  getFirestore(getFirebaseAdminApp()).collection(collection)
+  db().collection(collection)
 
 /** Slugs identify a term publicly, so they must stay unique within a collection. */
 const isSlugTaken = async (

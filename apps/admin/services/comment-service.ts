@@ -1,19 +1,14 @@
-import { DocumentReference, Firestore, getFirestore } from 'firebase-admin/firestore'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
-import { toIsoString } from '@/lib/firestore'
+import { DocumentReference } from 'firebase-admin/firestore'
+import { db, toIsoString, toProfileMap } from '@/lib/firestore'
+import { UNEXPECTED } from '@/lib/errors'
 import { resolveAuthorName } from '@/lib/user-display'
 import { AdminComment, CommentParentType } from '@/interfaces/comment'
-import { UserProfileDoc } from '@/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
-
-const UNEXPECTED = 'Something went wrong. Please try again.'
 
 const COLLECTION_FOR: Record<CommentParentType, string> = {
   story: 'stories',
   project: 'projects',
 }
-
-const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 
 // A comment's parent is a story or project; its grandparent is the top-level
 // collection the comment was left under.
@@ -49,10 +44,7 @@ export const listComments = async (): Promise<AdminComment[]> => {
     parentRefs.size ? firestore.getAll(...parentRefs.values()) : Promise.resolve([]),
   ])
 
-  const profiles = new Map<string, UserProfileDoc>()
-  userSnaps.forEach((snap) => {
-    if (snap.exists) profiles.set(snap.id, snap.data() as UserProfileDoc)
-  })
+  const profiles = toProfileMap(userSnaps)
 
   const parentTitles = new Map<string, string>()
   parentSnaps.forEach((snap) => {
