@@ -15,7 +15,7 @@
         "{projectRoot}/.next/**",
         "!{projectRoot}/.next/cache/**"
       ],
-      "cache": true
+      "cache": false
     },
     "lint": {
       "dependsOn": [
