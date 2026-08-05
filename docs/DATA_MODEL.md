@@ -46,15 +46,38 @@ The app's primary content type, authored in the admin app.
 - `user`: _DocumentReference_ → `users/{uid}` (author)
 - `createdAt`, `updatedAt`: _Timestamp_
 
-### Categories — `categories/{categoryId}` and Tags — `tags/{tagId}`
-Shared taxonomy shape, managed in the admin app:
+### Categories — `categories/{categoryId}`, Tags — `tags/{tagId}`, Technologies — `technologies/{technologyId}`
+Shared taxonomy shape, managed in the admin app. Categories/tags label stories and
+projects; technologies are a project's tech stack (kept separate from tags so the
+showcase can render them distinctly and they can gain an `icon`/`url` later).
 - `name`: _string_
 - `slug`: _string_ — unique within the collection
 - `description`: _string_ or _null_
 - `createdAt`, `updatedAt`: _Timestamp_
 
 ### Projects — `projects/{projectId}`
-Portfolio entries (admin-managed). Shape TBD as the Portfolio section is built.
+Portfolio entries, authored in the admin app. Mirrors the Story model.
+- `title`: _string_
+- `slug`: _string_ — URL-safe, derived from the title
+- `status`: _'draft' | 'published' | 'archived'_
+- `visibility`: _'public' | 'private'_
+- `excerpt`: _string_ or _null_ — short description for cards
+- `content`: _string_ or _null_ — rich-text **HTML** from CKEditor 5
+- `coverImage`: _string_ or _null_ — Storage download URL
+- `category`: _string_ or _null_ — a category slug
+- `tags`: _string[]_ — tag slugs
+- `technologies`: _string[]_ — technology slugs
+- `sourceCodeLink`, `livePreviewLink`, `figmaLink`: _string_ or _null_
+- `developmentStatus`: _'planned' | 'in-development' | 'complete' | 'on-hold' | 'cancelled'_ or _null_
+- `featured`: _boolean_
+- `allowComments`: _boolean_
+- `user`: _DocumentReference_ → `users/{ownerId}`
+- `roles`: _map_ — `{ [uid]: 'owner' | 'writer' | 'reader' }`
+- `createdAt`, `updatedAt`, `publishedAt`: _Timestamp_
+
+#### Comments — `projects/{projectId}/comments/{commentId}`
+Same shape as story comments; the admin Comments section moderates story and
+project comments together.
 
 ## Storage
 - **User avatars** — the user's uploaded avatar image.

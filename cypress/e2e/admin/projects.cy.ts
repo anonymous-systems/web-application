@@ -14,6 +14,11 @@ const SEED_TITLE = 'E2E Seeded Project'
 const CREATE_TITLE = 'E2E Alpha Project'
 const EDIT_TITLE = 'E2E Beta Project'
 
+const TECH_ID = 'e2eProjectTech'
+const TECH_SLUG = 'react'
+const TAG_ID = 'e2eProjectTag'
+const TAG_SLUG = 'web'
+
 const projectRow = () =>
   cy.get(`[data-testid="projectRow"][data-project-id="${PROJECT_ID}"]`)
 
@@ -61,9 +66,41 @@ const clearProjects = (): void => {
   })
 }
 
+// A technology + tag the form can offer as chips to select.
+const seedTerms = (): void => {
+  cy.request({
+    method: 'PATCH',
+    url: `${DOCS}/technologies/${TECH_ID}`,
+    headers: OWNER,
+    body: {
+      fields: { name: { stringValue: 'React' }, slug: { stringValue: TECH_SLUG } },
+    },
+  })
+  cy.request({
+    method: 'PATCH',
+    url: `${DOCS}/tags/${TAG_ID}`,
+    headers: OWNER,
+    body: {
+      fields: { name: { stringValue: 'Web' }, slug: { stringValue: TAG_SLUG } },
+    },
+  })
+}
+
+const clearTerms = (): void => {
+  ;[`technologies/${TECH_ID}`, `tags/${TAG_ID}`].forEach((path) => {
+    cy.request({
+      method: 'DELETE',
+      url: `${DOCS}/${path}`,
+      headers: OWNER,
+      failOnStatusCode: false,
+    })
+  })
+}
+
 describe('Admin Portfolio section', () => {
   beforeEach(() => {
     clearProjects()
+    clearTerms()
     cy.loginAdmin()
   })
 
@@ -135,6 +172,36 @@ describe('Admin Portfolio section', () => {
     rowByTitle(EDIT_TITLE).find('[data-testid="deleteProjectTrigger"]').click()
     cy.get('[data-testid="confirmDeleteProject"]').click()
     rowByTitle(EDIT_TITLE).should('not.exist')
+  })
+
+  it('selects a tag and technology that persist to the project', () => {
+    seedTerms()
+    cy.visit(`${ADMIN_URL}/projects/new`)
+
+    cy.get('[data-testid="projectTitleInput"]').type(CREATE_TITLE)
+    cy.get(`[data-testid="projectTagToggle"][data-slug="${TAG_SLUG}"]`).click()
+    cy.get(`[data-testid="projectTechToggle"][data-slug="${TECH_SLUG}"]`).click()
+    cy.get('[data-testid="projectSaveDraft"]').click()
+
+    cy.url().should('match', /\/projects$/)
+
+    // The selections round-trip through the saved document to the edit form.
+    rowByTitle(CREATE_TITLE).find('[data-testid="editProjectTrigger"]').click()
+    cy.get(`[data-testid="projectTagToggle"][data-slug="${TAG_SLUG}"]`).should(
+      'have.attr',
+      'data-selected',
+      'true'
+    )
+    cy.get(`[data-testid="projectTechToggle"][data-slug="${TECH_SLUG}"]`).should(
+      'have.attr',
+      'data-selected',
+      'true'
+    )
+
+    // Clean up the project so the test is idempotent (terms cleared in beforeEach).
+    cy.visit(`${ADMIN_URL}/projects`)
+    rowByTitle(CREATE_TITLE).find('[data-testid="deleteProjectTrigger"]').click()
+    cy.get('[data-testid="confirmDeleteProject"]').click()
   })
 
   it('uploads a cover image to storage', () => {

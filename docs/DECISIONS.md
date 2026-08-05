@@ -66,3 +66,18 @@ and Hosting: Firebase App Hosting
 - **Reason**: Matches the app's server-action architecture (like the story cover upload), needs no
   client storage-rules for admin access, and keeps the browser bundle lean. The Angular version was an
   early-learning build, so rebuilding on the current stack modernizes and improves it.
+
+## Portfolio (Projects): admin CRUD, model, and Technologies taxonomy
+- **Method**: The **Portfolio** section manages **Projects** (`projects/{id}`) with a clean model that
+  mirrors Story (admin authoring, `user` ref + roles, status/visibility, cover upload, rich-text content
+  via the shared balloon-block editor), plus project-specific fields: `technologies[]`, source/live/figma
+  links, and `developmentStatus`. **Technologies are their own taxonomy** (a third instance of the generic
+  Categories/Tags pattern), not folded into Tags. The public YouTube-style showcase (modelled on the
+  user's `aaronjonesii` site) is a later `apps/frontend` task; this ships the admin CRUD it will consume.
+  The admin Comments moderation was generalized to cover project comments too.
+- **Date**: 2026-08-04
+- **Reason**: Consistency with Stories (shared editor/cover/patterns → reuse). Tags are free editorial
+  labels; technologies are a controlled stack the showcase renders distinctly and can later gain an
+  `icon`/`url` — and a third taxonomy instance is nearly free. A legacy-project migration was **dropped**:
+  the `aaronjonesii` repo is a UI reference (separate project, not the data source), and the old
+  `anonsys.tech` app has no confirmed production project data to migrate (YAGNI).
