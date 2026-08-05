@@ -1,0 +1,55 @@
+# Settings for the Admin Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+runConfig:
+  minInstances: 0
+  # maxInstances: 100
+  # concurrency: 80
+  # cpu: 1
+  # memoryMiB: 512
+
+# Environment variables and secrets.
+env:
+  - variable: FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: anonymous-systems-dev.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+    value: https://anonymous-systems-dev-default-rtdb.firebaseio.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: anonymous-systems-dev.appspot.com
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: 160347575398
+
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:160347575398:web:478e7d3526c0be8a4749a7
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-1DJNZ7RV9Z
+  - variable: NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY
+    value: 6LfCTlotAAAAAGsDnVTQasgFxJSlrP4TqGhWHiRk
+
+  - variable: USE_SECURE_COOKIES
+    value: true
+
+  # --- Secrets (Cloud Secret Manager) ---
+  # Distinct admin cookie secrets isolate the admin session from the frontend
+  # and avoid re-committing the frontend's exposed plaintext signing keys.
+  - variable: COOKIE_SECRET_CURRENT
+    secret: APPHOSTING_ADMIN_COOKIE_SECRET_CURRENT
+  - variable: COOKIE_SECRET_PREVIOUS
+    secret: APPHOSTING_ADMIN_COOKIE_SECRET_PREVIOUS
+
+  # The admin web app has its own browser API key (distinct from the frontend's),
+  # so it uses its own secret rather than sharing the frontend's.
+  - variable: FIREBASE_API_KEY
+    secret: APPHOSTING_ADMIN_FIREBASE_API_KEY
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: APPHOSTING_ADMIN_FIREBASE_API_KEY
+
+  # Project-wide service account, shared with the frontend backend (the Admin SDK
+  # uses the same service account). Grant this backend access to each.
+  - variable: FIREBASE_ADMIN_PRIVATE_KEY
+    secret: APPHOSTING_FIREBASE_ADMIN_PRIVATE_KEY
+  - variable: FIREBASE_ADMIN_CLIENT_EMAIL
+    secret: APPHOSTING_FIREBASE_ADMIN_CLIENT_EMAIL

@@ -7,7 +7,7 @@ import {
   DialogTitle
 } from '@workspace/ui/components/dialog'
 import Image from 'next/image'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { getAvatars } from '@/services/avatar-service'
 import { toast } from '@workspace/ui/components/sonner'
 import { LoadingSpinner } from '@workspace/ui/components/loading-spinner'
@@ -112,10 +112,10 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
   }
 
   return (
-    <Dialog open={props.open}>
+    <Dialog open={props.open} onOpenChange={(open) => { if (!open) props.onClose?.() }}>
       <DialogPortal>
         <DialogOverlay>
-          <DialogContent onCloseButton={props.onClose}>
+          <DialogContent>
             <DialogTitle>Select Avatar</DialogTitle>
             <DialogDescription>
               Select an avatar from the available options or upload a new one.

@@ -8,7 +8,7 @@ import {
   useState
 } from 'react'
 import { CircleUserRound, Plus, Upload, User, X } from 'lucide-react'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import { Input } from '@workspace/ui/components/input'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 import {

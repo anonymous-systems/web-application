@@ -77,10 +77,13 @@ const getOrInitializeAppCheck = (app: FirebaseApp): AppCheck => {
   if (appCheck != null) return appCheck
 
   if (process.env.NODE_ENV !== 'production') {
+    const configuredDebugTokenOrAutoGenerate =
+      process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN || true
+
     Object.assign(
       window,
       {
-        FIREBASE_APPCHECK_DEBUG_TOKEN: process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_DEBUG_TOKEN
+        FIREBASE_APPCHECK_DEBUG_TOKEN: configuredDebugTokenOrAutoGenerate
       }
     )
   }

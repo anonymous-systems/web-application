@@ -51,6 +51,8 @@ firebase-export*
 
 # Cypress
 cypress.env.json
+cypress/screenshots
+cypress/videos
 
 # Junie
 .junie

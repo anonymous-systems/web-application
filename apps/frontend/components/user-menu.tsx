@@ -1,7 +1,7 @@
 import { JSX } from 'react'
 import { User } from '@/interfaces/user'
 import { AppRoutes } from '@/lib/app-routes'
-import { Button } from '@workspace/ui/components/button'
+import { Button } from '@workspace/ui/components/custom/button'
 import Link from 'next/link'
 import {
   DropdownMenu,
