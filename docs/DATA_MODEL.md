@@ -75,6 +75,10 @@ Portfolio entries, authored in the admin app. Mirrors the Story model.
 - `roles`: _map_ — `{ [uid]: 'owner' | 'writer' | 'reader' }`
 - `createdAt`, `updatedAt`, `publishedAt`: _Timestamp_
 
+> Legacy projects from the previous anonsys.tech portfolio used a flat shape
+> (`name`, `description`, `images[]`, `link`, `github`, `order`). They are
+> converted by `apps/admin/scripts/migrate-projects.ts` — see its header.
+
 #### Comments — `projects/{projectId}/comments/{commentId}`
 Same shape as story comments; the admin Comments section moderates story and
 project comments together.

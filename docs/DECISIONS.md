@@ -78,6 +78,9 @@ and Hosting: Firebase App Hosting
 - **Date**: 2026-08-04
 - **Reason**: Consistency with Stories (shared editor/cover/patterns → reuse). Tags are free editorial
   labels; technologies are a controlled stack the showcase renders distinctly and can later gain an
-  `icon`/`url` — and a third taxonomy instance is nearly free. A legacy-project migration was **dropped**:
-  the `aaronjonesii` repo is a UI reference (separate project, not the data source), and the old
-  `anonsys.tech` app has no confirmed production project data to migrate (YAGNI).
+  `icon`/`url` — and a third taxonomy instance is nearly free.
+- **Migration**: The `aaronjonesii` repo is only a UI reference (a separate project, not the data source).
+  The production `projects` data comes from the old **anonsys.tech** portfolio, so it's migrated in place
+  like Stories (`scripts/migrate-projects.ts`): `name→title`, `description→excerpt`, `images[0]→coverImage`,
+  `link→livePreviewLink`, `github→sourceCodeLink`, `order` dropped, defaulting to published/public and
+  adding timestamps + owner. Validate on a copy of prod first.
