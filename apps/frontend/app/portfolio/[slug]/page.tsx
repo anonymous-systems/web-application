@@ -2,9 +2,9 @@ import { JSX } from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { ExternalLink, Figma, Github } from 'lucide-react'
 import { Layout } from '@/components/layout'
 import { getPublishedProjectBySlug } from '@/services/project-service'
+import { projectChips, projectLinks } from '@/lib/content-display'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
 import { Badge } from '@workspace/ui/components/custom/badge'
 import { Button } from '@workspace/ui/components/custom/button'
@@ -46,14 +46,8 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
   const project = await getPublishedProjectBySlug(slug)
   if (!project) notFound()
 
-  const chips =
-    project.technologies.length > 0 ? project.technologies : project.tags
-
-  const links = [
-    { href: project.sourceCodeLink, label: 'Source code', Icon: Github },
-    { href: project.livePreviewLink, label: 'Live preview', Icon: ExternalLink },
-    { href: project.figmaLink, label: 'Figma', Icon: Figma },
-  ].filter((link): link is typeof link & { href: string } => Boolean(link.href))
+  const chips = projectChips(project)
+  const links = projectLinks(project)
 
   return (
     <Layout dataTestId="projectDetailPage">

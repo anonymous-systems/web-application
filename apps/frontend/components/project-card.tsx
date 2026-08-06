@@ -1,12 +1,13 @@
 import { JSX } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ExternalLink, Figma, Github, ImageOff } from 'lucide-react'
+import { ImageOff } from 'lucide-react'
 import { Card } from '@workspace/ui/components/card'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
 import { Badge } from '@workspace/ui/components/custom/badge'
 import { Project } from '@workspace/ui/models/interfaces/project'
 import { PROJECT_DEVELOPMENT_STATUS_LABELS } from '@workspace/ui/models/project-constants'
+import { projectChips, projectLinks } from '@/lib/content-display'
 import { AppRoutes } from '@/lib/app-routes'
 
 interface Props {
@@ -20,16 +21,8 @@ interface Props {
  * row are what make a project recognisable next to a story.
  */
 export const ProjectCard = ({ project }: Props): JSX.Element => {
-  // Migrated projects have an empty `technologies`, with the stack still sitting
-  // in `tags`. Falling back keeps the chip row meaningful until they're split.
-  const chips =
-    project.technologies.length > 0 ? project.technologies : project.tags
-
-  const links = [
-    { href: project.sourceCodeLink, label: 'Source code', Icon: Github },
-    { href: project.livePreviewLink, label: 'Live preview', Icon: ExternalLink },
-    { href: project.figmaLink, label: 'Figma', Icon: Figma },
-  ].filter((link): link is typeof link & { href: string } => Boolean(link.href))
+  const chips = projectChips(project)
+  const links = projectLinks(project)
 
   return (
     <Card className="relative gap-0 overflow-hidden py-0">

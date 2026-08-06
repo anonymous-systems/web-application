@@ -7,11 +7,8 @@ import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
 import { Badge } from '@workspace/ui/components/custom/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Story } from '@workspace/ui/models/interfaces/story'
-import {
-  PROBLEM_STATUS_LABELS,
-  STORY_TYPE_LABELS,
-} from '@workspace/ui/models/story-constants'
 import { initialsFrom } from '@workspace/ui/lib/initials'
+import { storyTypeBadge } from '@/lib/content-display'
 import { formatDate } from '@/lib/format-date'
 import { AppRoutes } from '@/lib/app-routes'
 
@@ -27,11 +24,7 @@ interface Props {
  */
 export const StoryCard = ({ story }: Props): JSX.Element => {
   const published = formatDate(story.publishedAt ?? story.createdAt)
-  // A `problem` carries its open/resolved state; every other type is just its name.
-  const badge =
-    story.type === 'problem' && story.problemStatus
-      ? `${STORY_TYPE_LABELS.problem} · ${PROBLEM_STATUS_LABELS[story.problemStatus]}`
-      : STORY_TYPE_LABELS[story.type]
+  const badge = storyTypeBadge(story)
 
   return (
     <Card className="relative gap-0 overflow-hidden py-0">

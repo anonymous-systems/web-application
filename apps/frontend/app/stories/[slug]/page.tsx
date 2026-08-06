@@ -15,10 +15,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { initialsFrom } from '@workspace/ui/lib/initials'
-import {
-  PROBLEM_STATUS_LABELS,
-  STORY_TYPE_LABELS,
-} from '@workspace/ui/models/story-constants'
+import { storyTypeBadge } from '@/lib/content-display'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -57,10 +54,7 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
   if (!story) notFound()
 
   const published = formatDate(story.publishedAt ?? story.createdAt)
-  const badge =
-    story.type === 'problem' && story.problemStatus
-      ? `${STORY_TYPE_LABELS.problem} · ${PROBLEM_STATUS_LABELS[story.problemStatus]}`
-      : STORY_TYPE_LABELS[story.type]
+  const badge = storyTypeBadge(story)
 
   return (
     <Layout dataTestId="storyDetailPage">
