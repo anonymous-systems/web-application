@@ -1,6 +1,5 @@
-// @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { slugify, uniqueSlug } from '@workspace/ui/lib/slug'
+import { slugify, uniqueSlug } from './slug'
 
 describe('slugify', () => {
   it('lowercases and hyphenates', () => {

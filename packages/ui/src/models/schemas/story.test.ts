@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { storyInputSchema } from '@workspace/ui/models/schemas/story'
+import { storyInputSchema } from './story'
 
 describe('storyInputSchema', () => {
   it('accepts a minimal story and fills in defaults', () => {
