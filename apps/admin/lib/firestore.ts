@@ -6,7 +6,7 @@ import {
   Timestamp,
 } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
-import { UserProfileDoc } from '@/interfaces/user-profile'
+import { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 
 export const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 

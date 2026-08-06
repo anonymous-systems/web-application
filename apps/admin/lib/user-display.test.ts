@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveAuthorName } from './user-display'
+import { resolveAuthorName } from '@workspace/ui/lib/user-display'
 
 describe('resolveAuthorName', () => {
   it('joins first and last name', () => {

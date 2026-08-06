@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from '@/lib/firebase-admin'
 import { hasAdminClaim } from '@/lib/admin-access'
 import { AdminUser } from '@/interfaces/admin-user'
-import { UserProfileDoc } from '@/interfaces/user-profile'
+import { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 
 /**
  * Lists every user for the admin Users section, merging each Firebase Auth
