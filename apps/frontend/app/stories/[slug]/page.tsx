@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Clock } from 'lucide-react'
@@ -21,6 +22,33 @@ import {
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+/**
+ * Per-story title, description and social card. Next dedupes this read against
+ * the one in the page body, so it costs no extra Firestore query.
+ *
+ * The missing-story check lives here rather than only in the page: metadata
+ * resolves before the response starts streaming, so `notFound()` can still set
+ * a 404. Thrown from the body instead, the chunked response has already
+ * committed a 200 and crawlers index the not-found page.
+ */
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const { slug } = await params
+  const story = await getPublishedStoryBySlug(slug)
+  if (!story) notFound()
+
+  return {
+    title: `${story.title} | Anonymous Systems`,
+    description: story.excerpt ?? undefined,
+    openGraph: {
+      title: story.title,
+      description: story.excerpt ?? undefined,
+      type: 'article',
+      publishedTime: story.publishedAt ?? undefined,
+      images: story.coverImage ? [story.coverImage] : undefined,
+    },
+  }
 }
 
 const Page = async ({ params }: Props): Promise<JSX.Element> => {

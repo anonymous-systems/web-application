@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ExternalLink, Figma, Github } from 'lucide-react'
@@ -12,6 +13,32 @@ import { PROJECT_DEVELOPMENT_STATUS_LABELS } from '@workspace/ui/models/project-
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+/**
+ * Per-project title, description and social card. Next dedupes this read
+ * against the one in the page body, so it costs no extra Firestore query.
+ *
+ * The missing-project check lives here rather than only in the page: metadata
+ * resolves before the response starts streaming, so `notFound()` can still set
+ * a 404. Thrown from the body instead, the chunked response has already
+ * committed a 200 and crawlers index the not-found page.
+ */
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const { slug } = await params
+  const project = await getPublishedProjectBySlug(slug)
+  if (!project) notFound()
+
+  return {
+    title: `${project.title} | Anonymous Systems`,
+    description: project.excerpt ?? undefined,
+    openGraph: {
+      title: project.title,
+      description: project.excerpt ?? undefined,
+      type: 'article',
+      images: project.coverImage ? [project.coverImage] : undefined,
+    },
+  }
 }
 
 const Page = async ({ params }: Props): Promise<JSX.Element> => {

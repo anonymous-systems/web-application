@@ -8,8 +8,15 @@ import {
   ToggleGroupItem,
 } from '@workspace/ui/components/custom/toggle-group'
 
+/**
+ * The unfiltered option. A real value rather than an empty string: Radix treats
+ * `''` as "nothing selected" in a single-select group, which would make "All"
+ * and "no selection" the same state. This maps to *no* query parameter.
+ */
+export const ALL_FILTER = 'all'
+
 export interface FilterOption {
-  /** Query-string value; the all-items option uses an empty string. */
+  /** Query-string value, or ALL_FILTER for the unfiltered option. */
   value: string
   label: string
 }
@@ -36,10 +43,11 @@ export const ContentFilters = ({
 }: Props): JSX.Element => {
   const router = useRouter()
 
-  // Radix clears the value when the active item is pressed again; treat that as
-  // a reset to "all" rather than navigating to an empty filter.
+  // Radix clears the value to '' when the active item is pressed again; that and
+  // ALL_FILTER both mean "no filter", so both drop the query parameter.
   const onChange = (next: string): void => {
-    router.push(next ? `${basePath}?${paramName}=${next}` : basePath)
+    const filtered = next && next !== ALL_FILTER
+    router.push(filtered ? `${basePath}?${paramName}=${next}` : basePath)
   }
 
   return (
