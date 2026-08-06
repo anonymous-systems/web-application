@@ -1,4 +1,4 @@
-import { db } from '@/lib/firestore'
+import { db } from '@workspace/firebase-config/firestore'
 
 export interface OverviewCounts {
   stories: number

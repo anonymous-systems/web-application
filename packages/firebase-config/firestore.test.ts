@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { describe, expect, it } from 'vitest'
 import type { DocumentSnapshot } from 'firebase-admin/firestore'
 import { toIsoString, toProfileMap } from './firestore'

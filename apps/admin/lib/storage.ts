@@ -1,5 +1,5 @@
 import { getStorage, type Storage } from 'firebase-admin/storage'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { getFirebaseAdminApp } from '@workspace/firebase-config/admin-app'
 
 export const STORAGE_BUCKET =
   process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? ''

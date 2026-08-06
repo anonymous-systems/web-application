@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { getAuth } from 'firebase-admin/auth'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { getFirebaseAdminApp } from '@workspace/firebase-config/admin-app'
 import { canManageAdminAccess } from '@/lib/admin-access'
 import { getAdminCaller } from '@/lib/admin-caller'
 import { AppRoutes } from '@/lib/app-routes'

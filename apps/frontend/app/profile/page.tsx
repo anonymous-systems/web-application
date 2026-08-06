@@ -5,7 +5,7 @@ import { getTokens } from 'next-firebase-auth-edge'
 import { cookies } from 'next/headers'
 import { authConfig } from '@workspace/firebase-config/auth'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
-import { getFirebaseAdminApp } from '@/app/firebase'
+import { getFirebaseAdminApp } from '@workspace/firebase-config/admin-app'
 
 const db = getFirestore(getFirebaseAdminApp())
 const getUserProfile = async (): Promise<UserProfile | null> => {

@@ -1,58 +1,18 @@
 import {
   CollectionReference,
-  DocumentReference,
-  DocumentSnapshot,
   FieldValue,
   Timestamp,
 } from 'firebase-admin/firestore'
-import { db, resolveProfiles, toIsoString } from '@/lib/firestore'
+import { db, resolveProfiles } from '@workspace/firebase-config/firestore'
+import { toProject } from '@workspace/firebase-config/documents'
 import { availableSlug } from '@/lib/available-slug'
 import { UNEXPECTED } from '@/lib/errors'
-import { resolveAuthorName } from '@workspace/ui/lib/user-display'
-import { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 import { ActionResult } from '@/interfaces/action-result'
 import { ProjectWriteFields } from '@/interfaces/project'
 import { Project } from '@workspace/ui/models/interfaces/project'
 import { ProjectInput, projectInputSchema } from '@workspace/ui/models/schemas/project'
 
 const projects = (): CollectionReference => db().collection('projects')
-
-// Every field is read defensively so legacy/partial documents never throw.
-const toProject = (
-  doc: DocumentSnapshot,
-  profiles: Map<string, UserProfileDoc>
-): Project => {
-  const data = doc.data() ?? {}
-  const userRef = data.user as DocumentReference | undefined
-  const profile = userRef?.id ? profiles.get(userRef.id) : undefined
-
-  return {
-    id: doc.id,
-    title: (data.title as string | undefined) ?? '',
-    slug: (data.slug as string | undefined) ?? '',
-    status: (data.status as Project['status'] | undefined) ?? 'draft',
-    visibility: (data.visibility as Project['visibility'] | undefined) ?? 'public',
-    excerpt: (data.excerpt as string | undefined) ?? null,
-    content: (data.content as string | undefined) ?? null,
-    coverImage: (data.coverImage as string | undefined) ?? null,
-    category: (data.category as string | undefined) ?? null,
-    tags: (data.tags as string[] | undefined) ?? [],
-    technologies: (data.technologies as string[] | undefined) ?? [],
-    sourceCodeLink: (data.sourceCodeLink as string | undefined) ?? null,
-    livePreviewLink: (data.livePreviewLink as string | undefined) ?? null,
-    figmaLink: (data.figmaLink as string | undefined) ?? null,
-    developmentStatus:
-      (data.developmentStatus as Project['developmentStatus'] | undefined) ?? null,
-    featured: (data.featured as boolean | undefined) ?? false,
-    allowComments: (data.allowComments as boolean | undefined) ?? true,
-    authorUid: userRef?.id ?? null,
-    authorName: resolveAuthorName(profile),
-    authorAvatar: profile?.avatar ?? null,
-    createdAt: toIsoString(data.createdAt),
-    updatedAt: toIsoString(data.updatedAt),
-    publishedAt: toIsoString(data.publishedAt),
-  }
-}
 
 export const listProjects = async (): Promise<Project[]> => {
   const snapshot = await projects().get()

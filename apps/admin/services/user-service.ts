@@ -1,6 +1,6 @@
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
-import { getFirebaseAdminApp } from '@/lib/firebase-admin'
+import { getFirebaseAdminApp } from '@workspace/firebase-config/admin-app'
 import { hasAdminClaim } from '@/lib/admin-access'
 import { AdminUser } from '@/interfaces/admin-user'
 import { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
