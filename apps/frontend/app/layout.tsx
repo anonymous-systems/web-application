@@ -32,7 +32,9 @@ export default async function AppLayout({ children }: { children: ReactNode }): 
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="initial-scale=1, width=device-width"/>
         <link rel="icon" href="/favicon.ico"/>
-        <title>{metadata.title as string}</title>
+        {/* No <title> here — Next renders it from the `metadata` export above.
+            Hardcoding one emitted a second, generic title on every page that
+            defines its own. */}
       </head>
       <body className='antialiased'>
         <Providers user={user}>{children}</Providers>

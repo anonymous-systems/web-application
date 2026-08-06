@@ -20,6 +20,8 @@ export const Layout = (props: Props): JSX.Element => {
 
   const navLinks: NavLink[] = [
     { id: 'home', name: 'Home', href: AppRoutes.home },
+    { id: 'stories', name: 'Stories', href: AppRoutes.stories },
+    { id: 'portfolio', name: 'Portfolio', href: AppRoutes.portfolio },
     { id: 'welcome', name: 'Welcome', href: AppRoutes.welcome },
     { id: 'profile', name: 'Profile', href: AppRoutes.profile },
     { id: 'onboarding', name: 'Onboarding', href: AppRoutes.onboarding },

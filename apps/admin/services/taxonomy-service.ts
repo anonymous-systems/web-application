@@ -1,5 +1,5 @@
 import { CollectionReference, FieldValue } from 'firebase-admin/firestore'
-import { db, toIsoString } from '@/lib/firestore'
+import { db, toIsoString } from '@workspace/firebase-config/firestore'
 import { UNEXPECTED } from '@/lib/errors'
 import { slugify } from '@workspace/ui/lib/slug'
 import { validateTaxonomyInput } from '@/lib/taxonomy'

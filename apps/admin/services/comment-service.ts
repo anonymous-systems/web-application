@@ -1,7 +1,7 @@
 import { DocumentReference } from 'firebase-admin/firestore'
-import { db, toIsoString, toProfileMap } from '@/lib/firestore'
+import { db, toIsoString, toProfileMap } from '@workspace/firebase-config/firestore'
 import { UNEXPECTED } from '@/lib/errors'
-import { resolveAuthorName } from '@/lib/user-display'
+import { resolveAuthorName } from '@workspace/ui/lib/user-display'
 import { AdminComment, CommentParentType } from '@/interfaces/comment'
 import { ActionResult } from '@/interfaces/action-result'
 

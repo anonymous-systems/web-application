@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Supplies the `prose` classes the story and project detail pages use to style
+   CKEditor output. Distinct from ./typography.css, which holds our own
+   title-/body- utilities. */
+@plugin "@tailwindcss/typography";
 @import './typography.css';
 @import './colors.css';
 @import './variables.css';
