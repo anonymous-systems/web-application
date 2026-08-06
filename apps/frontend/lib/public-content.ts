@@ -1,7 +1,6 @@
 import type { CollectionReference, Query } from 'firebase-admin/firestore'
 
-/** The subset of a Story/Project the public ordering depends on. */
-interface Datable {
+interface HasPublishDates {
   publishedAt: string | null
   createdAt: string | null
 }
@@ -21,7 +20,7 @@ export const publiclyVisible = (collection: CollectionReference): Query =>
  * Newest first, by publish date and falling back to creation date. The fallback
  * matters for migrated documents, which can lack `publishedAt` entirely.
  */
-export const byNewest = (a: Datable, b: Datable): number =>
+export const byNewest = (a: HasPublishDates, b: HasPublishDates): number =>
   (b.publishedAt ?? b.createdAt ?? '').localeCompare(
     a.publishedAt ?? a.createdAt ?? ''
   )

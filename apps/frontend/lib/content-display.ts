@@ -16,7 +16,6 @@ import {
  * separate, they just no longer each own a private copy of these rules.
  */
 
-/** A `problem` carries its open/resolved state; every other type is just its name. */
 export const storyTypeBadge = (
   story: Pick<Story, 'type' | 'problemStatus'>
 ): string =>
@@ -40,7 +39,6 @@ export interface ProjectLink {
   Icon: LucideIcon
 }
 
-/** The external links a project actually has, in a fixed order. */
 export const projectLinks = (
   project: Pick<Project, 'sourceCodeLink' | 'livePreviewLink' | 'figmaLink'>
 ): ProjectLink[] =>

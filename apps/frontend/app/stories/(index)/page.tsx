@@ -40,7 +40,6 @@ export const metadata = {
 
 const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
   const { type = '' } = await searchParams
-  // An unrecognised query value falls back to "all" rather than an empty list.
   const activeType = isStoryType(type) ? type : ALL_FILTER
 
   const stories = await listPublishedStories()

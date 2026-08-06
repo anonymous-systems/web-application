@@ -23,8 +23,6 @@ export type StoryVisibility = (typeof STORY_VISIBILITIES)[number]
 export const PROBLEM_STATUSES = ['open', 'resolved'] as const
 export type ProblemStatus = (typeof PROBLEM_STATUSES)[number]
 
-// A `problem` story carries its state in the badge alongside the type, so these
-// labels sit next to STORY_TYPE_LABELS rather than in the card.
 export const PROBLEM_STATUS_LABELS: Record<ProblemStatus, string> = {
   open: 'Open',
   resolved: 'Resolved',
