@@ -2,7 +2,7 @@ import { JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { ThreeDSphere } from '@workspace/ui/components/three-d-sphere/three-d-sphere'
 import { Button } from '@workspace/ui/components/custom/button'
-import { CalendarDays, Mail, Star, StarHalf } from 'lucide-react'
+import { CalendarDays, Mail } from 'lucide-react'
 import {
   Carousel,
   CarouselContent,
@@ -13,30 +13,6 @@ import { Divider } from '@workspace/ui/components/divider'
 import { Card, CardContent } from '@workspace/ui/components/card'
 
 export const HomePage = (): JSX.Element => {
-  const testimonials = [
-    {
-      id: '1',
-      content: 'Since partnering with TechConsult, our business has seen significant growth.',
-      rating: 5,
-      name: 'Jane Smith',
-      position: 'Lead Consultant'
-    },
-    {
-      id: '2',
-      content: 'I recommend TechConsult to any business looking for improvement.',
-      rating: 5,
-      name: 'John Doe',
-      position: 'Product Manager'
-    },
-    {
-      id: '3',
-      content: 'I can\'t imagine running our company without TechConsult.',
-      rating: 4.5,
-      name: 'Ben Clock',
-      position: 'CTO, TechConsult'
-    }
-  ]
-
   return (
     <Layout dataTestId='homePage'>
       <div className="flex flex-col items-center gap-8 p-4 pb-24">
@@ -182,38 +158,11 @@ export const HomePage = (): JSX.Element => {
           <Button size='lg'>Get Started</Button>
         </section>
 
-        <section id='testimonials' className='flex flex-col items-center gap-4'>
-          <div className='flex flex-col gap-2'>
-            <h2 className='title-lg'>Testimonials</h2>
-            <p className='body-lg'>Clients Love Our Services</p>
-          </div>
-
-          <div className='flex flex-col gap-2'>
-            {testimonials.map(testimonial => (
-              <div
-                key={testimonial.id}
-                className='bg-accent p-4 flex flex-col items-center gap-2 rounded-2xl'
-              >
-                <p className='label-lg'>{testimonial.content}</p>
-                <div className='flex gap-2 relative'>
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star key={i} className='fill-card' strokeWidth={0} />
-                  ))}
-                  <div className='flex gap-2 absolute'>
-                    {[...Array<unknown>(Math.floor(testimonial.rating))].map((_, i) => (
-                      <Star key={i} className='fill-current' strokeWidth={0} />
-                    ))}
-                    {testimonial.rating % 1 !== 0 && (
-                      <StarHalf key="half" className='fill-current' strokeWidth={0} />
-                    )}
-                  </div>
-                </div>
-                <p className='label-lg font-semibold'>{testimonial.name}</p>
-                <p>{testimonial.position}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/*
+          * The testimonials section was removed: it carried invented quotes from
+          * named people praising "TechConsult", a brand from the moodboard rather
+          * than this business. Reinstate it only with real, attributable quotes.
+          */}
 
         <section id='get-started' className='flex flex-col items-center gap-4 bg-accent p-4 rounded-2xl'>
           <div className='flex flex-col gap-2'>
