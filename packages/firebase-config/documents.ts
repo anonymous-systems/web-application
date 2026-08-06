@@ -6,9 +6,8 @@ import type { Story } from '@workspace/ui/models/interfaces/story'
 import type { Project } from '@workspace/ui/models/interfaces/project'
 
 /**
- * Firestore document → display model. Shared by the admin app and the public
- * site so a field added to the model is mapped in exactly one place; when this
- * lived in both, a missed field read as null on one surface only.
+ * Firestore document → display model, mapped in exactly one place so a field
+ * added to the model cannot be missed on one surface and read as null there.
  *
  * Every field is read defensively so legacy and partially-migrated documents
  * never throw — the collections still hold pre-migration shapes.

@@ -57,11 +57,6 @@ export const HomePage = (): JSX.Element => {
             <CarouselContent>
               {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index} className='basis-1/3'>
-                  {/*<div className='bg-accent text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm'>*/}
-                  {/*  <div className='flex aspect-square items-center justify-center p-6'>*/}
-                  {/*    <span className="text-4xl font-semibold">{index + 1}</span>*/}
-                  {/*  </div>*/}
-                  {/*</div>*/}
                   <div className="p-1">
                     <Card>
                       <CardContent className="flex aspect-square items-center justify-center p-6">
@@ -157,12 +152,6 @@ export const HomePage = (): JSX.Element => {
 
           <Button size='lg'>Get Started</Button>
         </section>
-
-        {/*
-          * The testimonials section was removed: it carried invented quotes from
-          * named people praising "TechConsult", a brand from the moodboard rather
-          * than this business. Reinstate it only with real, attributable quotes.
-          */}
 
         <section id='get-started' className='flex flex-col items-center gap-4 bg-accent p-4 rounded-2xl'>
           <div className='flex flex-col gap-2'>

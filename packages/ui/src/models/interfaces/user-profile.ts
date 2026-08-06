@@ -7,8 +7,7 @@ export interface UserProfile {
 
 /**
  * The Firestore `users/{uid}` profile document. Every field is optional because
- * a user may not have completed onboarding. Shared by the admin and frontend
- * read layers, which both resolve story/project authors from these documents.
+ * a user may not have completed onboarding.
  */
 export interface UserProfileDoc {
   firstName?: string
