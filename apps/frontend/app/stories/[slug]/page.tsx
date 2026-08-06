@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Clock } from 'lucide-react'
 import { Layout } from '@/components/layout'
+import { TrustedHtml } from '@/components/trusted-html'
 import { getPublishedStoryBySlug } from '@/services/story-service'
 import { formatDate } from '@/lib/format-date'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
@@ -110,17 +111,7 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
         <Divider />
 
         {story.content ? (
-          /*
-           * CKEditor HTML, rendered as-is. This is only safe because authoring is
-           * admin-only (middleware + `ensureAdmin`), so the markup is trusted.
-           * `STORY_STATUSES` already reserves `pending` for a creator-submission
-           * flow — that flow must sanitise on write before it ships, or this
-           * becomes stored XSS.
-           */
-          <div
-            className="prose dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: story.content }}
-          />
+          <TrustedHtml html={story.content} />
         ) : (
           <p className="text-muted-foreground">
             {story.excerpt ?? 'This story has no content yet.'}

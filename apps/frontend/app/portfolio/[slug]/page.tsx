@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Layout } from '@/components/layout'
+import { TrustedHtml } from '@/components/trusted-html'
 import { getPublishedProjectBySlug } from '@/services/project-service'
 import { projectChips, projectLinks } from '@/lib/content-display'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
@@ -103,11 +104,7 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
         <Divider />
 
         {project.content ? (
-          /* Same trust model as story content — see app/stories/[slug]/page.tsx. */
-          <div
-            className="prose dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: project.content }}
-          />
+          <TrustedHtml html={project.content} />
         ) : (
           <p className="text-muted-foreground">
             A fuller write-up for this project is on the way.
