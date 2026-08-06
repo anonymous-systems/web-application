@@ -22,7 +22,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { listComments } from '@/services/comment-service'
-import { initialsFrom } from '@/lib/initials'
+import { initialsFrom } from '@workspace/ui/lib/initials'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
 import { ConfirmDeleteDialog } from '@/components/dashboard/confirm-delete-dialog'
 import { AdminComment } from '@/interfaces/comment'

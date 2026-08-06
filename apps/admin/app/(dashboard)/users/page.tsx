@@ -21,7 +21,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { listUsers } from '@/services/user-service'
-import { initialsFrom } from '@/lib/initials'
+import { initialsFrom } from '@workspace/ui/lib/initials'
 import { getAdminCaller } from '@/lib/admin-caller'
 import { UserAdminToggle } from '@/components/users/user-admin-toggle'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
