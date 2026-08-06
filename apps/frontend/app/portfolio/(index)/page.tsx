@@ -2,7 +2,11 @@ import { JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { ContentGrid } from '@/components/content-grid'
 import { ProjectCard } from '@/components/project-card'
-import { ContentFilters, FilterOption } from '@/components/content-filters'
+import {
+  ALL_FILTER,
+  ContentFilters,
+  FilterOption,
+} from '@/components/content-filters'
 import { listPublishedProjects } from '@/services/project-service'
 import { AppRoutes } from '@/lib/app-routes'
 import {
@@ -18,7 +22,7 @@ import {
 } from '@workspace/ui/components/empty'
 
 const filterOptions: FilterOption[] = [
-  { value: '', label: 'All' },
+  { value: ALL_FILTER, label: 'All' },
   ...PROJECT_DEVELOPMENT_STATUSES.map((status) => ({
     value: status,
     label: PROJECT_DEVELOPMENT_STATUS_LABELS[status],
@@ -32,15 +36,23 @@ interface Props {
   searchParams: Promise<{ status?: string }>
 }
 
+export const metadata = {
+  title: 'Portfolio | Anonymous Systems',
+  description: 'Explore our portfolio and see what we\'ve accomplished.',
+}
+
 const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
   const { status = '' } = await searchParams
   // An unrecognised query value falls back to "all" rather than an empty list.
-  const activeStatus = isDevelopmentStatus(status) ? status : ''
+  const activeStatus = isDevelopmentStatus(status) ? status : ALL_FILTER
 
   const projects = await listPublishedProjects()
-  const visible = activeStatus
-    ? projects.filter((project) => project.developmentStatus === activeStatus)
-    : projects
+  const visible =
+    activeStatus === ALL_FILTER
+      ? projects
+      : projects.filter(
+        (project) => project.developmentStatus === activeStatus
+      )
 
   return (
     <Layout dataTestId="portfolioPage">
@@ -70,9 +82,9 @@ const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
             <EmptyHeader>
               <EmptyTitle>No projects yet</EmptyTitle>
               <EmptyDescription>
-                {activeStatus
-                  ? 'Nothing published under this filter yet — try another.'
-                  : 'Check back soon.'}
+                {activeStatus === ALL_FILTER
+                  ? 'Check back soon.'
+                  : 'Nothing published under this filter yet — try another.'}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>

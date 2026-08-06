@@ -2,7 +2,11 @@ import { JSX } from 'react'
 import { Layout } from '@/components/layout'
 import { ContentGrid } from '@/components/content-grid'
 import { StoryCard } from '@/components/story-card'
-import { ContentFilters, FilterOption } from '@/components/content-filters'
+import {
+  ALL_FILTER,
+  ContentFilters,
+  FilterOption,
+} from '@/components/content-filters'
 import { listPublishedStories } from '@/services/story-service'
 import { AppRoutes } from '@/lib/app-routes'
 import {
@@ -18,7 +22,7 @@ import {
 } from '@workspace/ui/components/empty'
 
 const filterOptions: FilterOption[] = [
-  { value: '', label: 'All' },
+  { value: ALL_FILTER, label: 'All' },
   ...STORY_TYPES.map((type) => ({ value: type, label: STORY_TYPE_LABELS[type] })),
 ]
 
@@ -29,15 +33,21 @@ interface Props {
   searchParams: Promise<{ type?: string }>
 }
 
+export const metadata = {
+  title: 'Stories | Anonymous Systems',
+  description: 'Insights, notes and write-ups from the work we do.',
+}
+
 const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
   const { type = '' } = await searchParams
   // An unrecognised query value falls back to "all" rather than an empty list.
-  const activeType = isStoryType(type) ? type : ''
+  const activeType = isStoryType(type) ? type : ALL_FILTER
 
   const stories = await listPublishedStories()
-  const visible = activeType
-    ? stories.filter((story) => story.type === activeType)
-    : stories
+  const visible =
+    activeType === ALL_FILTER
+      ? stories
+      : stories.filter((story) => story.type === activeType)
 
   return (
     <Layout dataTestId="storiesPage">
@@ -67,9 +77,9 @@ const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
             <EmptyHeader>
               <EmptyTitle>No stories yet</EmptyTitle>
               <EmptyDescription>
-                {activeType
-                  ? 'Nothing published under this filter yet — try another.'
-                  : 'Check back soon.'}
+                {activeType === ALL_FILTER
+                  ? 'Check back soon.'
+                  : 'Nothing published under this filter yet — try another.'}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
