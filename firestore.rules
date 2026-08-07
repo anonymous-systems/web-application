@@ -15,6 +15,13 @@ service cloud.firestore {
     /* function to check if creator (admins are implicitly creators) */
     function isCreator() { return isAdmin() || request.auth.token.creator == true; }
 
+    /* a reaction holds only a type, from a fixed vocabulary; counts are
+       maintained by a trigger and must never be written by a client */
+    function isValidReaction() {
+      return request.resource.data.keys().hasOnly(['type'])
+        && request.resource.data.type in ['like', 'dislike'];
+    }
+
     /* stories collection */
     match /stories/{storyID} {
       /* function to get role of signed in user */
@@ -41,6 +48,14 @@ service cloud.firestore {
       match /comments/{commentID} {
         allow create, update: if request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid) && publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID)));
         allow read: if publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID))) || isOneOfRoles(get(/databases/$(database)/documents/stories/$(storyID)), ["owner", "writer", "reader"]);
+
+        /* reactions keyed by reactor uid, so a user cannot react twice and
+           writing someone else's reaction is structurally impossible */
+        match /reactions/{reactorUID} {
+          allow read: if publicStory(get(/databases/$(database)/documents/stories/$(storyID)));
+          allow delete: if request.auth.uid == reactorUID;
+          allow create, update: if request.auth.uid == reactorUID && isValidReaction() && publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID)));
+        }
       }
     }
 
@@ -102,6 +117,14 @@ service cloud.firestore {
       match /comments/{commentID} {
         allow create, update: if request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid) && publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID)));
         allow read: if publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID))) || isOneOfRoles(get(/databases/$(database)/documents/projects/$(projectID)), ["owner", "writer", "reader"]);
+
+        /* reactions keyed by reactor uid, so a user cannot react twice and
+           writing someone else's reaction is structurally impossible */
+        match /reactions/{reactorUID} {
+          allow read: if publicProject(get(/databases/$(database)/documents/projects/$(projectID)));
+          allow delete: if request.auth.uid == reactorUID;
+          allow create, update: if request.auth.uid == reactorUID && isValidReaction() && publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID)));
+        }
       }
     }
   }
