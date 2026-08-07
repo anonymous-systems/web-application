@@ -39,10 +39,22 @@ export const listComments = async (): Promise<AdminComment[]> => {
     if (parentRef) parentRefs.set(parentRef.path, parentRef)
   }
 
-  const [userSnaps, parentSnaps] = await Promise.all([
+  const [userSnaps, parentSnaps, reportSnaps] = await Promise.all([
     userRefs.size ? firestore.getAll(...userRefs.values()) : Promise.resolve([]),
     parentRefs.size ? firestore.getAll(...parentRefs.values()) : Promise.resolve([]),
+    // One collection-group query for every open report, rather than a count per
+    // comment: the moderation table would otherwise be an N+1 on each load.
+    firestore.collectionGroup('reports').where('status', '==', 'open').get(),
   ])
+
+  // Keyed by the reported comment's full path, since ids repeat across parents.
+  const openReports = new Map<string, number>()
+  reportSnaps.docs.forEach((report) => {
+    const commentPath = report.ref.parent.parent?.path
+    if (commentPath) {
+      openReports.set(commentPath, (openReports.get(commentPath) ?? 0) + 1)
+    }
+  })
 
   const profiles = toProfileMap(userSnaps)
 
@@ -70,9 +82,49 @@ export const listComments = async (): Promise<AdminComment[]> => {
         authorUsername: profile?.username ?? null,
         authorAvatar: profile?.avatar ?? null,
         createdAt: toIsoString(data.createdAt),
+        openReports: openReports.get(doc.ref.path) ?? 0,
       }
     })
-    .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+    // Reported comments first — the table is a moderation queue, and a report
+    // sitting below a week of ordinary chatter is a report nobody actions.
+    .sort(
+      (a, b) =>
+        b.openReports - a.openReports ||
+        (b.createdAt ?? '').localeCompare(a.createdAt ?? '')
+    )
+}
+
+/**
+ * Marks every open report on a comment as reviewed, clearing it from the queue
+ * without deleting the comment — the moderator's "this is fine" outcome.
+ * Reports are kept rather than removed so a repeat offender's history survives.
+ */
+export const dismissReports = async (
+  parentType: CommentParentType,
+  parentId: string,
+  id: string
+): Promise<ActionResult> => {
+  try {
+    const reports = await db()
+      .collection(COLLECTION_FOR[parentType])
+      .doc(parentId)
+      .collection('comments')
+      .doc(id)
+      .collection('reports')
+      .where('status', '==', 'open')
+      .get()
+
+    const batch = db().batch()
+    reports.docs.forEach((report) =>
+      batch.update(report.ref, { status: 'reviewed' })
+    )
+    await batch.commit()
+
+    return { ok: true }
+  } catch (error) {
+    console.error('Failed to dismiss reports', error)
+    return { ok: false, error: UNEXPECTED }
+  }
 }
 
 export const deleteComment = async (

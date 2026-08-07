@@ -25,6 +25,8 @@ import { listComments } from '@/services/comment-service'
 import { initialsFrom } from '@workspace/ui/lib/initials'
 import { RefreshButton } from '@/components/dashboard/refresh-button'
 import { ConfirmDeleteDialog } from '@/components/dashboard/confirm-delete-dialog'
+import { DismissReportsButton } from '@/components/dashboard/dismiss-reports-button'
+import { Badge } from '@workspace/ui/components/custom/badge'
 import { AdminComment } from '@/interfaces/comment'
 import { deleteComment } from './actions'
 
@@ -113,8 +115,17 @@ export default async function Page(): Promise<JSX.Element> {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex min-w-0 flex-col gap-0.5">
-                        <span className="text-sm font-medium">
+                        <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
                           {authorLabel(comment)}
+                          {comment.openReports > 0 && (
+                            <Badge
+                              variant="destructive"
+                              data-testid="commentReports"
+                            >
+                              {comment.openReports}{' '}
+                              {comment.openReports === 1 ? 'report' : 'reports'}
+                            </Badge>
+                          )}
                         </span>
                         <p className="text-sm break-words whitespace-pre-line text-muted-foreground line-clamp-3">
                           {comment.content}
@@ -139,7 +150,14 @@ export default async function Page(): Promise<JSX.Element> {
                     {posted}
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-1">
+                      {comment.openReports > 0 && (
+                        <DismissReportsButton
+                          parentType={comment.parentType}
+                          parentId={comment.parentId}
+                          commentId={comment.id}
+                        />
+                      )}
                       <ConfirmDeleteDialog
                         entity="Comment"
                         title="Delete comment"

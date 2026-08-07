@@ -237,6 +237,98 @@ describe.each([
     })
   })
 
+  describe('reports', () => {
+    const reportPath = (uid: string): string =>
+      `${collection}/doc1/comments/c1/reports/${uid}`
+
+    const report = (): Record<string, unknown> => ({
+      reason: 'spam',
+      detail: 'Selling something',
+      status: 'open',
+      createdAt: new Date(),
+    })
+
+    it('lets a signed-in user file their own report', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertSucceeds(
+        setDoc(doc(signedInAs(OTHER_UID), reportPath(OTHER_UID)), report())
+      )
+    })
+
+    // The report id is the reporter's uid, so one person cannot bury a comment
+    // under repeat reports, and filing in someone else's name is impossible.
+    it("denies filing a report in another user's name", async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reportPath(OWNER_UID)), report())
+      )
+    })
+
+    it('denies anonymous reports', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(anonymous(), reportPath(OTHER_UID)), report())
+      )
+    })
+
+    it('denies a reason outside the vocabulary', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reportPath(OTHER_UID)), {
+          ...report(),
+          reason: 'because',
+        })
+      )
+    })
+
+    // Only a moderator moves a report on; opening one pre-reviewed would let a
+    // reporter hide it from the queue.
+    it('denies opening a report in any state but open', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reportPath(OTHER_UID)), {
+          ...report(),
+          status: 'reviewed',
+        })
+      )
+    })
+
+    it('denies a non-admin reading someone else’s report', async () => {
+      await seed(`${collection}/doc1`, content())
+      await seed(reportPath(OWNER_UID), report())
+
+      await assertFails(getDoc(doc(signedInAs(OTHER_UID), reportPath(OWNER_UID))))
+      await assertFails(getDoc(doc(anonymous(), reportPath(OWNER_UID))))
+    })
+
+    // So the UI can show "Reported" without a moderator round trip.
+    it('lets a reporter read their own report', async () => {
+      await seed(`${collection}/doc1`, content())
+      await seed(reportPath(OTHER_UID), report())
+
+      await assertSucceeds(
+        getDoc(doc(signedInAs(OTHER_UID), reportPath(OTHER_UID)))
+      )
+    })
+
+    it('denies a non-admin marking a report reviewed', async () => {
+      await seed(`${collection}/doc1`, content())
+      await seed(reportPath(OTHER_UID), report())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reportPath(OTHER_UID)), {
+          ...report(),
+          status: 'reviewed',
+        })
+      )
+    })
+  })
+
   it('denies commenting on a draft parent', async () => {
     await seed(`${collection}/doc1`, content({ status: 'draft' }))
 

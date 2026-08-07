@@ -128,7 +128,8 @@ export const toComment = (
   id: string,
   data: DocumentFields,
   profiles: Map<string, UserProfileDoc>,
-  viewerReaction: Comment['viewerReaction'] = null
+  viewerReaction: Comment['viewerReaction'] = null,
+  viewerReported = false
 ): Comment => ({
   id,
   content: (data.content as string | undefined) ?? '',
@@ -139,4 +140,5 @@ export const toComment = (
   likeCount: (data.likeCount as number | undefined) ?? 0,
   dislikeCount: (data.dislikeCount as number | undefined) ?? 0,
   viewerReaction,
+  viewerReported,
 })

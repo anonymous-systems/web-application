@@ -19,4 +19,10 @@ export interface AdminComment {
   authorUsername: string | null
   authorAvatar: string | null
   createdAt: string | null
+  /**
+   * Open reports against this comment. Counted so the moderation table can
+   * surface the queue; dismissing marks them reviewed rather than deleting, so
+   * a repeat offender's history survives.
+   */
+  openReports: number
 }
