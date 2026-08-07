@@ -98,13 +98,33 @@ export const CommentsSection = async ({
     headers: await headers(),
   })
 
-  const comments = await listComments(
-    parentType,
-    parentId,
-    tokens
-      ? { uid: tokens.decodedToken.uid, idToken: tokens.token }
-      : undefined
-  )
+  // The thread is secondary to the content it hangs off, so a failure says so
+  // and leaves the article readable rather than throwing out of the server
+  // component and taking the page with it.
+  let comments: Comment[]
+  try {
+    comments = await listComments(
+      parentType,
+      parentId,
+      tokens
+        ? { uid: tokens.decodedToken.uid, idToken: tokens.token }
+        : undefined
+    )
+  } catch (error) {
+    console.error('Failed to load comments', { parentType, parentId, error })
+
+    return (
+      <section className="flex flex-col gap-4" data-testid="commentsSection">
+        <Divider />
+        <p
+          className="text-muted-foreground text-sm"
+          data-testid="commentsUnavailable"
+        >
+          Comments couldn’t be loaded right now.
+        </p>
+      </section>
+    )
+  }
 
   return (
     <section className="flex flex-col gap-4" data-testid="commentsSection">
