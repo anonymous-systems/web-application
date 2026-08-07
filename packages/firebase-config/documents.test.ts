@@ -2,9 +2,21 @@ import { describe, expect, it } from 'vitest'
 import { Timestamp } from 'firebase-admin/firestore'
 import { toIsoString, toProject, toStory } from './documents'
 import type { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
+import type { TaxonomyTermRef } from '@workspace/ui/models/interfaces/taxonomy-term-ref'
 
 // The mappers take plain values, so a reference only needs its id.
 const userRef = (uid: string): { id: string } => ({ id: uid })
+
+const FIREBASE: TaxonomyTermRef = { id: 'tagFirebase', name: 'Firebase', slug: 'firebase' }
+const ANGULAR: TaxonomyTermRef = { id: 'techAngular', name: 'Angular', slug: 'angular' }
+
+// Keyed by id and slug, exactly as the read layers build it.
+const terms = new Map<string, TaxonomyTermRef>([
+  [FIREBASE.id, FIREBASE],
+  [FIREBASE.slug, FIREBASE],
+  [ANGULAR.id, ANGULAR],
+  [ANGULAR.slug, ANGULAR],
+])
 
 const profiles = (
   uid: string,
@@ -46,17 +58,19 @@ describe('toStory', () => {
         visibility: 'public',
         problemStatus: 'resolved',
         readTimeMinutes: 3,
-        tags: ['firebase'],
+        tags: [userRef(FIREBASE.id)],
         user: userRef('uid1'),
         createdAt: Timestamp.fromDate(new Date('2023-09-01T00:00:00.000Z')),
       },
-      profiles('uid1', { firstName: 'Ada', lastName: 'Lovelace' })
+      profiles('uid1', { firstName: 'Ada', lastName: 'Lovelace' }),
+      terms
     )
 
     expect(story.title).toBe('Using Firebase')
     expect(story.type).toBe('problem')
     expect(story.problemStatus).toBe('resolved')
     expect(story.readTimeMinutes).toBe(3)
+    expect(story.tags).toEqual([FIREBASE])
     expect(story.authorUid).toBe('uid1')
     expect(story.authorName).toBe('Ada Lovelace')
     expect(story.createdAt).toBe('2023-09-01T00:00:00.000Z')
@@ -104,17 +118,18 @@ describe('toProject', () => {
         slug: 'google-tasks-clone',
         status: 'published',
         visibility: 'public',
-        technologies: ['Angular'],
+        technologies: [userRef(ANGULAR.id)],
         sourceCodeLink: 'https://github.com/x/y',
         developmentStatus: 'complete',
         user: userRef('uid1'),
         publishedAt: Timestamp.fromDate(new Date('2024-01-02T00:00:00.000Z')),
       },
-      profiles('uid1', { firstName: 'Ada' })
+      profiles('uid1', { firstName: 'Ada' }),
+      terms
     )
 
     expect(project.title).toBe('Google Tasks Clone')
-    expect(project.technologies).toEqual(['Angular'])
+    expect(project.technologies).toEqual([ANGULAR])
     expect(project.developmentStatus).toBe('complete')
     expect(project.authorName).toBe('Ada')
     expect(project.publishedAt).toBe('2024-01-02T00:00:00.000Z')
@@ -137,5 +152,38 @@ describe('toProject', () => {
       featured: false,
       allowComments: true,
     })
+  })
+})
+
+// The mapper is what keeps the site rendering while a collection is part-way
+// through the reference migration, so each stored shape needs covering.
+describe('taxonomy links', () => {
+  it('resolves a reference to its term', () => {
+    expect(toStory('s', { tags: [userRef(FIREBASE.id)] }, new Map(), terms).tags).toEqual([
+      FIREBASE,
+    ])
+  })
+
+  // Pre-migration stories stored the slug.
+  it('resolves a stored slug', () => {
+    expect(toStory('s', { category: 'firebase' }, new Map(), terms).category).toEqual(
+      FIREBASE
+    )
+  })
+
+  // Pre-migration projects stored the display name instead.
+  it('resolves a stored display name', () => {
+    expect(
+      toProject('p', { technologies: ['Angular'] }, new Map(), terms).technologies
+    ).toEqual([ANGULAR])
+  })
+
+  // A term that no longer exists has no name to show, and a raw id in a chip row
+  // is worse than an absent chip.
+  it('drops a link nothing answers to', () => {
+    const story = toStory('s', { category: 'ghost', tags: ['ghost'] }, new Map(), terms)
+
+    expect(story.category).toBeNull()
+    expect(story.tags).toEqual([])
   })
 })
