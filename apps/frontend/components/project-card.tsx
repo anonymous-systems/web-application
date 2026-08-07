@@ -68,9 +68,9 @@ export const ProjectCard = ({ project }: Props): JSX.Element => {
         {chips.length > 0 && (
           <ul className="flex flex-wrap gap-1">
             {chips.map((chip) => (
-              <li key={chip}>
+              <li key={chip.id}>
                 <Badge variant="secondary" className="text-[11px]">
-                  {chip}
+                  {chip.name}
                 </Badge>
               </li>
             ))}

@@ -3,19 +3,23 @@ import { withServerFirestore } from '@workspace/firebase-config/server-firestore
 import { toProject } from '@workspace/firebase-config/documents'
 import { byNewest, publiclyVisible } from '@/lib/public-content'
 import { resolveProfiles } from '@/lib/profiles'
+import { loadTerms } from '@/lib/terms'
 import { Project } from '@workspace/ui/models/interfaces/project'
 
 /** Published, public projects for the `/portfolio` index, newest first. */
 export const listPublishedProjects = async (): Promise<Project[]> =>
   withServerFirestore(async (firestore) => {
     const snapshot = await getDocs(publiclyVisible(firestore, 'projects'))
-    const profiles = await resolveProfiles(
-      firestore,
-      snapshot.docs.map((document) => document.data())
-    )
+    const [profiles, terms] = await Promise.all([
+      resolveProfiles(
+        firestore,
+        snapshot.docs.map((document) => document.data())
+      ),
+      loadTerms(firestore),
+    ])
 
     return snapshot.docs
-      .map((document) => toProject(document.id, document.data(), profiles))
+      .map((document) => toProject(document.id, document.data(), profiles, terms))
       .sort(byNewest)
   })
 
@@ -34,6 +38,10 @@ export const getPublishedProjectBySlug = async (
     const document = snapshot.docs[0]
     if (!document) return null
 
-    const profiles = await resolveProfiles(firestore, [document.data()])
-    return toProject(document.id, document.data(), profiles)
+    const [profiles, terms] = await Promise.all([
+      resolveProfiles(firestore, [document.data()]),
+      loadTerms(firestore),
+    ])
+
+    return toProject(document.id, document.data(), profiles, terms)
   })
