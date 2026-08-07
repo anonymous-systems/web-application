@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "migrate:stories": "tsx scripts/migrate-stories.ts",
-    "migrate:projects": "tsx scripts/migrate-projects.ts"
+    "migrate:projects": "tsx scripts/migrate-projects.ts",
+    "migrate:taxonomy": "tsx scripts/migrate-taxonomy.ts"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^11.2.0",

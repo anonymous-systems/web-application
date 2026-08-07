@@ -26,23 +26,36 @@ const isSlugTaken = async (
   return snapshot.docs.some((doc) => doc.id !== excludeId)
 }
 
+/**
+ * Every term in a collection, sorted by name.
+ *
+ * Sorted in memory rather than with `orderBy('name')`: Firestore silently omits
+ * documents missing the ordered field, so an unmigrated term simply vanished
+ * from this list. That hid the unmigrated taxonomy collections for months — the
+ * dashboard counted 12 tags while this returned 4, and in prod 78 against 0. A
+ * term with no name should look wrong, not be invisible.
+ */
 export const listTerms = async (
   collection: TaxonomyCollection
 ): Promise<TaxonomyTerm[]> => {
-  const snapshot = await terms(collection).orderBy('name').get()
+  const snapshot = await terms(collection).get()
 
-  return snapshot.docs.map((doc): TaxonomyTerm => {
-    const data = doc.data()
+  return snapshot.docs
+    .map((doc): TaxonomyTerm => {
+      const data = doc.data()
 
-    return {
-      id: doc.id,
-      name: (data.name as string | undefined) ?? '',
-      slug: (data.slug as string | undefined) ?? '',
-      description: (data.description as string | undefined) ?? null,
-      createdAt: toIsoString(data.createdAt),
-      updatedAt: toIsoString(data.updatedAt),
-    }
-  })
+      return {
+        id: doc.id,
+        name: (data.name as string | undefined) ?? '',
+        slug: (data.slug as string | undefined) ?? '',
+        description: (data.description as string | undefined) ?? null,
+        createdAt: toIsoString(data.createdAt),
+        updatedAt: toIsoString(data.updatedAt),
+      }
+    })
+    // Unnamed terms sort first rather than last: they are the ones needing
+    // attention, and burying them at the bottom is how they went unnoticed.
+    .sort((a, b) => Number(Boolean(a.name)) - Number(Boolean(b.name)) || a.name.localeCompare(b.name))
 }
 
 export const createTerm = async (
