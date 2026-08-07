@@ -23,7 +23,6 @@ export interface Viewer {
   idToken: string
 }
 
-/** What the signed-in viewer has already done to a given comment. */
 interface ViewerState {
   reaction: ReactionType | null
   reported: boolean
@@ -36,6 +35,10 @@ interface ViewerState {
  * id *is* the viewer's uid — so comments they never touched simply come back
  * missing. Two reads per comment, issued concurrently; a thread is small enough
  * that this stays one round trip in practice.
+ *
+ * A failed read degrades to "no viewer state" rather than propagating: this is
+ * decorative — whether *you* already reacted — so losing it costs an
+ * unhighlighted thumb, while throwing once cost the whole article.
  */
 const viewerState = async (
   firestore: Firestore,
@@ -46,15 +49,19 @@ const viewerState = async (
   const entries = await Promise.all(
     commentIds.map(async (commentId) => {
       const [reaction, report] = await Promise.all([
-        getDoc(doc(firestore, commentsPath, commentId, 'reactions', viewerUid)),
-        getDoc(doc(firestore, commentsPath, commentId, 'reports', viewerUid)),
+        getDoc(
+          doc(firestore, commentsPath, commentId, 'reactions', viewerUid)
+        ).catch(() => null),
+        getDoc(
+          doc(firestore, commentsPath, commentId, 'reports', viewerUid)
+        ).catch(() => null),
       ])
 
       return [
         commentId,
         {
-          reaction: (reaction.data()?.type as ReactionType | undefined) ?? null,
-          reported: report.exists(),
+          reaction: (reaction?.data()?.type as ReactionType | undefined) ?? null,
+          reported: report?.exists() ?? false,
         },
       ] as const
     })
