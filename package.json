@@ -16,9 +16,11 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test:e2e": "firebase emulators:exec \"concurrently --kill-others --names dev,e2e --success command-e2e \\\"pnpm dev\\\" \\\"pnpm cypress:run\\\"\" --import=test-seed --export-on-exit=test-seed --only auth,firestore,storage,functions",
-    "test:ui": "firebase emulators:exec \"concurrently \\\"pnpm dev\\\" \\\"pnpm cypress:open\\\"\" --import=test-seed --export-on-exit=test-seed --ui --only auth,firestore,storage,functions"
+    "test:ui": "firebase emulators:exec \"concurrently \\\"pnpm dev\\\" \\\"pnpm cypress:open\\\"\" --import=test-seed --export-on-exit=test-seed --ui --only auth,firestore,storage,functions",
+    "test:rules": "firebase emulators:exec --only firestore \"vitest run --config vitest.rules.config.ts\""
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/firebase-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
@@ -28,7 +30,8 @@
     "firebase-tools": "^14.12.0",
     "nx": "21.3.11",
     "prettier": "^3.5.1",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748",
   "engines": {
