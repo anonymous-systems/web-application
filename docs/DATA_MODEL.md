@@ -27,8 +27,8 @@ The app's primary content type, authored in the admin app.
 - `excerpt`: _string_ or _null_ — short summary for cards/SEO
 - `content`: _string_ or _null_ — rich-text **HTML** from CKEditor 5
 - `coverImage`: _string_ or _null_ — Storage download URL
-- `category`: _string_ or _null_ — a category slug
-- `tags`: _string[]_ — tag slugs
+- `category`: _DocumentReference_ → `categories/{categoryId}` or _null_
+- `tags`: _DocumentReference[]_ → `tags/{tagId}`
 - `allowComments`: _boolean_
 - `featured`: _boolean_
 - `problemStatus`: _'open' | 'resolved'_ or _null_ (only for `type: 'problem'`)
@@ -51,9 +51,15 @@ Shared taxonomy shape, managed in the admin app. Categories/tags label stories a
 projects; technologies are a project's tech stack (kept separate from tags so the
 showcase can render them distinctly and they can gain an `icon`/`url` later).
 - `name`: _string_
-- `slug`: _string_ — unique within the collection
+- `slug`: _string_ — unique within the collection, minted at creation and never
+  re-derived: it is the term's public identity, so a rename must not move it
 - `description`: _string_ or _null_
 - `createdAt`, `updatedAt`: _Timestamp_
+
+Content links to a term by _DocumentReference_, not by slug. A slug on the content
+is a copy of the term's name, and renaming the term used to re-derive that slug and
+strand everything pointing at the old one. Links are converted by
+`apps/admin/scripts/migrate-taxonomy-links.ts` — see its header.
 
 ### Projects — `projects/{projectId}`
 Portfolio entries, authored in the admin app. Mirrors the Story model.
@@ -64,9 +70,9 @@ Portfolio entries, authored in the admin app. Mirrors the Story model.
 - `excerpt`: _string_ or _null_ — short description for cards
 - `content`: _string_ or _null_ — rich-text **HTML** from CKEditor 5
 - `coverImage`: _string_ or _null_ — Storage download URL
-- `category`: _string_ or _null_ — a category slug
-- `tags`: _string[]_ — tag slugs
-- `technologies`: _string[]_ — technology slugs
+- `category`: _DocumentReference_ → `categories/{categoryId}` or _null_
+- `tags`: _DocumentReference[]_ → `tags/{tagId}`
+- `technologies`: _DocumentReference[]_ → `technologies/{technologyId}`
 - `sourceCodeLink`, `livePreviewLink`, `figmaLink`: _string_ or _null_
 - `developmentStatus`: _'planned' | 'in-development' | 'complete' | 'on-hold' | 'cancelled'_ or _null_
 - `featured`: _boolean_
