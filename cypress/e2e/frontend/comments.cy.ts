@@ -78,19 +78,23 @@ const clearStories = (): void => {
       }).then((comments) => {
         const found: Array<{ name: string }> = comments.body?.documents ?? []
         found.forEach((comment) => {
-          cy.request({
-            method: 'GET',
-            url: `${BASE}/${comment.name}/reactions?pageSize=100`,
-            headers: OWNER,
-            failOnStatusCode: false,
-          }).then((reactions) => {
-            const each: Array<{ name: string }> = reactions.body?.documents ?? []
-            each.forEach((reaction) => {
-              cy.request({
-                method: 'DELETE',
-                url: `${BASE}/${reaction.name}`,
-                headers: OWNER,
-                failOnStatusCode: false,
+          // Every subcollection under the comment, not just reactions — an
+          // orphan reattaches to the next comment reusing that id.
+          ;['reactions', 'reports'].forEach((subcollection) => {
+            cy.request({
+              method: 'GET',
+              url: `${BASE}/${comment.name}/${subcollection}?pageSize=100`,
+              headers: OWNER,
+              failOnStatusCode: false,
+            }).then((response) => {
+              const each: Array<{ name: string }> = response.body?.documents ?? []
+              each.forEach((document) => {
+                cy.request({
+                  method: 'DELETE',
+                  url: `${BASE}/${document.name}`,
+                  headers: OWNER,
+                  failOnStatusCode: false,
+                })
               })
             })
           })
@@ -214,6 +218,37 @@ describe('Comments', () => {
       cy.get('button[aria-label="Dislike"]').click()
       cy.get('button[aria-label="Dislike"]').should('contain.text', '1')
       cy.get('button[aria-label="Like"]').should('not.contain.text', '1')
+    })
+
+    it('reports a comment and remembers it', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Comment options"]').click()
+      cy.contains('Report').click()
+
+      cy.get('input[type="radio"][value="spam"]').check()
+      cy.contains('button', 'Send report').should('not.be.disabled').click()
+
+      // The dialog closes only once the write resolved, so this distinguishes a
+      // successful report from a silently disabled button.
+      cy.contains('Report this comment').should('not.exist')
+
+      // The report is keyed by the reporter's uid, so a reload finds it and the
+      // menu offers no second filing.
+      cy.reload()
+      cy.get('button[aria-label="Comment options"]').click()
+      cy.contains('Reported').should('exist')
+    })
+
+    it('will not send a report without a reason', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Comment options"]').click()
+      cy.contains('Report').click()
+
+      cy.contains('button', 'Send report').should('be.disabled')
     })
 
     it('clears the composer on cancel', () => {
