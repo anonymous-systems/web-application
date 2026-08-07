@@ -17,6 +17,25 @@ const PRIVATE = { id: 'e2ePrivateProject', title: 'E2E Private Project' }
 
 const now = (): string => new Date().toISOString()
 
+// Content links to taxonomy terms by reference, so the chips a card shows come
+// from the term document rather than from a string on the project.
+const TECHNOLOGY = { id: 'e2eAngular', name: 'Angular', slug: 'angular' }
+const technologyPath = `projects/${PROJECT}/databases/(default)/documents/technologies/${TECHNOLOGY.id}`
+
+const seedTechnology = (): void => {
+  cy.request({
+    method: 'PATCH',
+    url: `${DOCS}/technologies/${TECHNOLOGY.id}`,
+    headers: OWNER,
+    body: {
+      fields: {
+        name: { stringValue: TECHNOLOGY.name },
+        slug: { stringValue: TECHNOLOGY.slug },
+      },
+    },
+  })
+}
+
 interface SeedOptions {
   id: string
   title: string
@@ -34,7 +53,7 @@ const seedProject = ({
   status = 'published',
   visibility = 'public',
   developmentStatus = 'complete',
-  technologies = ['Angular'],
+  technologies = [technologyPath],
 }: SeedOptions): void => {
   cy.request({
     method: 'PATCH',
@@ -50,7 +69,7 @@ const seedProject = ({
         excerpt: { stringValue: `${title} excerpt` },
         technologies: {
           arrayValue: {
-            values: technologies.map((value) => ({ stringValue: value })),
+            values: technologies.map((value) => ({ referenceValue: value })),
           },
         },
         createdAt: { timestampValue: now() },
@@ -82,10 +101,19 @@ const clearProjects = (): void => {
 describe('Portfolio', () => {
   beforeEach(() => {
     clearProjects()
+    seedTechnology()
     seedProject(PUBLISHED)
   })
 
-  after(() => clearProjects())
+  after(() => {
+    clearProjects()
+    cy.request({
+      method: 'DELETE',
+      url: `${DOCS}/technologies/${TECHNOLOGY.id}`,
+      headers: OWNER,
+      failOnStatusCode: false,
+    })
+  })
 
   it('lists a published, public project', () => {
     cy.visit('/portfolio')
@@ -108,7 +136,7 @@ describe('Portfolio', () => {
   it('shows the development status and technology chips on a card', () => {
     cy.visit('/portfolio')
     cy.contains('Complete').should('be.visible')
-    cy.contains('Angular').should('be.visible')
+    cy.contains(TECHNOLOGY.name).should('be.visible')
   })
 
   it('filters by development status and back to all', () => {

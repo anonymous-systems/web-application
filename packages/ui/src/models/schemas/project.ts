@@ -35,6 +35,8 @@ export const projectInputSchema = z.object({
     .nullish(),
   content: z.string().nullish(),
   coverImage: z.string().trim().nullish(),
+  // Taxonomy term document ids. The service turns them into references; a slug
+  // would be a copy that goes stale the moment the term is renamed.
   category: z.string().trim().nullish(),
   tags: z.array(z.string().trim().min(1)).default([]),
   technologies: z.array(z.string().trim().min(1)).default([]),

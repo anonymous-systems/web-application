@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { TaxonomyTermRef } from '@workspace/ui/models/interfaces/taxonomy-term-ref'
 import { projectChips, projectLinks, storyTypeBadge } from './content-display'
 
 describe('storyTypeBadge', () => {
@@ -27,18 +28,23 @@ describe('storyTypeBadge', () => {
 })
 
 describe('projectChips', () => {
+  const term = (name: string): TaxonomyTermRef => ({
+    id: `id-${name}`,
+    name,
+    slug: name.toLowerCase(),
+  })
+
   it('prefers technologies', () => {
     expect(
-      projectChips({ technologies: ['Angular'], tags: ['SEO'] })
-    ).toEqual(['Angular'])
+      projectChips({ technologies: [term('Angular')], tags: [term('SEO')] })
+    ).toEqual([term('Angular')])
   })
 
   // The migration left technologies empty with the stack still in tags.
   it('falls back to tags when technologies is empty', () => {
-    expect(projectChips({ technologies: [], tags: ['Angular', 'Firebase'] })).toEqual([
-      'Angular',
-      'Firebase',
-    ])
+    expect(
+      projectChips({ technologies: [], tags: [term('Angular'), term('Firebase')] })
+    ).toEqual([term('Angular'), term('Firebase')])
   })
 
   it('is empty when neither is set', () => {

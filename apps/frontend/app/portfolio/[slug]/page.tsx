@@ -82,8 +82,8 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
         {chips.length > 0 && (
           <ul className="flex flex-wrap gap-1">
             {chips.map((chip) => (
-              <li key={chip}>
-                <Badge variant="secondary">{chip}</Badge>
+              <li key={chip.id}>
+                <Badge variant="secondary">{chip.name}</Badge>
               </li>
             ))}
           </ul>

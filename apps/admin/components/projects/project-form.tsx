@@ -42,7 +42,9 @@ const RichTextEditor = dynamic(
   }
 )
 
+/** A selectable taxonomy term. `id` is what gets stored; `slug` labels it in tests. */
 interface TermOption {
+  id: string
   name: string
   slug: string
 }
@@ -84,7 +86,7 @@ const TermChips = ({
 }: {
   terms: TermOption[]
   selected: string[]
-  onToggle: (slug: string) => void
+  onToggle: (id: string) => void
   section: string
   groupTestId: string
   toggleTestId: string
@@ -96,14 +98,14 @@ const TermChips = ({
   ) : (
     <div className="flex flex-wrap gap-2" data-testid={groupTestId}>
       {terms.map((term) => {
-        const isSelected = selected.includes(term.slug)
+        const isSelected = selected.includes(term.id)
         return (
           <Button
-            key={term.slug}
+            key={term.id}
             type="button"
             variant={isSelected ? 'default' : 'outline'}
             size="sm"
-            onClick={() => onToggle(term.slug)}
+            onClick={() => onToggle(term.id)}
             data-testid={toggleTestId}
             data-slug={term.slug}
             data-selected={isSelected}
@@ -132,9 +134,9 @@ export const ProjectForm = ({
     excerpt: project?.excerpt ?? '',
     content: project?.content ?? '',
     coverImage: project?.coverImage ?? '',
-    category: project?.category ?? '',
-    tags: project?.tags ?? [],
-    technologies: project?.technologies ?? [],
+    category: project?.category?.id ?? '',
+    tags: project?.tags.map((tag) => tag.id) ?? [],
+    technologies: project?.technologies.map((tech) => tech.id) ?? [],
     sourceCodeLink: project?.sourceCodeLink ?? '',
     livePreviewLink: project?.livePreviewLink ?? '',
     figmaLink: project?.figmaLink ?? '',
@@ -147,12 +149,12 @@ export const ProjectForm = ({
     value: FormValues[K]
   ): void => setValues((current) => ({ ...current, [key]: value }))
 
-  const toggleChip = (key: ChipField, slug: string): void =>
+  const toggleChip = (key: ChipField, id: string): void =>
     setValues((current) => ({
       ...current,
-      [key]: current[key].includes(slug)
-        ? current[key].filter((value) => value !== slug)
-        : [...current[key], slug],
+      [key]: current[key].includes(id)
+        ? current[key].filter((value) => value !== id)
+        : [...current[key], id],
     }))
 
   const uploadCover = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -289,7 +291,7 @@ export const ProjectForm = ({
         value={values.category}
         onChange={(value) => setField('category', value)}
         options={categories.map((category) => ({
-          value: category.slug,
+          value: category.id,
           label: category.name,
         }))}
         noneLabel="No category"
@@ -345,7 +347,7 @@ export const ProjectForm = ({
         <TermChips
           terms={tags}
           selected={values.tags}
-          onToggle={(slug) => toggleChip('tags', slug)}
+          onToggle={(id) => toggleChip('tags', id)}
           section="tags"
           groupTestId="projectTags"
           toggleTestId="projectTagToggle"
@@ -357,7 +359,7 @@ export const ProjectForm = ({
         <TermChips
           terms={technologies}
           selected={values.technologies}
-          onToggle={(slug) => toggleChip('technologies', slug)}
+          onToggle={(id) => toggleChip('technologies', id)}
           section="technologies"
           groupTestId="projectTechnologies"
           toggleTestId="projectTechToggle"

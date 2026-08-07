@@ -102,8 +102,8 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
         {story.tags.length > 0 && (
           <ul className="flex flex-wrap gap-1">
             {story.tags.map((tag) => (
-              <li key={tag}>
-                <Badge variant="outline">#{tag}</Badge>
+              <li key={tag.id}>
+                <Badge variant="outline">#{tag.name}</Badge>
               </li>
             ))}
           </ul>

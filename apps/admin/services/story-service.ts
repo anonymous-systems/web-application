@@ -6,6 +6,8 @@ import {
 import { db, resolveProfiles } from '@workspace/firebase-config/firestore'
 import { toStory } from '@workspace/firebase-config/documents'
 import { availableSlug } from '@/lib/available-slug'
+import { loadTerms } from '@/lib/terms'
+import { termRef, termRefs } from '@/lib/term-refs'
 import { UNEXPECTED } from '@/lib/errors'
 import { readTimeMinutes } from '@/lib/read-time'
 import { ActionResult } from '@/interfaces/action-result'
@@ -17,10 +19,13 @@ const stories = (): CollectionReference => db().collection('stories')
 
 export const listStories = async (): Promise<Story[]> => {
   const snapshot = await stories().get()
-  const profiles = await resolveProfiles(snapshot.docs)
+  const [profiles, terms] = await Promise.all([
+    resolveProfiles(snapshot.docs),
+    loadTerms(),
+  ])
 
   return snapshot.docs
-    .map((doc) => toStory(doc.id, doc.data() ?? {}, profiles))
+    .map((doc) => toStory(doc.id, doc.data() ?? {}, profiles, terms))
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
@@ -28,8 +33,12 @@ export const getStory = async (id: string): Promise<Story | null> => {
   const doc = await stories().doc(id).get()
   if (!doc.exists) return null
 
-  const profiles = await resolveProfiles([doc])
-  return toStory(doc.id, doc.data() ?? {}, profiles)
+  const [profiles, terms] = await Promise.all([
+    resolveProfiles([doc]),
+    loadTerms(),
+  ])
+
+  return toStory(doc.id, doc.data() ?? {}, profiles, terms)
 }
 
 // `readTimeMinutes` comes from the content; `user`, `roles`, and timestamps are
@@ -43,8 +52,8 @@ const writableFields = (input: StoryInput, slug: string): StoryWriteFields => ({
   excerpt: input.excerpt?.trim() || null,
   content: input.content || null,
   coverImage: input.coverImage?.trim() || null,
-  category: input.category?.trim() || null,
-  tags: input.tags,
+  category: termRef('categories', input.category),
+  tags: termRefs('tags', input.tags),
   allowComments: input.allowComments,
   featured: input.featured,
   problemStatus: input.problemStatus ?? null,

@@ -6,6 +6,8 @@ import {
 import { db, resolveProfiles } from '@workspace/firebase-config/firestore'
 import { toProject } from '@workspace/firebase-config/documents'
 import { availableSlug } from '@/lib/available-slug'
+import { loadTerms } from '@/lib/terms'
+import { termRef, termRefs } from '@/lib/term-refs'
 import { UNEXPECTED } from '@/lib/errors'
 import { ActionResult } from '@/interfaces/action-result'
 import { ProjectWriteFields } from '@/interfaces/project'
@@ -16,10 +18,13 @@ const projects = (): CollectionReference => db().collection('projects')
 
 export const listProjects = async (): Promise<Project[]> => {
   const snapshot = await projects().get()
-  const profiles = await resolveProfiles(snapshot.docs)
+  const [profiles, terms] = await Promise.all([
+    resolveProfiles(snapshot.docs),
+    loadTerms(),
+  ])
 
   return snapshot.docs
-    .map((doc) => toProject(doc.id, doc.data() ?? {}, profiles))
+    .map((doc) => toProject(doc.id, doc.data() ?? {}, profiles, terms))
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
@@ -27,8 +32,12 @@ export const getProject = async (id: string): Promise<Project | null> => {
   const doc = await projects().doc(id).get()
   if (!doc.exists) return null
 
-  const profiles = await resolveProfiles([doc])
-  return toProject(doc.id, doc.data() ?? {}, profiles)
+  const [profiles, terms] = await Promise.all([
+    resolveProfiles([doc]),
+    loadTerms(),
+  ])
+
+  return toProject(doc.id, doc.data() ?? {}, profiles, terms)
 }
 
 // `user`, `roles`, and timestamps are owned by create/update, not the caller.
@@ -43,9 +52,9 @@ const writableFields = (
   excerpt: input.excerpt?.trim() || null,
   content: input.content || null,
   coverImage: input.coverImage?.trim() || null,
-  category: input.category?.trim() || null,
-  tags: input.tags,
-  technologies: input.technologies,
+  category: termRef('categories', input.category),
+  tags: termRefs('tags', input.tags),
+  technologies: termRefs('technologies', input.technologies),
   sourceCodeLink: input.sourceCodeLink ?? null,
   livePreviewLink: input.livePreviewLink ?? null,
   figmaLink: input.figmaLink ?? null,

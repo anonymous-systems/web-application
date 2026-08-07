@@ -1,6 +1,7 @@
 import { ExternalLink, Figma, Github, type LucideIcon } from 'lucide-react'
 import type { Story } from '@workspace/ui/models/interfaces/story'
 import type { Project } from '@workspace/ui/models/interfaces/project'
+import type { TaxonomyTermRef } from '@workspace/ui/models/interfaces/taxonomy-term-ref'
 import {
   PROBLEM_STATUS_LABELS,
   STORY_TYPE_LABELS,
@@ -30,7 +31,7 @@ export const storyTypeBadge = (
  */
 export const projectChips = (
   project: Pick<Project, 'technologies' | 'tags'>
-): string[] =>
+): TaxonomyTermRef[] =>
   project.technologies.length > 0 ? project.technologies : project.tags
 
 export interface ProjectLink {

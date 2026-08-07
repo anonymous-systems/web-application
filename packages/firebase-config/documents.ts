@@ -1,8 +1,10 @@
 import { resolveAuthorName } from '@workspace/ui/lib/user-display'
+import { slugify } from '@workspace/ui/lib/slug'
 import type { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 import type { Story } from '@workspace/ui/models/interfaces/story'
 import type { Project } from '@workspace/ui/models/interfaces/project'
 import type { Comment } from '@workspace/ui/models/interfaces/comment'
+import type { TaxonomyTermRef } from '@workspace/ui/models/interfaces/taxonomy-term-ref'
 
 /**
  * Raw Firestore document fields. Deliberately plain values rather than a
@@ -41,6 +43,39 @@ export const toIsoString = (value: unknown): string | null =>
     ? (value as TimestampLike).toDate().toISOString()
     : null
 
+/**
+ * Resolves a stored taxonomy link — a reference, or a bare slug on documents
+ * predating the reference migration — against the terms the caller supplied.
+ *
+ * An unresolved link is dropped rather than rendered: a term that no longer
+ * exists has no name to show, and a raw id in a chip row is worse than nothing.
+ */
+const termOf = (
+  value: unknown,
+  terms: Map<string, TaxonomyTermRef>
+): TaxonomyTermRef | null => {
+  if (isReference(value)) return terms.get(value.id) ?? null
+
+  // Pre-migration documents stored a string: stories a slug, projects a display
+  // name. Terms are keyed by id and slug, so slugifying covers both and the site
+  // keeps rendering against a collection the migration has not reached.
+  if (typeof value === 'string') {
+    return terms.get(value) ?? terms.get(slugify(value)) ?? null
+  }
+
+  return null
+}
+
+const termsOf = (
+  value: unknown,
+  terms: Map<string, TaxonomyTermRef>
+): TaxonomyTermRef[] =>
+  Array.isArray(value)
+    ? value
+        .map((entry) => termOf(entry, terms))
+        .filter((term): term is TaxonomyTermRef => term !== null)
+    : []
+
 const authorOf = (
   data: DocumentFields,
   profiles: Map<string, UserProfileDoc>
@@ -65,7 +100,8 @@ const authorOf = (
 export const toStory = (
   id: string,
   data: DocumentFields,
-  profiles: Map<string, UserProfileDoc>
+  profiles: Map<string, UserProfileDoc>,
+  terms: Map<string, TaxonomyTermRef> = new Map()
 ): Story => ({
   id,
   title: (data.title as string | undefined) ?? '',
@@ -76,8 +112,8 @@ export const toStory = (
   excerpt: (data.excerpt as string | undefined) ?? null,
   content: (data.content as string | undefined) ?? null,
   coverImage: (data.coverImage as string | undefined) ?? null,
-  category: (data.category as string | undefined) ?? null,
-  tags: (data.tags as string[] | undefined) ?? [],
+  category: termOf(data.category, terms),
+  tags: termsOf(data.tags, terms),
   allowComments: (data.allowComments as boolean | undefined) ?? true,
   featured: (data.featured as boolean | undefined) ?? false,
   problemStatus:
@@ -93,7 +129,8 @@ export const toStory = (
 export const toProject = (
   id: string,
   data: DocumentFields,
-  profiles: Map<string, UserProfileDoc>
+  profiles: Map<string, UserProfileDoc>,
+  terms: Map<string, TaxonomyTermRef> = new Map()
 ): Project => ({
   id,
   title: (data.title as string | undefined) ?? '',
@@ -103,9 +140,9 @@ export const toProject = (
   excerpt: (data.excerpt as string | undefined) ?? null,
   content: (data.content as string | undefined) ?? null,
   coverImage: (data.coverImage as string | undefined) ?? null,
-  category: (data.category as string | undefined) ?? null,
-  tags: (data.tags as string[] | undefined) ?? [],
-  technologies: (data.technologies as string[] | undefined) ?? [],
+  category: termOf(data.category, terms),
+  tags: termsOf(data.tags, terms),
+  technologies: termsOf(data.technologies, terms),
   sourceCodeLink: (data.sourceCodeLink as string | undefined) ?? null,
   livePreviewLink: (data.livePreviewLink as string | undefined) ?? null,
   figmaLink: (data.figmaLink as string | undefined) ?? null,
