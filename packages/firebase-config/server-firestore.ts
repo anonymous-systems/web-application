@@ -4,6 +4,7 @@ import {
   connectFirestoreEmulator,
   type Firestore,
 } from 'firebase/firestore'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getAppCheck } from 'firebase-admin/app-check'
 import { firebaseClientConfig } from './client'
 import { getFirebaseAdminApp } from './admin-app'
@@ -84,6 +85,23 @@ export const withServerFirestore = async <T>(
     if (process.env.FIRESTORE_EMULATOR_HOST) {
       const [host, port] = process.env.FIRESTORE_EMULATOR_HOST.split(':')
       connectFirestoreEmulator(firestore, host as string, Number(port))
+    }
+
+    if (idToken) {
+      // `authIdToken` only takes effect once auth has resolved. Without this the
+      // app stays anonymous and every rule reading `request.auth.uid` fails with
+      // a null-value error rather than an obvious "not signed in".
+      const auth = getAuth(app)
+
+      if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+        connectAuthEmulator(
+          auth,
+          `http://${process.env.FIREBASE_AUTH_EMULATOR_HOST}`,
+          { disableWarnings: true }
+        )
+      }
+
+      await auth.authStateReady()
     }
 
     return await read(firestore)
