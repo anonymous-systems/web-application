@@ -1,4 +1,11 @@
-import type { CollectionReference, Query } from 'firebase-admin/firestore'
+import {
+  collection,
+  query,
+  where,
+  type CollectionReference,
+  type Firestore,
+  type Query,
+} from 'firebase/firestore'
 
 interface HasPublishDates {
   publishedAt: string | null
@@ -6,15 +13,26 @@ interface HasPublishDates {
 }
 
 /**
- * Restricts a collection to what the public site may read. Applied at query
- * level rather than after the fact, so draft and private documents never leave
- * Firestore — the same rule guards stories and projects, which share these two
- * fields.
+ * Restricts a collection to what the public site may read: published documents
+ * with public visibility, matching `publicStory()` / `publicProject()` in
+ * firestore.rules exactly.
+ *
+ * The match must be exact. Rules authorise rather than filter, so a query that
+ * asks for documents the rules disallow is rejected outright instead of being
+ * trimmed — a mismatch here fails the whole page, not just the extra documents.
  */
-export const publiclyVisible = (collection: CollectionReference): Query =>
-  collection
-    .where('status', '==', 'published')
-    .where('visibility', '==', 'public')
+export const publiclyVisible = (
+  firestore: Firestore,
+  path: 'stories' | 'projects'
+): Query => {
+  const ref: CollectionReference = collection(firestore, path)
+
+  return query(
+    ref,
+    where('status', '==', 'published'),
+    where('visibility', '==', 'public')
+  )
+}
 
 /**
  * Newest first, by publish date and falling back to creation date. The fallback
