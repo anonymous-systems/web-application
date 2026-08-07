@@ -1,18 +1,23 @@
-import { CollectionReference } from 'firebase-admin/firestore'
-import { db, resolveProfiles } from '@workspace/firebase-config/firestore'
+import { getDocs, limit, query, where } from 'firebase/firestore'
+import { withServerFirestore } from '@workspace/firebase-config/server-firestore'
 import { toStory } from '@workspace/firebase-config/documents'
 import { byNewest, publiclyVisible } from '@/lib/public-content'
+import { resolveProfiles } from '@/lib/profiles'
 import { Story } from '@workspace/ui/models/interfaces/story'
 
-const stories = (): CollectionReference => db().collection('stories')
-
 /** Published, public stories for the `/stories` index, newest first. */
-export const listPublishedStories = async (): Promise<Story[]> => {
-  const snapshot = await publiclyVisible(stories()).get()
-  const profiles = await resolveProfiles(snapshot.docs)
+export const listPublishedStories = async (): Promise<Story[]> =>
+  withServerFirestore(async (firestore) => {
+    const snapshot = await getDocs(publiclyVisible(firestore, 'stories'))
+    const profiles = await resolveProfiles(
+      firestore,
+      snapshot.docs.map((document) => document.data())
+    )
 
-  return snapshot.docs.map((doc) => toStory(doc, profiles)).sort(byNewest)
-}
+    return snapshot.docs
+      .map((document) => toStory(document.id, document.data(), profiles))
+      .sort(byNewest)
+  })
 
 /**
  * A single published, public story by slug, or null. Slugs are unique within
@@ -20,15 +25,15 @@ export const listPublishedStories = async (): Promise<Story[]> => {
  */
 export const getPublishedStoryBySlug = async (
   slug: string
-): Promise<Story | null> => {
-  const snapshot = await publiclyVisible(stories())
-    .where('slug', '==', slug)
-    .limit(1)
-    .get()
+): Promise<Story | null> =>
+  withServerFirestore(async (firestore) => {
+    const snapshot = await getDocs(
+      query(publiclyVisible(firestore, 'stories'), where('slug', '==', slug), limit(1))
+    )
 
-  const doc = snapshot.docs[0]
-  if (!doc) return null
+    const document = snapshot.docs[0]
+    if (!document) return null
 
-  const profiles = await resolveProfiles([doc])
-  return toStory(doc, profiles)
-}
+    const profiles = await resolveProfiles(firestore, [document.data()])
+    return toStory(document.id, document.data(), profiles)
+  })
