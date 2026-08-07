@@ -3,16 +3,15 @@ import {
   DocumentSnapshot,
   Firestore,
   getFirestore,
-  Timestamp,
 } from 'firebase-admin/firestore'
 import { getFirebaseAdminApp } from './admin-app'
 import type { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 
 export const db = (): Firestore => getFirestore(getFirebaseAdminApp())
 
-/** Converts a Firestore Timestamp to an ISO string, or null for anything else. */
-export const toIsoString = (value: unknown): string | null =>
-  value instanceof Timestamp ? value.toDate().toISOString() : null
+// Lives in documents.ts, which imports neither SDK. Re-exported here so callers
+// already reaching for it alongside `db` don't need a second import.
+export { toIsoString } from './documents'
 
 /** Keyed by uid, so a caller that already batched its own reads can map them. */
 export const toProfileMap = (

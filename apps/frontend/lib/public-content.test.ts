@@ -1,34 +1,34 @@
 import { describe, expect, it, vi } from 'vitest'
-import type { CollectionReference } from 'firebase-admin/firestore'
-import { byNewest, publiclyVisible } from './public-content'
+import type { Firestore } from 'firebase/firestore'
 
-/** Records the `where` calls a query builder receives, chaining like Firestore. */
-const fakeCollection = (): {
-  collection: CollectionReference
-  calls: [string, string, unknown][]
-} => {
-  const calls: [string, string, unknown][] = []
-  const query = {
-    where: vi.fn((field: string, op: string, value: unknown) => {
-      calls.push([field, op, value])
-      return query
-    }),
-  }
+// Stubbed so the constraints can be inspected without a live Firestore. The
+// query must match publicStory()/publicProject() in firestore.rules exactly:
+// rules authorise rather than filter, so asking for more than they allow fails
+// the whole query instead of trimming the result.
+vi.mock('firebase/firestore', () => ({
+  collection: (_firestore: unknown, path: string) => ({ path }),
+  where: (field: string, op: string, value: unknown) => ({ field, op, value }),
+  query: (ref: unknown, ...constraints: unknown[]) => ({ ref, constraints }),
+}))
 
-  return { collection: query as unknown as CollectionReference, calls }
-}
+const { byNewest, publiclyVisible } = await import('./public-content')
 
 describe('publiclyVisible', () => {
-  it('restricts the query to published, public documents', () => {
-    const { collection, calls } = fakeCollection()
+  it.each(['stories', 'projects'] as const)(
+    'restricts %s to published, public documents',
+    (path) => {
+      const built = publiclyVisible({} as Firestore, path) as unknown as {
+        ref: { path: string }
+        constraints: { field: string; op: string; value: unknown }[]
+      }
 
-    publiclyVisible(collection)
-
-    expect(calls).toEqual([
-      ['status', '==', 'published'],
-      ['visibility', '==', 'public'],
-    ])
-  })
+      expect(built.ref.path).toBe(path)
+      expect(built.constraints).toEqual([
+        { field: 'status', op: '==', value: 'published' },
+        { field: 'visibility', op: '==', value: 'public' },
+      ])
+    }
+  )
 })
 
 describe('byNewest', () => {

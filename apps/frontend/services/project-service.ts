@@ -1,18 +1,23 @@
-import { CollectionReference } from 'firebase-admin/firestore'
-import { db, resolveProfiles } from '@workspace/firebase-config/firestore'
+import { getDocs, limit, query, where } from 'firebase/firestore'
+import { withServerFirestore } from '@workspace/firebase-config/server-firestore'
 import { toProject } from '@workspace/firebase-config/documents'
 import { byNewest, publiclyVisible } from '@/lib/public-content'
+import { resolveProfiles } from '@/lib/profiles'
 import { Project } from '@workspace/ui/models/interfaces/project'
 
-const projects = (): CollectionReference => db().collection('projects')
-
 /** Published, public projects for the `/portfolio` index, newest first. */
-export const listPublishedProjects = async (): Promise<Project[]> => {
-  const snapshot = await publiclyVisible(projects()).get()
-  const profiles = await resolveProfiles(snapshot.docs)
+export const listPublishedProjects = async (): Promise<Project[]> =>
+  withServerFirestore(async (firestore) => {
+    const snapshot = await getDocs(publiclyVisible(firestore, 'projects'))
+    const profiles = await resolveProfiles(
+      firestore,
+      snapshot.docs.map((document) => document.data())
+    )
 
-  return snapshot.docs.map((doc) => toProject(doc, profiles)).sort(byNewest)
-}
+    return snapshot.docs
+      .map((document) => toProject(document.id, document.data(), profiles))
+      .sort(byNewest)
+  })
 
 /**
  * A single published, public project by slug, or null. Slugs are unique within
@@ -20,15 +25,15 @@ export const listPublishedProjects = async (): Promise<Project[]> => {
  */
 export const getPublishedProjectBySlug = async (
   slug: string
-): Promise<Project | null> => {
-  const snapshot = await publiclyVisible(projects())
-    .where('slug', '==', slug)
-    .limit(1)
-    .get()
+): Promise<Project | null> =>
+  withServerFirestore(async (firestore) => {
+    const snapshot = await getDocs(
+      query(publiclyVisible(firestore, 'projects'), where('slug', '==', slug), limit(1))
+    )
 
-  const doc = snapshot.docs[0]
-  if (!doc) return null
+    const document = snapshot.docs[0]
+    if (!document) return null
 
-  const profiles = await resolveProfiles([doc])
-  return toProject(doc, profiles)
-}
+    const profiles = await resolveProfiles(firestore, [document.data()])
+    return toProject(document.id, document.data(), profiles)
+  })
