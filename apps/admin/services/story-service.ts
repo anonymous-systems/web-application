@@ -20,7 +20,7 @@ export const listStories = async (): Promise<Story[]> => {
   const profiles = await resolveProfiles(snapshot.docs)
 
   return snapshot.docs
-    .map((doc) => toStory(doc, profiles))
+    .map((doc) => toStory(doc.id, doc.data() ?? {}, profiles))
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
@@ -29,7 +29,7 @@ export const getStory = async (id: string): Promise<Story | null> => {
   if (!doc.exists) return null
 
   const profiles = await resolveProfiles([doc])
-  return toStory(doc, profiles)
+  return toStory(doc.id, doc.data() ?? {}, profiles)
 }
 
 // `readTimeMinutes` comes from the content; `user`, `roles`, and timestamps are

@@ -19,7 +19,7 @@ export const listProjects = async (): Promise<Project[]> => {
   const profiles = await resolveProfiles(snapshot.docs)
 
   return snapshot.docs
-    .map((doc) => toProject(doc, profiles))
+    .map((doc) => toProject(doc.id, doc.data() ?? {}, profiles))
     .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
 }
 
@@ -28,7 +28,7 @@ export const getProject = async (id: string): Promise<Project | null> => {
   if (!doc.exists) return null
 
   const profiles = await resolveProfiles([doc])
-  return toProject(doc, profiles)
+  return toProject(doc.id, doc.data() ?? {}, profiles)
 }
 
 // `user`, `roles`, and timestamps are owned by create/update, not the caller.
