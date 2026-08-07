@@ -2,6 +2,7 @@ import { getApp, getApps, initializeApp, FirebaseApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { AppCheck, initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check'
 
 export const firebaseClientConfig = {
@@ -71,6 +72,19 @@ const getFirebaseStorage = () => {
   return storage
 }
 
+const getFirebaseFirestore = () => {
+  const firestore = getFirestore(getFirebaseApp())
+
+  if (process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST) {
+    const split = process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST.split(':')
+    const host = split[0] as string
+    const port = parseInt(split[1] as string, 10)
+    connectFirestoreEmulator(firestore, host, port)
+  }
+
+  return firestore
+}
+
 let appCheck: AppCheck | null = null
 
 const getOrInitializeAppCheck = (app: FirebaseApp): AppCheck => {
@@ -112,5 +126,6 @@ export {
   getFirebaseAuth,
   getFirebaseFunctions,
   getFirebaseStorage,
+  getFirebaseFirestore,
   getAppCheck
 }
