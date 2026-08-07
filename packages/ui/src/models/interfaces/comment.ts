@@ -28,4 +28,10 @@ export interface Comment {
    * the document. Null when signed out or when they have not reacted.
    */
   viewerReaction: ReactionType | null
+  /**
+   * Whether the current viewer already reported this comment, so the menu can
+   * say so rather than inviting a duplicate. Reports are keyed by reporter uid,
+   * so a second one would overwrite the first regardless.
+   */
+  viewerReported: boolean
 }
