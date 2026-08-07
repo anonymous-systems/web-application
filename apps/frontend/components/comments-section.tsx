@@ -9,6 +9,7 @@ import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { formatRelativeTime } from '@/lib/format-relative-time'
 import { CommentForm } from '@/components/comment-form'
 import { CommentReactions } from '@/components/comment-reactions'
+import { CommentReportDialog } from '@/components/comment-report-dialog'
 import { CommentParentType } from '@/lib/comment-parents'
 import { listComments } from '@/services/comment-service'
 
@@ -48,11 +49,19 @@ const CommentRow = ({ comment, parentType, parentId }: RowProps): JSX.Element =>
 
         <p className="text-sm whitespace-pre-line">{comment.content}</p>
 
-        <CommentReactions
-          comment={comment}
-          parentType={parentType}
-          parentId={parentId}
-        />
+        <div className="flex items-center gap-1">
+          <CommentReactions
+            comment={comment}
+            parentType={parentType}
+            parentId={parentId}
+          />
+          <CommentReportDialog
+            commentId={comment.id}
+            parentType={parentType}
+            parentId={parentId}
+            reported={comment.viewerReported}
+          />
+        </div>
       </div>
     </li>
   )
@@ -92,7 +101,9 @@ export const CommentsSection = async ({
   const comments = await listComments(
     parentType,
     parentId,
-    tokens?.decodedToken.uid
+    tokens
+      ? { uid: tokens.decodedToken.uid, idToken: tokens.token }
+      : undefined
   )
 
   return (
