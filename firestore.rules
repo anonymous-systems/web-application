@@ -22,6 +22,13 @@ service cloud.firestore {
         && request.resource.data.type in ['like', 'dislike'];
     }
 
+    /* a report opens in the 'open' state; only a moderator may move it on */
+    function isValidReport() {
+      return request.resource.data.keys().hasOnly(['reason', 'detail', 'status', 'createdAt'])
+        && request.resource.data.reason in ['spam', 'harassment', 'hate', 'misinformation', 'other']
+        && request.resource.data.status == 'open';
+    }
+
     /* stories collection */
     match /stories/{storyID} {
       /* function to get role of signed in user */
@@ -55,6 +62,15 @@ service cloud.firestore {
           allow read: if publicStory(get(/databases/$(database)/documents/stories/$(storyID)));
           allow delete: if request.auth.uid == reactorUID;
           allow create, update: if request.auth.uid == reactorUID && isValidReaction() && publicStory(get(/databases/$(database)/documents/stories/$(storyID))) && commentsEnabled(get(/databases/$(database)/documents/stories/$(storyID)));
+        }
+
+        /* reports keyed by reporter uid: one report per person per comment, and
+           filing one in someone else's name is structurally impossible. Only a
+           moderator can read the pile or move a report on. */
+        match /reports/{reporterUID} {
+          allow read: if isAdmin() || request.auth.uid == reporterUID;
+          allow create: if request.auth.uid == reporterUID && isValidReport() && publicStory(get(/databases/$(database)/documents/stories/$(storyID)));
+          allow update, delete: if isAdmin();
         }
       }
     }
@@ -124,6 +140,15 @@ service cloud.firestore {
           allow read: if publicProject(get(/databases/$(database)/documents/projects/$(projectID)));
           allow delete: if request.auth.uid == reactorUID;
           allow create, update: if request.auth.uid == reactorUID && isValidReaction() && publicProject(get(/databases/$(database)/documents/projects/$(projectID))) && commentsEnabled(get(/databases/$(database)/documents/projects/$(projectID)));
+        }
+
+        /* reports keyed by reporter uid: one report per person per comment, and
+           filing one in someone else's name is structurally impossible. Only a
+           moderator can read the pile or move a report on. */
+        match /reports/{reporterUID} {
+          allow read: if isAdmin() || request.auth.uid == reporterUID;
+          allow create: if request.auth.uid == reporterUID && isValidReport() && publicProject(get(/databases/$(database)/documents/projects/$(projectID)));
+          allow update, delete: if isAdmin();
         }
       }
     }
