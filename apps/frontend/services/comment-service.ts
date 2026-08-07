@@ -4,14 +4,8 @@ import { toComment } from '@workspace/firebase-config/documents'
 import { resolveProfiles } from '@/lib/profiles'
 import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { ReactionType } from '@workspace/ui/models/comment-constants'
+import { COLLECTION_FOR, CommentParentType } from '@/lib/comment-parents'
 
-/** Comments live under the story or project they were left on. */
-export type CommentParentType = 'story' | 'project'
-
-export const COLLECTION_FOR: Record<CommentParentType, string> = {
-  story: 'stories',
-  project: 'projects',
-}
 
 /**
  * How the viewer reacted to each comment, keyed by comment id. Read as one

@@ -9,7 +9,8 @@ import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { formatRelativeTime } from '@/lib/format-relative-time'
 import { CommentForm } from '@/components/comment-form'
 import { CommentReactions } from '@/components/comment-reactions'
-import { CommentParentType, listComments } from '@/services/comment-service'
+import { CommentParentType } from '@/lib/comment-parents'
+import { listComments } from '@/services/comment-service'
 
 interface Props {
   parentType: CommentParentType

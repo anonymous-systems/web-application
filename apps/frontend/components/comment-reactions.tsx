@@ -10,7 +10,7 @@ import { cn } from '@workspace/ui/lib/utils'
 import { ReactionType } from '@workspace/ui/models/comment-constants'
 import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { useAuth } from '@/hooks/use-auth'
-import { COLLECTION_FOR, CommentParentType } from '@/services/comment-service'
+import { COLLECTION_FOR, CommentParentType } from '@/lib/comment-parents'
 
 interface Props {
   comment: Comment
