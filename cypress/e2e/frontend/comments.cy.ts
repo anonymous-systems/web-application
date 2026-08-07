@@ -66,7 +66,10 @@ const clearStories = (): void => {
   }).then((response) => {
     const documents: Array<{ name: string }> = response.body?.documents ?? []
     documents.forEach((document) => {
-      // Comments are a subcollection, so they must go before their parent.
+      // Deleting a document leaves its subcollections behind, so this unwinds
+      // depth-first: reactions, then comments, then the parent. Skipping the
+      // reactions left a stale one attached to the next comment reusing that id,
+      // which flipped the following test's first click into a toggle-off.
       cy.request({
         method: 'GET',
         url: `${BASE}/${document.name}/comments?pageSize=100`,
@@ -75,6 +78,23 @@ const clearStories = (): void => {
       }).then((comments) => {
         const found: Array<{ name: string }> = comments.body?.documents ?? []
         found.forEach((comment) => {
+          cy.request({
+            method: 'GET',
+            url: `${BASE}/${comment.name}/reactions?pageSize=100`,
+            headers: OWNER,
+            failOnStatusCode: false,
+          }).then((reactions) => {
+            const each: Array<{ name: string }> = reactions.body?.documents ?? []
+            each.forEach((reaction) => {
+              cy.request({
+                method: 'DELETE',
+                url: `${BASE}/${reaction.name}`,
+                headers: OWNER,
+                failOnStatusCode: false,
+              })
+            })
+          })
+
           cy.request({
             method: 'DELETE',
             url: `${BASE}/${comment.name}`,
@@ -149,6 +169,51 @@ describe('Comments', () => {
       cy.get('textarea[aria-label="Add a comment"]').focus()
       cy.contains('button', 'Comment').should('be.visible')
       cy.contains('button', 'Cancel').should('be.visible')
+    })
+
+    // Counts are written by a Firestore trigger, so these assert the whole
+    // round trip: reaction document -> function -> denormalised count -> reread.
+    it('likes a comment and shows the count', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Like"]').click()
+
+      cy.get('button[aria-label="Like"]').should(
+        'have.attr',
+        'aria-pressed',
+        'true'
+      )
+      cy.get('button[aria-label="Like"]').should('contain.text', '1')
+    })
+
+    it('withdraws a like when pressed again', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Like"]').click()
+      cy.get('button[aria-label="Like"]').should('contain.text', '1')
+
+      cy.get('button[aria-label="Like"]').click()
+      cy.get('button[aria-label="Like"]').should(
+        'have.attr',
+        'aria-pressed',
+        'false'
+      )
+      cy.get('button[aria-label="Like"]').should('not.contain.text', '1')
+    })
+
+    // Switching sides has to move both counters, not just add to the new one.
+    it('switches from like to dislike', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Like"]').click()
+      cy.get('button[aria-label="Like"]').should('contain.text', '1')
+
+      cy.get('button[aria-label="Dislike"]').click()
+      cy.get('button[aria-label="Dislike"]').should('contain.text', '1')
+      cy.get('button[aria-label="Like"]').should('not.contain.text', '1')
     })
 
     it('clears the composer on cancel', () => {
