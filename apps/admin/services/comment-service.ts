@@ -81,12 +81,16 @@ export const deleteComment = async (
   id: string
 ): Promise<ActionResult> => {
   try {
-    await db()
-      .collection(COLLECTION_FOR[parentType])
-      .doc(parentId)
-      .collection('comments')
-      .doc(id)
-      .delete()
+    // Recursive so the comment's reactions subcollection isn't orphaned —
+    // deleting a document leaves its subcollections behind, and orphaned
+    // reactions would reattach to any comment later given the same id.
+    await db().recursiveDelete(
+      db()
+        .collection(COLLECTION_FOR[parentType])
+        .doc(parentId)
+        .collection('comments')
+        .doc(id)
+    )
 
     return { ok: true }
   } catch (error) {
