@@ -43,7 +43,9 @@ const RichTextEditor = dynamic(
   }
 )
 
+/** A selectable taxonomy term. `id` is what gets stored; `slug` labels it in tests. */
 interface TermOption {
+  id: string
   name: string
   slug: string
 }
@@ -80,8 +82,8 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
     excerpt: story?.excerpt ?? '',
     content: story?.content ?? '',
     coverImage: story?.coverImage ?? '',
-    category: story?.category ?? '',
-    tags: story?.tags ?? [],
+    category: story?.category?.id ?? '',
+    tags: story?.tags.map((tag) => tag.id) ?? [],
     visibility: story?.visibility ?? 'public',
     allowComments: story?.allowComments ?? true,
     featured: story?.featured ?? false,
@@ -93,12 +95,12 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
     value: FormValues[K]
   ): void => setValues((current) => ({ ...current, [key]: value }))
 
-  const toggleTag = (slug: string): void =>
+  const toggleTag = (id: string): void =>
     setValues((current) => ({
       ...current,
-      tags: current.tags.includes(slug)
-        ? current.tags.filter((tag) => tag !== slug)
-        : [...current.tags, slug],
+      tags: current.tags.includes(id)
+        ? current.tags.filter((tag) => tag !== id)
+        : [...current.tags, id],
     }))
 
   const uploadCover = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -245,7 +247,7 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         value={values.category}
         onChange={(value) => setField('category', value)}
         options={categories.map((category) => ({
-          value: category.slug,
+          value: category.id,
           label: category.name,
         }))}
         noneLabel="No category"
@@ -305,14 +307,14 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         ) : (
           <div className="flex flex-wrap gap-2" data-testid="storyTags">
             {tags.map((tag) => {
-              const selected = values.tags.includes(tag.slug)
+              const selected = values.tags.includes(tag.id)
               return (
                 <Button
-                  key={tag.slug}
+                  key={tag.id}
                   type="button"
                   variant={selected ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => toggleTag(tag.slug)}
+                  onClick={() => toggleTag(tag.id)}
                   data-testid="storyTagToggle"
                   data-slug={tag.slug}
                   data-selected={selected}

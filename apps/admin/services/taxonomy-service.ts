@@ -18,12 +18,29 @@ const terms = (collection: TaxonomyCollection): CollectionReference =>
 /** Slugs identify a term publicly, so they must stay unique within a collection. */
 const isSlugTaken = async (
   collection: TaxonomyCollection,
-  slug: string,
+  slug: string
+): Promise<boolean> => !(await terms(collection).where('slug', '==', slug).get()).empty
+
+/**
+ * Two terms with the same name are indistinguishable in the term picker.
+ *
+ * Compared by slugified name so "Web Dev" and "web-dev" count as one, and read
+ * in memory rather than queried: slugs stop tracking names after the first
+ * rename, so the stored slug is no longer a reliable stand-in for the name.
+ */
+const isNameTaken = async (
+  collection: TaxonomyCollection,
+  name: string,
   excludeId?: string
 ): Promise<boolean> => {
-  const snapshot = await terms(collection).where('slug', '==', slug).get()
+  const snapshot = await terms(collection).get()
+  const candidate = slugify(name)
 
-  return snapshot.docs.some((doc) => doc.id !== excludeId)
+  return snapshot.docs.some(
+    (doc) =>
+      doc.id !== excludeId &&
+      slugify((doc.data().name as string | undefined) ?? '') === candidate
+  )
 }
 
 /**
@@ -69,7 +86,10 @@ export const createTerm = async (
   const slug = slugify(name)
 
   try {
-    if (await isSlugTaken(collection, slug)) {
+    if (
+      (await isSlugTaken(collection, slug)) ||
+      (await isNameTaken(collection, name))
+    ) {
       return {
         ok: false,
         error: `A ${SINGULAR[collection]} with a similar name already exists.`,
@@ -91,6 +111,14 @@ export const createTerm = async (
   }
 }
 
+/**
+ * Renames a term. The slug is deliberately **not** recomputed.
+ *
+ * A slug is minted once, at creation, and then belongs to the term for good: it
+ * is the term's public identity, so re-deriving it from the new name would
+ * silently break every URL already pointing at it. Content is unaffected either
+ * way — it links by reference, not by slug.
+ */
 export const updateTerm = async (
   collection: TaxonomyCollection,
   id: string,
@@ -100,10 +128,8 @@ export const updateTerm = async (
   const validation = validateTaxonomyInput({ name, description })
   if (!validation.valid) return { ok: false, error: validation.error }
 
-  const slug = slugify(name)
-
   try {
-    if (await isSlugTaken(collection, slug, id)) {
+    if (await isNameTaken(collection, name, id)) {
       return {
         ok: false,
         error: `A ${SINGULAR[collection]} with a similar name already exists.`,
@@ -112,7 +138,6 @@ export const updateTerm = async (
 
     await terms(collection).doc(id).update({
       name: name.trim(),
-      slug,
       description: description.trim() || null,
       updatedAt: FieldValue.serverTimestamp(),
     })
