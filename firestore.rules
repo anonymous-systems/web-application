@@ -23,8 +23,8 @@ service cloud.firestore {
       /* function to tell if role story has provided roles */
       function isOneOfRoles(rsc, array) { return isSignedIn() && (getRole(rsc) in array); }
 
-      /* function to tell if story is public */
-      function publicStory(rsc) { return rsc.data.visibility == 'public'; }
+      /* function to tell if story is publicly visible (published + public) */
+      function publicStory(rsc) { return rsc.data.visibility == 'public' && rsc.data.status == 'published'; }
 
       /* function to validate new story owner */
       function isValidNewStory() { return isOneOfRoles(request.resource, ["owner"]) && request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid); }
