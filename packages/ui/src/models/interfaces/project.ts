@@ -3,12 +3,14 @@ import type {
   ProjectStatus,
   ProjectVisibility,
 } from '../project-constants'
+import type { TaxonomyTermRef } from './taxonomy-term-ref'
 
 /**
  * A portfolio project as read for display. Serializable — ISO-string timestamps
  * and the author resolved into plain fields — so it crosses the server/client
  * boundary and is shared by the admin app and the future public showcase.
- * `category`, `tags`, and `technologies` hold slugs. `excerpt` is the short
+ * `category`, `tags`, and `technologies` are resolved taxonomy terms, linked
+ * by id rather than slug. `excerpt` is the short
  * description shown on cards; `content` is the rich-text body of the detail page.
  */
 export interface Project {
@@ -20,9 +22,9 @@ export interface Project {
   excerpt: string | null
   content: string | null
   coverImage: string | null
-  category: string | null
-  tags: string[]
-  technologies: string[]
+  category: TaxonomyTermRef | null
+  tags: TaxonomyTermRef[]
+  technologies: TaxonomyTermRef[]
   sourceCodeLink: string | null
   livePreviewLink: string | null
   figmaLink: string | null

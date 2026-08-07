@@ -4,12 +4,14 @@ import type {
   StoryType,
   StoryVisibility,
 } from '../story-constants'
+import type { TaxonomyTermRef } from './taxonomy-term-ref'
 
 /**
  * A story (the app's primary content type) as read for display. Serializable —
  * ISO-string timestamps and the author resolved into plain fields — so it
  * crosses the server/client boundary and is shared by the admin app and a future
- * frontend authoring surface. `category` and `tags` hold slugs; `pending` status
+ * frontend authoring surface. `category` and `tags` are resolved taxonomy
+ * terms, linked by id rather than slug; `pending` status
  * is reserved for a future creator-submission flow (admin authoring uses
  * draft/published).
  */
@@ -23,8 +25,8 @@ export interface Story {
   excerpt: string | null
   content: string | null
   coverImage: string | null
-  category: string | null
-  tags: string[]
+  category: TaxonomyTermRef | null
+  tags: TaxonomyTermRef[]
   allowComments: boolean
   featured: boolean
   /** Only meaningful when `type === 'problem'`. */
