@@ -127,10 +127,16 @@ export const toProject = (
 export const toComment = (
   id: string,
   data: DocumentFields,
-  profiles: Map<string, UserProfileDoc>
+  profiles: Map<string, UserProfileDoc>,
+  viewerReaction: Comment['viewerReaction'] = null
 ): Comment => ({
   id,
   content: (data.content as string | undefined) ?? '',
   ...authorOf(data, profiles),
   createdAt: toIsoString(data.createdAt),
+  // Absent on comments written before reactions existed, and briefly absent on
+  // new ones until the counter trigger runs.
+  likeCount: (data.likeCount as number | undefined) ?? 0,
+  dislikeCount: (data.dislikeCount as number | undefined) ?? 0,
+  viewerReaction,
 })

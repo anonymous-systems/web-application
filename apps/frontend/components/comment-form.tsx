@@ -13,12 +13,7 @@ import {
   commentInputSchema,
 } from '@workspace/ui/models/schemas/comment'
 import { useAuth } from '@/hooks/use-auth'
-import { CommentParentType } from '@/services/comment-service'
-
-const COLLECTION_FOR: Record<CommentParentType, string> = {
-  story: 'stories',
-  project: 'projects',
-}
+import { COLLECTION_FOR, CommentParentType } from '@/lib/comment-parents'
 
 interface Props {
   parentType: CommentParentType

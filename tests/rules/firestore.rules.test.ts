@@ -162,6 +162,81 @@ describe.each([
     )
   })
 
+  describe('reactions', () => {
+    const reactionPath = (uid: string): string =>
+      `${collection}/doc1/comments/c1/reactions/${uid}`
+
+    it('lets a signed-in user write their own reaction', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertSucceeds(
+        setDoc(doc(signedInAs(OTHER_UID), reactionPath(OTHER_UID)), {
+          type: 'like',
+        })
+      )
+    })
+
+    // The reaction id is the reactor's uid, so reacting twice or as someone
+    // else is impossible by construction rather than by validation.
+    it("denies writing another user's reaction", async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reactionPath(OWNER_UID)), {
+          type: 'like',
+        })
+      )
+    })
+
+    it('denies anonymous reactions', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(anonymous(), reactionPath(OTHER_UID)), { type: 'like' })
+      )
+    })
+
+    it('denies a reaction type outside the vocabulary', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reactionPath(OTHER_UID)), {
+          type: 'shrug',
+        })
+      )
+    })
+
+    // Counts are maintained by a trigger; letting a client write them would let
+    // anyone set any total.
+    it('denies smuggling extra fields onto a reaction', async () => {
+      await seed(`${collection}/doc1`, content())
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reactionPath(OTHER_UID)), {
+          type: 'like',
+          likeCount: 9001,
+        })
+      )
+    })
+
+    it('denies reacting when the parent disabled comments', async () => {
+      await seed(`${collection}/doc1`, content({ allowComments: false }))
+
+      await assertFails(
+        setDoc(doc(signedInAs(OTHER_UID), reactionPath(OTHER_UID)), {
+          type: 'like',
+        })
+      )
+    })
+
+    it('lets anyone read reactions on a public parent', async () => {
+      await seed(`${collection}/doc1`, content())
+      await seed(reactionPath(OWNER_UID), { type: 'like' })
+
+      await assertSucceeds(getDoc(doc(anonymous(), reactionPath(OWNER_UID))))
+    })
+  })
+
   it('denies commenting on a draft parent', async () => {
     await seed(`${collection}/doc1`, content({ status: 'draft' }))
 

@@ -1,11 +1,16 @@
 import { JSX } from 'react'
+import { cookies, headers } from 'next/headers'
+import { getTokens } from 'next-firebase-auth-edge'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Divider } from '@workspace/ui/components/divider'
+import { authConfig } from '@workspace/firebase-config/auth'
 import { initialsFrom } from '@workspace/ui/lib/initials'
 import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { formatRelativeTime } from '@/lib/format-relative-time'
 import { CommentForm } from '@/components/comment-form'
-import { CommentParentType, listComments } from '@/services/comment-service'
+import { CommentReactions } from '@/components/comment-reactions'
+import { CommentParentType } from '@/lib/comment-parents'
+import { listComments } from '@/services/comment-service'
 
 interface Props {
   parentType: CommentParentType
@@ -13,7 +18,13 @@ interface Props {
   allowComments: boolean
 }
 
-const CommentRow = ({ comment }: { comment: Comment }): JSX.Element => {
+interface RowProps {
+  comment: Comment
+  parentType: CommentParentType
+  parentId: string
+}
+
+const CommentRow = ({ comment, parentType, parentId }: RowProps): JSX.Element => {
   const posted = formatRelativeTime(comment.createdAt)
 
   return (
@@ -36,6 +47,12 @@ const CommentRow = ({ comment }: { comment: Comment }): JSX.Element => {
         </div>
 
         <p className="text-sm whitespace-pre-line">{comment.content}</p>
+
+        <CommentReactions
+          comment={comment}
+          parentType={parentType}
+          parentId={parentId}
+        />
       </div>
     </li>
   )
@@ -65,7 +82,18 @@ export const CommentsSection = async ({
     )
   }
 
-  const comments = await listComments(parentType, parentId)
+  // Resolved here rather than passed from the page: the viewer's reactions are
+  // part of reading the thread, and every caller would otherwise repeat this.
+  const tokens = await getTokens(await cookies(), {
+    ...authConfig,
+    headers: await headers(),
+  })
+
+  const comments = await listComments(
+    parentType,
+    parentId,
+    tokens?.decodedToken.uid
+  )
 
   return (
     <section className="flex flex-col gap-4" data-testid="commentsSection">
@@ -80,7 +108,12 @@ export const CommentsSection = async ({
       {comments.length > 0 && (
         <ul className="flex flex-col gap-4">
           {comments.map((comment) => (
-            <CommentRow key={comment.id} comment={comment} />
+            <CommentRow
+              key={comment.id}
+              comment={comment}
+              parentType={parentType}
+              parentId={parentId}
+            />
           ))}
         </ul>
       )}
