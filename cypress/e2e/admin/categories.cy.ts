@@ -5,7 +5,6 @@ const ADMIN_URL = Cypress.env('adminUrl')
 const NAME = 'E2E Category'
 const SLUG = 'e2e-category'
 const RENAMED = 'E2E Category Renamed'
-const RENAMED_SLUG = 'e2e-category-renamed'
 
 const categoryRow = (slug: string) =>
   cy.get(`[data-testid="categoryRow"][data-slug="${slug}"]`)
@@ -47,19 +46,19 @@ describe('Admin Categories section', () => {
 
     categoryRow(SLUG).should('contain', NAME).and('contain', SLUG)
 
-    // Edit — the slug is regenerated from the new name
+    // Edit — a rename must not move the slug: it is the term's public identity,
+    // and re-deriving it would break every URL already pointing at the term.
     categoryRow(SLUG).find('[data-testid="editTermTrigger"]').click()
     cy.get('[data-testid="termNameInput"]').clear()
     cy.get('[data-testid="termNameInput"]').type(RENAMED)
     cy.get('[data-testid="termSubmit"]').click()
 
-    categoryRow(RENAMED_SLUG).should('contain', RENAMED)
-    categoryRow(SLUG).should('not.exist')
+    categoryRow(SLUG).should('contain', RENAMED).and('contain', SLUG)
 
     // Delete — restores the original state so the test is idempotent
-    categoryRow(RENAMED_SLUG).find('[data-testid="deleteTermTrigger"]').click()
+    categoryRow(SLUG).find('[data-testid="deleteTermTrigger"]').click()
     cy.get('[data-testid="confirmDeleteTerm"]').click()
 
-    categoryRow(RENAMED_SLUG).should('not.exist')
+    categoryRow(SLUG).should('not.exist')
   })
 })

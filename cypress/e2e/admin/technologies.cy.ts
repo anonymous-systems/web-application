@@ -5,7 +5,6 @@ const ADMIN_URL = Cypress.env('adminUrl')
 const NAME = 'E2E Technology'
 const SLUG = 'e2e-technology'
 const RENAMED = 'E2E Technology Renamed'
-const RENAMED_SLUG = 'e2e-technology-renamed'
 
 const technologyRow = (slug: string) =>
   cy.get(`[data-testid="technologyRow"][data-slug="${slug}"]`)
@@ -47,19 +46,19 @@ describe('Admin Technologies section', () => {
 
     technologyRow(SLUG).should('contain', NAME).and('contain', SLUG)
 
-    // Edit — the slug is regenerated from the new name
+    // Edit — a rename must not move the slug: it is the term's public identity,
+    // and re-deriving it would break every URL already pointing at the term.
     technologyRow(SLUG).find('[data-testid="editTermTrigger"]').click()
     cy.get('[data-testid="termNameInput"]').clear()
     cy.get('[data-testid="termNameInput"]').type(RENAMED)
     cy.get('[data-testid="termSubmit"]').click()
 
-    technologyRow(RENAMED_SLUG).should('contain', RENAMED)
-    technologyRow(SLUG).should('not.exist')
+    technologyRow(SLUG).should('contain', RENAMED).and('contain', SLUG)
 
     // Delete — restores the original state so the test is idempotent
-    technologyRow(RENAMED_SLUG).find('[data-testid="deleteTermTrigger"]').click()
+    technologyRow(SLUG).find('[data-testid="deleteTermTrigger"]').click()
     cy.get('[data-testid="confirmDeleteTerm"]').click()
 
-    technologyRow(RENAMED_SLUG).should('not.exist')
+    technologyRow(SLUG).should('not.exist')
   })
 })
