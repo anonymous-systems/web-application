@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Layout } from '@/components/layout'
 import { TrustedHtml } from '@/components/trusted-html'
+import { CommentsSection } from '@/components/comments-section'
 import { getPublishedProjectBySlug } from '@/services/project-service'
 import { projectChips, projectLinks } from '@/lib/content-display'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
@@ -110,6 +111,12 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
             A fuller write-up for this project is on the way.
           </p>
         )}
+
+        <CommentsSection
+          parentType="project"
+          parentId={project.id}
+          allowComments={project.allowComments}
+        />
       </article>
     </Layout>
   )

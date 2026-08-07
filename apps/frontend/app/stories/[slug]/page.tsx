@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { Clock } from 'lucide-react'
 import { Layout } from '@/components/layout'
 import { TrustedHtml } from '@/components/trusted-html'
+import { CommentsSection } from '@/components/comments-section'
 import { getPublishedStoryBySlug } from '@/services/story-service'
 import { formatDate } from '@/lib/format-date'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
@@ -117,6 +118,12 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
             {story.excerpt ?? 'This story has no content yet.'}
           </p>
         )}
+
+        <CommentsSection
+          parentType="story"
+          parentId={story.id}
+          allowComments={story.allowComments}
+        />
       </article>
     </Layout>
   )

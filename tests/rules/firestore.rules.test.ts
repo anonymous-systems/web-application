@@ -119,6 +119,18 @@ describe.each([
     await assertFails(getDoc(doc(anonymous(), commentPath)))
   })
 
+  // A parent written before `allowComments` existed has no such field. Reading
+  // it directly raised an evaluation error — denying the whole rule rather than
+  // returning false — so the app rendered a thread it could never load. The
+  // rules default to true here to match the schema and mapper defaults.
+  it('allows comments on a parent with no allowComments field', async () => {
+    const { allowComments: _omitted, ...withoutFlag } = content()
+    await seed(`${collection}/doc1`, withoutFlag)
+    await seed(commentPath, { content: 'Nice write-up' })
+
+    await assertSucceeds(getDoc(doc(anonymous(), commentPath)))
+  })
+
   it('denies reading comments when the parent disabled them', async () => {
     await seed(`${collection}/doc1`, content({ allowComments: false }))
     await seed(commentPath, { content: 'Nice write-up' })

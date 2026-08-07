@@ -2,6 +2,7 @@ import { resolveAuthorName } from '@workspace/ui/lib/user-display'
 import type { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 import type { Story } from '@workspace/ui/models/interfaces/story'
 import type { Project } from '@workspace/ui/models/interfaces/project'
+import type { Comment } from '@workspace/ui/models/interfaces/comment'
 
 /**
  * Raw Firestore document fields. Deliberately plain values rather than a
@@ -116,4 +117,20 @@ export const toProject = (
   createdAt: toIsoString(data.createdAt),
   updatedAt: toIsoString(data.updatedAt),
   publishedAt: toIsoString(data.publishedAt),
+})
+
+/**
+ * Firestore document → display model for a comment. Comments live in a
+ * per-parent subcollection, so unlike stories and projects there is no parent
+ * reference to resolve — the caller already knows which post it is on.
+ */
+export const toComment = (
+  id: string,
+  data: DocumentFields,
+  profiles: Map<string, UserProfileDoc>
+): Comment => ({
+  id,
+  content: (data.content as string | undefined) ?? '',
+  ...authorOf(data, profiles),
+  createdAt: toIsoString(data.createdAt),
 })
