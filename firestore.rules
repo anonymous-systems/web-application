@@ -10,7 +10,7 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
 
     /* function to check if admin */
-    function isAdmin() { return request.auth.token.admin == true; }
+    function isAdmin() { return isSignedIn() && request.auth.token.admin == true; }
 
     /* function to check if creator (admins are implicitly creators) */
     function isCreator() { return isAdmin() || request.auth.token.creator == true; }
@@ -30,7 +30,7 @@ service cloud.firestore {
       function isValidNewStory() { return isOneOfRoles(request.resource, ["owner"]) && request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid); }
 
       /* function to tell if story comments are enabled */
-      function commentsEnabled(rsc) { return rsc.data.allowComments; }
+      function commentsEnabled(rsc) { return rsc.data.get('allowComments', true); }
 
       allow create: if isCreator() && isValidNewStory();
       allow update: if isOneOfRoles(resource, ['owner', 'writer']);
@@ -91,7 +91,7 @@ service cloud.firestore {
       function isValidNewProject() { return isOneOfRoles(request.resource, ["owner"]) && request.resource.data.user == /databases/$(database)/documents/users/$(request.auth.uid); }
 
       /* function to tell if project comments are enabled */
-      function commentsEnabled(rsc) { return rsc.data.allowComments; }
+      function commentsEnabled(rsc) { return rsc.data.get('allowComments', true); }
 
       allow create: if isCreator() && isValidNewProject();
       allow update: if isOneOfRoles(resource, ['owner', 'writer']);
