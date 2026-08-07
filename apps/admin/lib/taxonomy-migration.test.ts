@@ -51,8 +51,8 @@ describe('planTaxonomyMigration', () => {
     expect(plan.set).toMatchObject({ name: 'Dockerfile', slug: 'dockerfile' })
   })
 
-  // Idempotency: re-running must not rewrite an already-migrated term.
-  it('skips a document that already has a name', () => {
+  // Idempotency: re-running must not rewrite a fully migrated term.
+  it('skips a document that is already on the current shape', () => {
     const plan = planTaxonomyMigration('firebase', {
       name: 'Firebase',
       slug: 'firebase',
@@ -60,6 +60,26 @@ describe('planTaxonomyMigration', () => {
 
     expect(plan.changed).toBe(false)
     expect(plan.set).toEqual({})
+  })
+
+  // Some legacy terms already carried a name while still holding the legacy
+  // timestamps. Treating "has a name" as "already migrated" left four dev tags
+  // half-converted — named, but still with created/updated/stories.
+  it('still converts a named term that kept its legacy fields', () => {
+    const plan = planTaxonomyMigration('angular', {
+      name: 'Angular',
+      slug: 'angular',
+      created: 'stamp',
+      updated: 'stamp',
+      stories: ['a'],
+    })
+
+    expect(plan.changed).toBe(true)
+    expect(plan.set).toEqual({ createdAt: 'stamp', updatedAt: 'stamp' })
+    expect(plan.remove).toEqual(['created', 'updated', 'stories'])
+    // The name is already right, so it must not be re-derived or warned about.
+    expect(plan.set.name).toBeUndefined()
+    expect(plan.warnings).toEqual([])
   })
 
   it('skips a document whose name is only whitespace', () => {

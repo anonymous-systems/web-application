@@ -33,35 +33,47 @@ export const nameFromSlug = (slug: string): string =>
  * ordered by `name`, and Firestore silently omits documents missing the ordered
  * field.
  *
- * Idempotent — a document that already has a `name` yields `changed: false`.
+ * Idempotent, but each concern is judged independently: some legacy terms
+ * already carry a `name` while still holding `created`/`updated`/`stories`.
+ * Treating "has a name" as "already migrated" left those half-converted.
  */
 export const planTaxonomyMigration = (
   id: string,
   data: Record<string, unknown>
 ): TaxonomyMigrationPlan => {
-  const empty = { changed: false, set: {}, remove: [], warnings: [] }
-  if (typeof data.name === 'string' && data.name.trim() !== '') return empty
+  const hasName = typeof data.name === 'string' && data.name.trim() !== ''
+  const remove = LEGACY_FIELDS.filter((field) => field in data)
+  if (hasName && remove.length === 0) {
+    return { changed: false, set: {}, remove: [], warnings: [] }
+  }
 
   const warnings: string[] = []
   const set: Record<string, unknown> = {}
 
-  // The document id is the slug in the legacy shape, so it is the more reliable
-  // source; `slug` is only used when the id somehow isn't one.
-  const slug = typeof data.slug === 'string' && data.slug.trim() !== '' ? data.slug : id
-  set.name = nameFromSlug(slug)
-  if (!data.slug) set.slug = slug
+  if (!hasName) {
+    // The document id is the slug in the legacy shape, so it is the more
+    // reliable source; `slug` is only used when the id somehow isn't one.
+    const slug =
+      typeof data.slug === 'string' && data.slug.trim() !== '' ? data.slug : id
+    const name = nameFromSlug(slug)
 
-  if (set.name === '') {
-    return { changed: false, set: {}, remove: [], warnings: [`${id}: no slug to derive a name from`] }
+    if (name === '') {
+      return {
+        changed: false,
+        set: {},
+        remove: [],
+        warnings: [`${id}: no slug to derive a name from`],
+      }
+    }
+
+    set.name = name
+    if (!data.slug) set.slug = slug
+    warnings.push(`${id}: named "${name}" from its slug — rename if wrong`)
   }
-
-  warnings.push(`${id}: named "${set.name as string}" from its slug — rename if wrong`)
 
   // `created`/`updated` become the createdAt/updatedAt the current model uses.
   if ('created' in data) set.createdAt = data.created
   if ('updated' in data) set.updatedAt = data.updated
-
-  const remove = LEGACY_FIELDS.filter((field) => field in data)
 
   return { changed: true, set, remove, warnings }
 }
