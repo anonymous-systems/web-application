@@ -11,7 +11,7 @@ import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
 interface Props {
   userProfile: UserProfile | null
 }
-export const ProfilePage = (props: Props): JSX.Element => {
+export const ProfileView = (props: Props): JSX.Element => {
   const { user } = useAuth()
 
   if (user == null) return <></>
