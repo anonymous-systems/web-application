@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Clock } from 'lucide-react'
 import { Layout } from '@/components/layout'
+import { AuthorByline } from '@/components/author-byline'
 import { TrustedHtml } from '@/components/trusted-html'
 import { CommentsSection } from '@/components/comments-section'
 import { getPublishedStoryBySlug } from '@/services/story-service'
@@ -11,12 +12,6 @@ import { formatDate } from '@/lib/format-date'
 import { AspectRatio } from '@workspace/ui/components/aspect-ratio'
 import { Badge } from '@workspace/ui/components/custom/badge'
 import { Divider } from '@workspace/ui/components/divider'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@workspace/ui/components/avatar'
-import { initialsFrom } from '@workspace/ui/lib/initials'
 import { storyTypeBadge } from '@/lib/content-display'
 
 interface Props {
@@ -81,14 +76,11 @@ const Page = async ({ params }: Props): Promise<JSX.Element> => {
         <h1 className="text-3xl font-semibold">{story.title}</h1>
 
         <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
-          <Avatar className="size-8">
-            {story.authorAvatar && <AvatarImage src={story.authorAvatar} alt="" />}
-            <AvatarFallback className="text-xs">
-              {initialsFrom(story.authorName)}
-            </AvatarFallback>
-          </Avatar>
-
-          {story.authorName && <span>{story.authorName}</span>}
+          <AuthorByline
+            name={story.authorName}
+            avatar={story.authorAvatar}
+            username={story.authorUsername}
+          />
           {published && <span>· {published}</span>}
 
           {story.readTimeMinutes !== null && (
