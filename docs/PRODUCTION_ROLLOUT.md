@@ -129,12 +129,43 @@ So, for any change that alters stored shape:
 2. **Rules** — `firebase deploy --only firestore:rules --project prod` and
    `--only storage:rules`.
 
-   > **Rules are not deployed by CI.** `.github/workflows/ci.yml` runs lint,
-   > typecheck, unit tests, and e2e — nothing else. Three PRs have already
-   > shipped code depending on rules that were never deployed, and the resulting
-   > breakage looked like an application bug both times. Until this is wired into
-   > CI, deploying rules is a manual step that is easy to forget and expensive to
-   > miss. **Wiring it into CI is the standing fix.**
+   > On dev these are deployed by CI: `.github/workflows/ci.yml` runs the rules
+   > specs on every PR, and on merge to `main` publishes rules, indexes and
+   > functions — everything App Hosting's build does not ship. That closed the
+   > gap where three PRs shipped code depending on rules nobody had deployed,
+   > each time looking like an application bug.
+   >
+   > **Production is not wired up** — the job names `anonymous-systems-dev`
+   > explicitly, because there is no prod alias yet. Adding prod here is part of
+   > the environment-targeting work above, and until then a prod deploy of any
+   > of these is manual.
+
+   ### Deploy permissions
+
+   The deploying identity needs each of these separately — none implies another.
+   The Firebase Admin SDK service account carries only the first row by default:
+
+   | Deploy | Required |
+   | --- | --- |
+   | Firestore + Storage rules | `roles/firebase.sdkAdminServiceAgent` |
+   | Firestore indexes | `roles/datastore.indexAdmin` |
+   | Cloud Functions | `roles/cloudfunctions.admin`, `roles/iam.serviceAccountUser`, `roles/artifactregistry.writer`, `roles/cloudbuild.builds.editor`, `roles/run.admin`, `roles/eventarc.admin` |
+
+   ```bash
+   gcloud projects add-iam-policy-binding <project> \
+     --member="serviceAccount:<ci-service-account>" \
+     --role="<role>"
+   ```
+
+   Functions need the long list because a v2 function is built by Cloud Build,
+   stored in Artifact Registry, run on Cloud Run and triggered through Eventarc —
+   deploying one touches all four.
+
+   Dev is already granted, on `firebase-adminsdk-1k7kl@anonymous-systems-dev`.
+   Production needs the same set on whichever account deploys there — and note
+   this is a lot of authority to hang on a downloadable JSON key, since anyone
+   holding it can deploy code. Prefer Workload Identity Federation for prod
+   rather than minting another long-lived key.
 
 3. **Functions** — `firebase deploy --only functions --project prod`. If a
    function changes trigger type (HTTPS ↔ background), the deploy is rejected;
