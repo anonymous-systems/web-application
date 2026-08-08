@@ -156,4 +156,61 @@
     backdrop-filter: saturate(180%) blur(var(--glass-blur));
     -webkit-backdrop-filter: saturate(180%) blur(var(--glass-blur));
   }
+
+  /*
+   * The lit edge of a piece of glass, for the floating command bar.
+   *
+   * The rim samples what is behind it rather than being a fixed white line.
+   * Over warm ground the reference reads orange, over a pale wall it reads
+   * grey — a hardcoded `rgba(255,255,255,…)` border gets that wrong on half the
+   * pages it sits over.
+   *
+   * A ring-shaped pseudo-element carries its own backdrop-filter: the two masks
+   * cancel everything but a hairline border box, and only that hairline is
+   * filtered. `contrast` rather than `brightness`, because brightening a rim
+   * over an already-white page changes nothing — contrast pushes the edge away
+   * from whatever is behind it in both directions.
+   */
+  .glass-rim {
+    position: relative;
+  }
+
+  .glass-rim::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    backdrop-filter: contrast(1.6) saturate(2) brightness(1.15);
+    -webkit-backdrop-filter: contrast(1.6) saturate(2) brightness(1.15);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  /*
+   * A highlight across the top, where a curved surface catches the light.
+   *
+   * Dark surfaces only. Laying white over a light page just makes the panel
+   * more opaque, which is the opposite of the effect — the reference keeps what
+   * is behind it fully legible.
+   */
+  .dark .glass-sheen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      --alpha(var(--color-white) / 14%),
+      transparent 45%
+    );
+  }
 }
