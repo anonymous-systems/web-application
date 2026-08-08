@@ -28,6 +28,11 @@ export const nextJsConfig = [
       globals: {
         ...globals.node,
         ...globals.serviceworker,
+        // A Next app runs in both places, so `document` and `window` are as
+        // real here as `process`. Without this, every client component touching
+        // them trips no-undef — react-internal.js already declares them, which
+        // is why the same code lints clean inside packages/ui.
+        ...globals.browser,
       },
       parserOptions: {
         projectService: true,
