@@ -1,13 +1,14 @@
 'use client'
 
 import { JSX, useState } from 'react'
+import { AuthCardShell } from '@workspace/ui/components/auth-card-shell'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2Icon } from 'lucide-react'
 import { BrandName } from '@workspace/ui/components/brand-name'
 import { Button } from '@workspace/ui/components/custom/button'
 import { toast } from '@workspace/ui/components/sonner'
-import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/GoogleSuperGIcon'
+import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/google-super-g-icon'
 import { signIn } from '@/services/auth-service'
 import { AppRoutes } from '@/lib/app-routes'
 
@@ -15,12 +16,6 @@ interface AdminAuthCardProps {
   /** True when an authenticated user is signed in but lacks the admin claim. */
   unauthorized: boolean
 }
-
-const cardClassName = [
-  'flex flex-col gap-4 bg-card',
-  'text-card-foreground rounded-lg',
-  'outline p-8 max-w-[400px] shadow-sm'
-].join(' ')
 
 export const AdminAuthCard = ({ unauthorized }: AdminAuthCardProps): JSX.Element => {
   const router = useRouter()
@@ -43,7 +38,7 @@ export const AdminAuthCard = ({ unauthorized }: AdminAuthCardProps): JSX.Element
 
   if (unauthorized) {
     return (
-      <div className={cardClassName} data-testid='adminUnauthorizedCard'>
+      <AuthCardShell dataTestId='adminUnauthorizedCard'>
         <BrandName className='text-center' />
         <h3 className='text-3xl'>Admin access required</h3>
         <p className='text-muted-foreground'>
@@ -55,12 +50,12 @@ export const AdminAuthCard = ({ unauthorized }: AdminAuthCardProps): JSX.Element
             Sign out
           </Button>
         </Link>
-      </div>
+      </AuthCardShell>
     )
   }
 
   return (
-    <div className={cardClassName} data-testid='adminSignInCard'>
+    <AuthCardShell dataTestId='adminSignInCard'>
       <BrandName className='text-center' />
       <h3 className='text-3xl' data-testid='pageTitle'>Admin sign in</h3>
       <p className='text-muted-foreground'>
@@ -78,6 +73,6 @@ export const AdminAuthCard = ({ unauthorized }: AdminAuthCardProps): JSX.Element
         </div>
         Sign in with Google
       </Button>
-    </div>
+    </AuthCardShell>
   )
 }

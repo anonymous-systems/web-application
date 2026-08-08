@@ -1,6 +1,7 @@
 'use client'
 
 import { JSX, useState } from 'react'
+import { AuthCardShell } from '@workspace/ui/components/auth-card-shell'
 import { BrandName } from '@workspace/ui/components/brand-name'
 import { Loader2Icon } from 'lucide-react'
 import { Button } from '@workspace/ui/components/custom/button'
@@ -8,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { AppRoutes } from '@/lib/app-routes'
 import Link from 'next/link'
 import { toast } from '@workspace/ui/components/sonner'
-import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/GoogleSuperGIcon'
+import { GoogleSuperGIcon } from '@workspace/ui/assets/icons/google-super-g-icon'
 
 type AuthMode = 'sign-in' | 'sign-up'
 
@@ -70,13 +71,7 @@ export const AuthCard = ({ mode }: AuthCardProps): JSX.Element => {
   }
 
   return (
-    <div
-      className={[
-        'flex flex-col gap-4 bg-card',
-        'text-card-foreground rounded-lg',
-        'outline p-8 max-w-[400px] shadow-sm'
-      ].join(' ')}
-    >
+    <AuthCardShell>
       <Link href={AppRoutes.home}>
         <BrandName className='text-center' />
       </Link>
@@ -102,6 +97,6 @@ export const AuthCard = ({ mode }: AuthCardProps): JSX.Element => {
           <Button variant='link' data-testid={altLinkTestId}>{altLinkText}</Button>
         </Link>
       </div>
-    </div>
+    </AuthCardShell>
   )
 }
