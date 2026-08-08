@@ -15,6 +15,7 @@ export type StoryWriteFields = Omit<
   | 'authorUid'
   | 'authorName'
   | 'authorAvatar'
+  | 'authorUsername'
   | 'createdAt'
   | 'updatedAt'
   | 'publishedAt'

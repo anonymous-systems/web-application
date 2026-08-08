@@ -15,6 +15,7 @@ export type ProjectWriteFields = Omit<
   | 'authorUid'
   | 'authorName'
   | 'authorAvatar'
+  | 'authorUsername'
   | 'createdAt'
   | 'updatedAt'
   | 'publishedAt'
