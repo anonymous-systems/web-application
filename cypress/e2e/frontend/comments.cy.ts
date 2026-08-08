@@ -241,6 +241,32 @@ describe('Comments', () => {
       cy.contains('Reported').should('exist')
     })
 
+    // "Something else" names nothing on its own, so the detail is the report.
+    it('will not send an "other" report without a detail', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('button[aria-label="Comment options"]').click()
+      cy.contains('Report').click()
+
+      cy.get('input[type="radio"][value="other"]').check()
+      cy.get('textarea[aria-label="Report details"]').should(
+        'have.attr',
+        'aria-required',
+        'true'
+      )
+
+      // The button stays live so the reason is stated rather than left to guess.
+      cy.contains('button', 'Send report').should('not.be.disabled').click()
+      cy.contains('Tell us what is wrong').should('be.visible')
+      cy.contains('Report this comment').should('be.visible')
+
+      // Filling it in clears the message and lets the report through.
+      cy.get('textarea[aria-label="Report details"]').type('Impersonating someone')
+      cy.contains('button', 'Send report').click()
+      cy.contains('Report this comment').should('not.exist')
+    })
+
     it('will not send a report without a reason', () => {
       seedComment(STORY.id, 'A seeded comment')
 
