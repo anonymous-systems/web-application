@@ -57,6 +57,33 @@ const seedComment = (storyId: string, content: string): void => {
   })
 }
 
+/**
+ * A comment with a controlled id, age and like count, for asserting thread
+ * order. `seedComment` always writes the same document, so ordering needs this.
+ */
+const seedCommentAt = (
+  storyId: string,
+  {
+    id,
+    content,
+    createdAt,
+    likeCount = 0,
+  }: { id: string; content: string; createdAt: string; likeCount?: number }
+): void => {
+  cy.request({
+    method: 'PATCH',
+    url: `${DOCS}/stories/${storyId}/comments/${id}`,
+    headers: OWNER,
+    body: {
+      fields: {
+        content: { stringValue: content },
+        createdAt: { timestampValue: createdAt },
+        likeCount: { integerValue: String(likeCount) },
+      },
+    },
+  })
+}
+
 const clearStories = (): void => {
   cy.request({
     method: 'GET',
@@ -218,6 +245,63 @@ describe('Comments', () => {
       cy.get('button[aria-label="Dislike"]').click()
       cy.get('button[aria-label="Dislike"]').should('contain.text', '1')
       cy.get('button[aria-label="Like"]').should('not.contain.text', '1')
+    })
+
+    // Sorting is done in the browser against the thread already on the page, so
+    // these assert the order changes without a navigation.
+    describe('sorting', () => {
+      const firstComment = (): Cypress.Chainable<JQuery<HTMLElement>> =>
+        cy.get('[data-testid="commentsThread"] li').first()
+
+      const chooseSort = (value: string): void => {
+        cy.get('[data-testid="commentSort"]').click()
+        cy.get(`[data-value="${value}"]`).click()
+      }
+
+      beforeEach(() => {
+        seedCommentAt(STORY.id, {
+          id: 'sortOld',
+          content: 'Oldest remark',
+          createdAt: '2026-01-01T00:00:00.000Z',
+        })
+        seedCommentAt(STORY.id, {
+          id: 'sortLiked',
+          content: 'Most liked remark',
+          createdAt: '2026-02-01T00:00:00.000Z',
+          likeCount: 9,
+        })
+        seedCommentAt(STORY.id, {
+          id: 'sortNew',
+          content: 'Newest remark',
+          createdAt: '2026-03-01T00:00:00.000Z',
+        })
+
+        cy.visit(`/stories/${STORY.slug}`)
+      })
+
+      // A thread reads as a conversation, so the first reply leads by default.
+      it('shows the oldest comment first by default', () => {
+        firstComment().should('contain.text', 'Oldest remark')
+      })
+
+      it('reverses the thread for newest', () => {
+        chooseSort('newest')
+        firstComment().should('contain.text', 'Newest remark')
+      })
+
+      it('ranks by likes for top', () => {
+        chooseSort('top')
+        firstComment().should('contain.text', 'Most liked remark')
+      })
+    })
+
+    // Every order is the same list until there is something to reorder.
+    it('offers no sort control for a single comment', () => {
+      seedComment(STORY.id, 'A seeded comment')
+
+      cy.visit(`/stories/${STORY.slug}`)
+      cy.get('[data-testid="commentsThread"] li').should('have.length', 1)
+      cy.get('[data-testid="commentSort"]').should('not.exist')
     })
 
     it('reports a comment and remembers it', () => {
