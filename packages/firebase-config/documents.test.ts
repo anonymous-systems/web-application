@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Timestamp } from 'firebase-admin/firestore'
-import { toIsoString, toProject, toStory } from './documents'
+import { toComment, toIsoString, toProject, toStory } from './documents'
 import type { UserProfileDoc } from '@workspace/ui/models/interfaces/user-profile'
 import type { TaxonomyTermRef } from '@workspace/ui/models/interfaces/taxonomy-term-ref'
 
@@ -152,6 +152,36 @@ describe('toProject', () => {
       featured: false,
       allowComments: true,
     })
+  })
+})
+
+describe('toComment reaction counts', () => {
+  it('reads the stored totals', () => {
+    const comment = toComment('c', { likeCount: 3, dislikeCount: 1 }, new Map())
+
+    expect(comment.likeCount).toBe(3)
+    expect(comment.dislikeCount).toBe(1)
+  })
+
+  it('defaults to zero when a comment predates reactions', () => {
+    const comment = toComment('c', {}, new Map())
+
+    expect(comment.likeCount).toBe(0)
+    expect(comment.dislikeCount).toBe(0)
+  })
+
+  /*
+   * Dev held likeCount -1 against a single dislike: the like was created while
+   * the counter trigger was undeployed so was never incremented, and switching
+   * it to a dislike applied the -1 regardless. A count cannot be negative, and
+   * the row hides a non-positive one — so the wrong number rendered as no
+   * number at all, which is what made it hard to see.
+   */
+  it('floors a count that drifted negative', () => {
+    const comment = toComment('c', { likeCount: -1, dislikeCount: 1 }, new Map())
+
+    expect(comment.likeCount).toBe(0)
+    expect(comment.dislikeCount).toBe(1)
   })
 })
 
