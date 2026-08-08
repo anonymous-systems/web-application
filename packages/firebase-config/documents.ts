@@ -157,6 +157,37 @@ export const toProject = (
 })
 
 /**
+ * A comment's denormalised reaction totals, floored at zero.
+ *
+ * The counters are maintained by a trigger applying increments, so they drift
+ * whenever an event happens with no trigger to see it — a reaction created
+ * while the function was undeployed is never counted, and the *next* change to
+ * it still decrements, driving the total negative. Dev held a `likeCount` of -1
+ * against a single dislike for exactly that reason.
+ *
+ * A count is a cardinality and cannot be below zero, so a negative one is
+ * corrupt rather than meaningful. Flooring keeps a wrong number from rendering
+ * as an absent one, which is how the drift stayed invisible: the row hides a
+ * non-positive count, so -1 and 0 look identical on screen.
+ *
+ * This bounds the symptom; it does not repair the data. Recompute the totals
+ * from the reactions subcollection with `pnpm --filter admin repair:reactions`.
+ */
+const reactionCounts = (
+  data: DocumentFields
+): Pick<Comment, 'likeCount' | 'dislikeCount'> => {
+  // Absent on comments written before reactions existed, and briefly absent on
+  // new ones until the counter trigger runs.
+  const count = (value: unknown): number =>
+    Math.max(0, (value as number | undefined) ?? 0)
+
+  return {
+    likeCount: count(data.likeCount),
+    dislikeCount: count(data.dislikeCount),
+  }
+}
+
+/**
  * Firestore document → display model for a comment. Comments live in a
  * per-parent subcollection, so unlike stories and projects there is no parent
  * reference to resolve — the caller already knows which post it is on.
@@ -172,10 +203,7 @@ export const toComment = (
   content: (data.content as string | undefined) ?? '',
   ...authorOf(data, profiles),
   createdAt: toIsoString(data.createdAt),
-  // Absent on comments written before reactions existed, and briefly absent on
-  // new ones until the counter trigger runs.
-  likeCount: (data.likeCount as number | undefined) ?? 0,
-  dislikeCount: (data.dislikeCount as number | undefined) ?? 0,
+  ...reactionCounts(data),
   viewerReaction,
   viewerReported,
 })

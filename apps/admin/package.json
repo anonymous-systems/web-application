@@ -14,7 +14,8 @@
     "migrate:stories": "tsx scripts/migrate-stories.ts",
     "migrate:projects": "tsx scripts/migrate-projects.ts",
     "migrate:taxonomy": "tsx scripts/migrate-taxonomy.ts",
-    "migrate:taxonomy-links": "tsx scripts/migrate-taxonomy-links.ts"
+    "migrate:taxonomy-links": "tsx scripts/migrate-taxonomy-links.ts",
+    "repair:reactions": "tsx scripts/repair-reaction-counts.ts"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^11.2.0",
