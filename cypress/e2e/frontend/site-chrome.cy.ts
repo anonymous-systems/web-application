@@ -109,11 +109,25 @@ describe('Site chrome', () => {
       cy.visit('/')
 
       cy.get('[data-testid="commandBar"]').should('be.visible')
-      cy.get('[data-testid="commandBar"]').find('button[aria-label="Stories"]').click()
+      // Selected by its visible label, which is also its accessible name — the
+      // buttons carry text now rather than an aria-label standing in for one.
+      cy.get('[data-testid="commandBar"]').contains('button', 'Stories').click()
 
       cy.url().should('include', '/stories')
       // Present on every page, not only the home page.
       cy.get('[data-testid="commandBar"]').should('be.visible')
+    })
+
+    // The current destination is marked for assistive tech, not by colour alone.
+    it('marks the destination you are on', () => {
+      cy.visit('/stories')
+
+      cy.get('[data-testid="commandBar"]')
+        .contains('button', 'Stories')
+        .should('have.attr', 'aria-current', 'page')
+      cy.get('[data-testid="commandBar"]')
+        .contains('button', 'Portfolio')
+        .should('not.have.attr', 'aria-current')
     })
 
     it('finds a story by title and jumps to it', () => {
