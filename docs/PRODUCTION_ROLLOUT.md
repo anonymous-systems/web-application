@@ -418,6 +418,19 @@ matters — `migrate:taxonomy-links` resolves terms by name and slug, so
 | 2 | `migrate:projects` | Legacy project shape → current model |
 | 3 | `migrate:taxonomy` | Backfills `name`, renames timestamps, drops `stories` |
 | 4 | `migrate:taxonomy-links` | Story/project taxonomy links → references |
+| 5 | `backfill:usernames` | `usernames/{username}` index for existing accounts |
+
+Two of those are repairs rather than one-time migrations, and are worth
+re-running whenever the thing they derive from has been written by any route
+other than the app:
+
+- **`backfill:usernames`** — public profiles resolve `/u/{username}` through the
+  `usernames` index, which only the onboarding function writes. Any account
+  created before that function existed, or imported directly, has no entry and
+  therefore no reachable profile. Dev had one real user against an entirely
+  empty index, and their profile answered 404.
+- **`repair:reactions`** — comment counters drift whenever a reaction is written
+  with no trigger deployed to see it.
 
 Every script is idempotent and supports `DRY_RUN=yes`. For each one:
 
