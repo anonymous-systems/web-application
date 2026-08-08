@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import Link from 'next/link'
 import { Layout } from '@/components/layout'
 import { ContentGrid } from '@/components/content-grid'
 import { StoryCard } from '@/components/story-card'
@@ -30,23 +31,35 @@ const isStoryType = (value: string): value is StoryType =>
   STORY_TYPES.includes(value as StoryType)
 
 interface Props {
-  searchParams: Promise<{ type?: string }>
+  searchParams: Promise<{ type?: string; tag?: string }>
 }
 
 export const metadata = {
-  title: 'Stories | Anonymous Systems',
+  title: 'Stories',
   description: 'Insights, notes and write-ups from the work we do.',
 }
 
 const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
-  const { type = '' } = await searchParams
+  const { type = '', tag = '' } = await searchParams
   const activeType = isStoryType(type) ? type : ALL_FILTER
 
   const stories = await listPublishedStories()
-  const visible =
+
+  // Type comes from the chips, tag from a topic link on the home page. They
+  // compose rather than replace each other, so narrowing by one keeps the other.
+  const byType =
     activeType === ALL_FILTER
       ? stories
       : stories.filter((story) => story.type === activeType)
+  const visible = tag
+    ? byType.filter((story) => story.tags.some((term) => term.slug === tag))
+    : byType
+
+  // Named from the stories themselves so a tag that no longer exists, or was
+  // renamed, shows the slug rather than an empty heading.
+  const tagName =
+    visible.flatMap((story) => story.tags).find((term) => term.slug === tag)
+      ?.name ?? tag
 
   return (
     <Layout dataTestId="storiesPage">
@@ -65,6 +78,21 @@ const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
           paramName="type"
         />
 
+        {tag && (
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <span className="text-muted-foreground">
+              Tagged <span className="text-foreground font-medium">{tagName}</span>
+            </span>
+            <Link
+              href={AppRoutes.stories}
+              className="text-muted-foreground hover:text-foreground underline underline-offset-4"
+              data-testid="clearTagFilter"
+            >
+              Clear
+            </Link>
+          </div>
+        )}
+
         {visible.length > 0 ? (
           <ContentGrid>
             {visible.map((story) => (
@@ -76,7 +104,7 @@ const Page = async ({ searchParams }: Props): Promise<JSX.Element> => {
             <EmptyHeader>
               <EmptyTitle>No stories yet</EmptyTitle>
               <EmptyDescription>
-                {activeType === ALL_FILTER
+                {activeType === ALL_FILTER && !tag
                   ? 'Check back soon.'
                   : 'Nothing published under this filter yet — try another.'}
               </EmptyDescription>

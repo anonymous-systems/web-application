@@ -37,7 +37,7 @@ interface Props {
 }
 
 export const metadata = {
-  title: 'Portfolio | Anonymous Systems',
+  title: 'Portfolio',
   description: 'Explore our portfolio and see what we\'ve accomplished.',
 }
 

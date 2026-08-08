@@ -133,7 +133,9 @@ export const Nav = (props: Props): JSX.Element => {
           'z-10 fixed w-full transition-colors',
           'max-w-[1024px] mx-auto align-self-center',
           'place-self-center',
-          isOpen ? 'bg-background' : 'bg-background/20',
+          // Opaque while open: the panel covers the page, so there is nothing
+          // behind it worth showing through.
+          isOpen ? 'bg-background' : 'glass',
           isOpen ? 'flex flex-col' : '',
           props.headerClassName || ''
         ].join(' ')}
@@ -154,7 +156,6 @@ export const Nav = (props: Props): JSX.Element => {
             transition: { duration: 1, ease: [0.22, 1, 0.36, 1] }
           })
         }
-        style={{ backdropFilter: 'saturate(180%) blur(20px)' }}
       >
         <div className='flex w-full gap-4 py-2 px-4'>
           {isSmallScreen ? smallScreenContent() : content()}
