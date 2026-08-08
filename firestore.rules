@@ -106,6 +106,23 @@ service cloud.firestore {
       allow read;
       allow write: if request.auth.uid == userUID || isAdmin();
     }
+
+    /*
+      usernames collection: the username -> uid index the onboarding function
+      writes, used to resolve a public profile URL.
+
+      `get` only, never `list`. A single document answers "who is this
+      username?", which is all the profile page asks; allowing `list` would turn
+      the index into a downloadable directory of every username on the site.
+
+      Writes stay closed to clients. The index and the profile must be created
+      together or a username is reserved with nothing behind it, so only the
+      onboarding function writes here — it uses the Admin SDK in a transaction
+      and bypasses these rules entirely.
+    */
+    match /usernames/{username} {
+      allow get;
+    }
     
     /* projects collection */
     match /projects/{projectID} {
