@@ -342,11 +342,25 @@ So, for any change that alters stored shape:
    console step did not take. `overrideEnv` present means console-set variables
    are outranking both yaml files.
 
+   List across **all** locations with `locations/-`, and surface errors rather
+   than defaulting. Backends are not necessarily co-located — here the frontend
+   is in `us-central1` and admin in `us-east5` — and a request naming the wrong
+   region 404s, which a `.get(..., '<unset>')` reports as an unset field. That
+   misread cost a round of "you didn't save it" when the console was fine.
+
    ```bash
    TOKEN=$(gcloud auth print-access-token | tr -d '\r\n')
    curl -s -H "Authorization: Bearer $TOKEN" \
-     "https://firebaseapphosting.googleapis.com/v1beta/projects/<project>/locations/us-central1/backends/<backend>" \
-     | python -c "import json,sys; d=json.load(sys.stdin); print('environment:', d.get('environment','<unset>')); print('overrideEnv:', d.get('overrideEnv','<none>'))"
+     "https://firebaseapphosting.googleapis.com/v1beta/projects/<project>/locations/-/backends" \
+     | python -c "
+   import json,sys
+   d=json.load(sys.stdin)
+   if 'error' in d: sys.exit('ERROR: ' + d['error'].get('message',''))
+   for b in d.get('backends',[]):
+       print(b['name'].split('/locations/')[1])
+       print('   environment:', b.get('environment','<UNSET>'))
+       print('   overrideEnv:', 'present' if b.get('overrideEnv') else 'none')
+   "
    ```
 
    **2. The overlay agrees with the base while both hold a value.** During the
@@ -365,7 +379,11 @@ So, for any change that alters stored shape:
    reporting SKIPPED means the backend is still serving the previous revision:
 
    ```bash
-   gcloud run services describe <backend> --project <project> --region us-central1 \
+   # `gcloud run services list` first — the region differs per backend, and
+   # `describe` with the wrong one fails rather than finding it elsewhere.
+   gcloud run services list --project <project> --format="value(metadata.name,metadata.namespace,region)"
+
+   gcloud run services describe <backend> --project <project> --region <region> \
      --format=json | python -c "import json,sys; [print(e['name'],'=',e.get('value','<secret>')) for e in json.load(sys.stdin)['spec']['template']['spec']['containers'][0].get('env',[])]"
    ```
 
