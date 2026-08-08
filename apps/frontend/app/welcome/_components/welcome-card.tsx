@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import { AuthCardShell } from '@workspace/ui/components/auth-card-shell'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { Logo } from '@/components/logo'
@@ -10,13 +11,7 @@ export const WelcomeCard = (): JSX.Element => {
   const { name, byline } = CompanyInformation
 
   return (
-    <div
-      className={[
-        'flex flex-col gap-4 bg-card',
-        'text-card-foreground rounded-lg',
-        'outline p-8 max-w-[400px] shadow-sm'
-      ].join(' ')}
-    >
+    <AuthCardShell>
       <picture className='flex justify-center'>
         <Link href={AppRoutes.home}>
           <Logo />
@@ -39,6 +34,6 @@ export const WelcomeCard = (): JSX.Element => {
           </Link>
         </div>
       </div>
-    </div>
+    </AuthCardShell>
   )
 }
