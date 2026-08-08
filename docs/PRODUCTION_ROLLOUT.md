@@ -147,16 +147,26 @@ So, for any change that alters stored shape:
 
    | Deploy | Required |
    | --- | --- |
-   | Firestore rules | `roles/firebase.sdkAdminServiceAgent` |
+   | Firestore rules | `roles/firebaserules.admin` |
    | Storage rules | the above **plus** `roles/firebasestorage.admin` |
    | Firestore indexes | `roles/datastore.indexAdmin` |
    | Cloud Functions | `roles/cloudfunctions.admin`, `roles/iam.serviceAccountUser`, `roles/artifactregistry.writer`, `roles/cloudbuild.builds.editor`, `roles/run.admin`, `roles/eventarc.admin` |
 
-   Storage rules are the trap. `roles/storage.admin` looks like it should cover
-   them and does not: that is Cloud Storage (`storage.*`), whereas publishing
-   rules first resolves which bucket to attach them to, which checks
-   `firebasestorage.defaultBucket.get`. Missing it fails the deploy *before* the
-   rules are read, so the error names a bucket lookup rather than the rules.
+   Deploying rules is two operations, and the permissions to publish do not
+   imply the permission to validate. `firebase deploy` first POSTs the sources
+   to `firebaserules.googleapis.com/v1/projects/<project>:test` — the
+   "checking … for compilation errors" line — which needs
+   `firebaserules.releases.test`. That is in `roles/firebaserules.admin` and in
+   **neither** `roles/firebase.sdkAdminServiceAgent` nor
+   `roles/firebasestorage.admin`, both of which carry only the create/update
+   permissions the publish itself uses. Granting the publish side alone fails at
+   the validate step, before a single rule is read.
+
+   Storage rules add a second trap. `roles/storage.admin` looks like it should
+   cover them and does not: that is Cloud Storage (`storage.*`), whereas
+   publishing storage rules first resolves which bucket to attach them to, which
+   checks `firebasestorage.defaultBucket.get`. Missing it fails the deploy before
+   the rules are read too, so the error names a bucket lookup rather than rules.
 
    ```bash
    gcloud projects add-iam-policy-binding <project> \
