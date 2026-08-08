@@ -45,6 +45,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
 
+  # The rules specs need the Firestore emulator, so they sit outside the nx
+  # `test` target and were never reached by CI — a security rule could regress
+  # with every other check green.
+  rules-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Cache Firebase emulators
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-emulators-
+
+      # Runs against a synthetic project id in the emulator, so no credentials
+      # are involved and nothing live is reachable.
+      - run: pnpm test:rules
+
   e2e:
     runs-on: ubuntu-latest
     needs: [lint, typecheck, unit-test]
@@ -191,3 +217,81 @@ jobs:
           EOF
 
       - run: pnpm test:e2e
+
+  # Everything App Hosting does not ship. Rules, indexes and functions are all
+  # outside the backend build, so they reached the project only when someone
+  # remembered to run the CLI: three PRs merged depending on rules that were
+  # never deployed, and each time the breakage read as an application bug. The
+  # comment counters have the same exposure — they are maintained by a trigger,
+  # so an undeployed function shows up as a count that silently never moves.
+  #
+  # Only dev is targeted today. Production has no alias yet — see
+  # docs/PRODUCTION_ROLLOUT.md, "Making the environment selectable".
+  deploy-firebase:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [rules-test, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Sets GOOGLE_APPLICATION_CREDENTIALS, which firebase-tools authenticates
+      # with. Each target below needs different IAM, and none of it is implied
+      # by the others — see docs/PRODUCTION_ROLLOUT.md for the grants.
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Rules and indexes deploy as separate steps so a failure names which one
+      # broke — they need different IAM, and a combined command fails opaquely
+      # when only one of the two is unauthorised.
+      #
+      # `--project` is explicit rather than relying on the .firebaserc default:
+      # the active project is invisible state, and these commands write.
+      #
+      # `--non-interactive` errors out where it would otherwise prompt, and
+      # `--force` — which bypasses those prompts — is deliberately absent. A
+      # destructive change, such as dropping an index still present remotely,
+      # therefore fails the job instead of being applied unattended.
+      #
+      # Rules go first: undeployed rules are the gap that actually caused
+      # incidents here, so they land even if the index step then fails.
+      - name: Deploy Firestore and Storage rules
+        run: >
+          pnpm exec firebase deploy
+          --only firestore:rules,storage
+          --project anonymous-systems-dev
+          --non-interactive
+
+      # Needs `roles/datastore.indexAdmin`, which the rules permissions above do
+      # not imply.
+      - name: Deploy Firestore indexes
+        run: >
+          pnpm exec firebase deploy
+          --only firestore:indexes
+          --project anonymous-systems-dev
+          --non-interactive
+
+      # Last, and needing the most: functions deploys build and run on Cloud
+      # Run, so the account needs cloudfunctions, run, cloudbuild,
+      # artifactregistry and eventarc access on top of the above.
+      #
+      # firebase.json runs lint and build as predeploy hooks, so a function that
+      # does not compile fails here rather than half-deploying.
+      #
+      # Still no `--force`: for functions it also means "delete any function
+      # missing from the source tree", which is not something a merge should do
+      # unattended. Removing a function stays a deliberate manual step, as does
+      # changing one's trigger type — that is rejected outright and needs the
+      # old function deleted first.
+      - name: Deploy Cloud Functions
+        run: >
+          pnpm exec firebase deploy
+          --only functions
+          --project anonymous-systems-dev
+          --non-interactive
