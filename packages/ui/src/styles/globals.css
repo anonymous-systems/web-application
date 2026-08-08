@@ -136,3 +136,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /*
+   * The frosted surface behind the header and the command bar: a translucent
+   * background over a saturated blur, so what passes beneath shows through with
+   * its colour intact rather than turning grey.
+   *
+   * The blur is per-surface, via `--glass-blur`. The header spans the full width
+   * with content running under it continuously, so it needs a heavy blur to stay
+   * legible; the command bar is a small pill with page visible all around it,
+   * where the same blur reads as a frosted lozenge rather than as glass. Same
+   * material, different thickness.
+   */
+  .glass {
+    --glass-blur: 20px;
+
+    @apply bg-background/20;
+    backdrop-filter: saturate(180%) blur(var(--glass-blur));
+    -webkit-backdrop-filter: saturate(180%) blur(var(--glass-blur));
+  }
+}
