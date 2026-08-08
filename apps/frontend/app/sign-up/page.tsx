@@ -1,8 +1,12 @@
 import { JSX } from 'react'
-import { SignUpPage } from '@/app/_pages/sign-up'
+import { AuthCard } from '@/components/auth-card'
 
 const Page = (): JSX.Element => {
-  return <SignUpPage />
+  return (
+    <main className='grid place-items-center h-screen bg-background p-8 pb-22'>
+      <AuthCard mode='sign-up' />
+    </main>
+  )
 }
 
 export default Page

@@ -2,7 +2,7 @@ import { JSX } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { getTokens } from 'next-firebase-auth-edge'
 import { cookies } from 'next/headers'
-import { ProfilePage } from '@/app/_pages/profile'
+import { ProfileView } from '@/app/profile/_components/profile-view'
 import { authConfig } from '@workspace/firebase-config/auth'
 import { withServerFirestore } from '@workspace/firebase-config/server-firestore'
 import { UserProfile } from '@workspace/ui/models/interfaces/user-profile'
@@ -32,7 +32,7 @@ const getUserProfile = async (): Promise<UserProfile | null> => {
 const Page = async (): Promise<JSX.Element> => {
   const userProfile = await getUserProfile()
 
-  return <ProfilePage userProfile={userProfile} />
+  return <ProfileView userProfile={userProfile} />
 }
 
 export default Page

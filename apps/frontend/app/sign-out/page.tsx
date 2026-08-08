@@ -1,8 +1,15 @@
 import { JSX } from 'react'
-import { SignOutPage } from '@/app/_pages/sign-out'
+import { SignOutCard } from '@/app/sign-out/_components/sign-out-card'
 
 const Page = (): JSX.Element => {
-  return <SignOutPage />
+  return (
+    <main
+      className='grid place-items-center h-screen bg-background p-8 pb-22'
+      data-testid='signOutPage'
+    >
+      <SignOutCard />
+    </main>
+  )
 }
 
 export default Page
