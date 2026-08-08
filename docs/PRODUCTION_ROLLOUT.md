@@ -44,14 +44,36 @@ they run entirely against emulators and never touch a live database.
    rather than relying on the active alias — the active project is invisible
    state, and it is the kind of thing that gets noticed after the write.
 
-2. **App Hosting config per environment.** App Hosting reads `apphosting.yaml`
-   and merges an environment-specific `apphosting.<environmentName>.yaml` over
-   it, with the environment name set on the backend. The plan is to leave shared
-   settings in `apphosting.yaml`, move every dev-specific value into
-   `apphosting.dev.yaml`, and add `apphosting.prod.yaml`.
-   **Confirm this mechanism in the console before relying on it** — CLI 14.12.0
-   exposes no flag for it, so it is configured per-backend rather than at deploy
-   time, and it has not been exercised in this repo.
+2. **App Hosting config per environment.** Each backend carries an *environment
+   name*, and App Hosting looks for `apphosting.<environment>.yaml` before
+   falling back to `apphosting.yaml`. `apps/*/apphosting.dev.yaml` and
+   `apphosting.prod.yaml` hold the values that differ between projects; the base
+   file holds what is identical.
+
+   **The name is set in the Firebase console** — there is no CLI for it:
+   App Hosting → the backend's dashboard → **Settings** → **Environment** →
+   **Environment name** → **Save**. The filename segment must match the name
+   exactly.
+
+   Precedence runs **console → `apphosting.<env>.yaml` → `apphosting.yaml` →
+   Firebase defaults**, per key. The first of those is the trap: a variable set
+   in the console silently outranks both files, so the repo can look wrong when
+   it is being overridden. Read `overrideEnv` off the backend to see what the
+   console has set (it is absent when nothing is).
+
+   Values in `apphosting.yaml` are available at **both build and run time** by
+   default, which is why the `NEXT_PUBLIC_*` values Next inlines at build work
+   without an `availability` key.
+
+   Deploying several environments into one project is explicitly *not*
+   recommended; a separate project per environment — as here — is the documented
+   shape.
+
+   > **Order matters when moving values.** Taking a value out of
+   > `apphosting.yaml` before the backend has an environment name leaves it
+   > undefined. Add the overlay first, set the name, confirm the deploy, and only
+   > then thin the base file — the same expand/contract order the taxonomy
+   > migration had to learn.
 
 3. **Migration scripts already take an environment.** Every script in
    `apps/admin/scripts/` reads `FIREBASE_PROJECT_ID` and refuses to run against a
@@ -147,16 +169,27 @@ So, for any change that alters stored shape:
 
    | Deploy | Required |
    | --- | --- |
-   | Firestore rules | `roles/firebase.sdkAdminServiceAgent` |
+   | Firestore rules | `roles/firebaserules.admin` |
    | Storage rules | the above **plus** `roles/firebasestorage.admin` |
    | Firestore indexes | `roles/datastore.indexAdmin` |
    | Cloud Functions | `roles/cloudfunctions.admin`, `roles/iam.serviceAccountUser`, `roles/artifactregistry.writer`, `roles/cloudbuild.builds.editor`, `roles/run.admin`, `roles/eventarc.admin` |
+   | Cloud Functions — also | a **custom role** with `firebaseextensions.instances.list` and `.get`, plus the Cloud Billing API enabled |
 
-   Storage rules are the trap. `roles/storage.admin` looks like it should cover
-   them and does not: that is Cloud Storage (`storage.*`), whereas publishing
-   rules first resolves which bucket to attach them to, which checks
-   `firebasestorage.defaultBucket.get`. Missing it fails the deploy *before* the
-   rules are read, so the error names a bucket lookup rather than the rules.
+   Deploying rules is two operations, and the permissions to publish do not
+   imply the permission to validate. `firebase deploy` first POSTs the sources
+   to `firebaserules.googleapis.com/v1/projects/<project>:test` — the
+   "checking … for compilation errors" line — which needs
+   `firebaserules.rulesets.test`. That is in `roles/firebaserules.admin` and in
+   **neither** `roles/firebase.sdkAdminServiceAgent` nor
+   `roles/firebasestorage.admin`, both of which carry only the create/update
+   permissions the publish itself uses. Granting the publish side alone fails at
+   the validate step, before a single rule is read.
+
+   Storage rules add a second trap. `roles/storage.admin` looks like it should
+   cover them and does not: that is Cloud Storage (`storage.*`), whereas
+   publishing storage rules first resolves which bucket to attach them to, which
+   checks `firebasestorage.defaultBucket.get`. Missing it fails the deploy before
+   the rules are read too, so the error names a bucket lookup rather than rules.
 
    ```bash
    gcloud projects add-iam-policy-binding <project> \
@@ -166,7 +199,37 @@ So, for any change that alters stored shape:
 
    Functions need the long list because a v2 function is built by Cloud Build,
    stored in Artifact Registry, run on Cloud Run and triggered through Eventarc —
-   deploying one touches all four.
+   deploying one touches all four. They also need two things that are not a role:
+
+   **A custom role, because no predefined one fits.** `firebase deploy --only
+   functions` enumerates Extensions instances first, and
+   `firebaseextensions.instances.list` is in none of the `firebaseextensions.*`
+   roles — those carry only `firebase.clients.*` and `resourcemanager.projects.*`.
+
+   ```bash
+   gcloud iam roles create ciDeployExtensionsRead --project=<project> \
+     --title="CI deploy: read Extensions" \
+     --permissions=firebaseextensions.instances.list,firebaseextensions.instances.get \
+     --stage=GA
+
+   gcloud projects add-iam-policy-binding <project> \
+     --member="serviceAccount:<ci-service-account>" \
+     --role="projects/<project>/roles/ciDeployExtensionsRead"
+   ```
+
+   To undo: remove the binding, then `gcloud iam roles delete
+   ciDeployExtensionsRead --project=<project>`. Deletion is a 7-day soft delete,
+   so `gcloud iam roles undelete` recovers it inside that window.
+
+   **The Cloud Billing API switched on**, which is not an IAM problem and so no
+   grant fixes it. A 2nd-gen function requires a billing account, so the deploy
+   reads `cloudbilling.googleapis.com/v1/projects/<project>/billingInfo`, which
+   answers 403 *"API has not been used in project … before or it is disabled"*
+   while the API is off:
+
+   ```bash
+   gcloud services enable cloudbilling.googleapis.com --project <project>
+   ```
 
    Dev is already granted, on `firebase-adminsdk-1k7kl@anonymous-systems-dev`.
    Production needs the same set on whichever account deploys there — and note
@@ -268,6 +331,68 @@ So, for any change that alters stored shape:
    the request 401s, so capture stdout only; and `gcloud` output carries `\r`,
    which silently breaks `--iam-account="$sa"` in a loop. Hence the `tr -d '\r'`
    above.
+
+   ### Verifying an environment is wired correctly
+
+   Run these after setting an Environment name, before trusting it. Every one is
+   read-only.
+
+   **1. The backend carries the name, and nothing is shadowing it.** An unset
+   field is omitted from the response, so absence of `environment` means the
+   console step did not take. `overrideEnv` present means console-set variables
+   are outranking both yaml files.
+
+   List across **all** locations with `locations/-`, and surface errors rather
+   than defaulting. Backends are not necessarily co-located — here the frontend
+   is in `us-central1` and admin in `us-east5` — and a request naming the wrong
+   region 404s, which a `.get(..., '<unset>')` reports as an unset field. That
+   misread cost a round of "you didn't save it" when the console was fine.
+
+   ```bash
+   TOKEN=$(gcloud auth print-access-token | tr -d '\r\n')
+   curl -s -H "Authorization: Bearer $TOKEN" \
+     "https://firebaseapphosting.googleapis.com/v1beta/projects/<project>/locations/-/backends" \
+     | python -c "
+   import json,sys
+   d=json.load(sys.stdin)
+   if 'error' in d: sys.exit('ERROR: ' + d['error'].get('message',''))
+   for b in d.get('backends',[]):
+       print(b['name'].split('/locations/')[1])
+       print('   environment:', b.get('environment','<UNSET>'))
+       print('   overrideEnv:', 'present' if b.get('overrideEnv') else 'none')
+   "
+   ```
+
+   **2. The overlay agrees with the base while both hold a value.** During the
+   expand phase the same variable is declared twice, and a drift between them is
+   invisible until the base file is thinned:
+
+   ```bash
+   node -e "const fs=require('fs'),YAML=require('js-yaml');
+   const base=Object.fromEntries((YAML.load(fs.readFileSync('apps/<app>/apphosting.yaml','utf8')).env||[]).filter(e=>e.value!==undefined).map(e=>[e.variable,String(e.value)]));
+   for (const e of YAML.load(fs.readFileSync('apps/<app>/apphosting.dev.yaml','utf8')).env||[])
+     if (base[e.variable]!==undefined && base[e.variable]!==String(e.value)) console.log('MISMATCH',e.variable);"
+   ```
+
+   **3. The deployed service resolved the values you expect.** This is the only
+   check that proves the whole chain, and the one worth trusting — a rollout
+   reporting SKIPPED means the backend is still serving the previous revision:
+
+   ```bash
+   # `gcloud run services list` first — the region differs per backend, and
+   # `describe` with the wrong one fails rather than finding it elsewhere.
+   gcloud run services list --project <project> --format="value(metadata.name,metadata.namespace,region)"
+
+   gcloud run services describe <backend> --project <project> --region <region> \
+     --format=json | python -c "import json,sys; [print(e['name'],'=',e.get('value','<secret>')) for e in json.load(sys.stdin)['spec']['template']['spec']['containers'][0].get('env',[])]"
+   ```
+
+   Note what is **not** on that list: `FIREBASE_WEBAPP_CONFIG`. firebase-tools
+   skips that autoinit for pnpm, so nothing may depend on it. `FIREBASE_CONFIG`
+   *is* injected automatically and carries `projectId`, `storageBucket` and
+   `databaseURL` — but only at runtime, on the server. The client SDK is
+   configured in the browser from `NEXT_PUBLIC_*` values Next inlines at build,
+   so those must be declared per environment rather than derived from it.
 
 3. **Functions** — `firebase deploy --only functions --project prod`. If a
    function changes trigger type (HTTPS ↔ background), the deploy is rejected;

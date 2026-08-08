@@ -1,0 +1,37 @@
+# Development overrides, loaded when the backend's Environment name is `dev`.
+#
+# App Hosting looks for apphosting.<environment>.yaml before falling back to
+# apphosting.yaml, so the filename and the Environment name set in the console
+# (App Hosting > backend > Settings > Environment) must match exactly.
+#
+# Only values that differ between projects belong here. Anything identical in
+# both — runConfig, USE_SECURE_COOKIES, the secret *names* — stays in the base
+# file. Note that a value set in the Firebase console outranks both files.
+env:
+  # The project itself. `FIREBASE_CONFIG` carries these at runtime, but the
+  # client SDK is configured in the browser and Next only inlines NEXT_PUBLIC_*
+  # into that bundle — so they have to be declared, not derived.
+  - variable: FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: anonymous-systems-dev
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: anonymous-systems-dev.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+    value: https://anonymous-systems-dev-default-rtdb.firebaseio.com
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: anonymous-systems-dev.appspot.com
+
+  # Identifiers unique to the dev Firebase project and its web app. Public by
+  # nature: they ship in the client bundle either way.
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: 160347575398
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:160347575398:web:a29a7b932649cae54749a7
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-ZXCJBFNDCG
+
+  # Bound to the dev web app's App Check registration, so it cannot be shared
+  # with prod — a key that does not match the app fails as auth/internal-error.
+  - variable: NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY
+    value: 6Ldo-aArAAAAAE0G5z4SrejilzW3aL-RZaEOgXUu

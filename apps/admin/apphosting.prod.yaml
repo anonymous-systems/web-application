@@ -1,0 +1,35 @@
+# Production overrides, loaded when the backend's Environment name is `prod`.
+#
+# See apphosting.dev.yaml for how the file is selected. Nothing in the prod
+# project exists yet — this file is the shape of what it will need, and every
+# value below has to be replaced with one read from the prod *admin* web app
+# before a backend is pointed at it.
+env:
+  # The project itself. `FIREBASE_CONFIG` carries these at runtime, but the
+  # client SDK is configured in the browser and Next only inlines NEXT_PUBLIC_*
+  # into that bundle — so they have to be declared, not derived.
+  - variable: FIREBASE_PROJECT_ID
+    value: anonymous-systems
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: anonymous-systems
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: anonymous-systems.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+    value: https://anonymous-systems-default-rtdb.firebaseio.com
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: anonymous-systems.appspot.com
+
+  # From the prod project's admin web app registration, which is distinct from
+  # the frontend's. The sender id is the prod project number, 64613558725.
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: REPLACE_WITH_PROD_MESSAGING_SENDER_ID
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: REPLACE_WITH_PROD_ADMIN_APP_ID
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: REPLACE_WITH_PROD_ADMIN_MEASUREMENT_ID
+
+  # Must be a reCAPTCHA **Enterprise** key registered to the prod admin app,
+  # with the prod authDomain in its allowed domains. App Check is enforced on
+  # identitytoolkit, so a mismatch locks admin sign-in out entirely.
+  - variable: NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITE_KEY
+    value: REPLACE_WITH_PROD_ADMIN_RECAPTCHA_ENTERPRISE_SITE_KEY

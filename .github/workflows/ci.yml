@@ -7,6 +7,13 @@ on:
 
 env:
   NODE_VERSION: 22
+  # The project the deploy job targets. Named once so pointing CI at another
+  # environment is one edit rather than one per target, and so the value is
+  # visible at the top of the file instead of buried three steps down.
+  #
+  # Production is deliberately not wired up: it has no backends, secrets or App
+  # Check key yet. See docs/PRODUCTION_ROLLOUT.md.
+  DEPLOY_PROJECT: anonymous-systems-dev
 
 jobs:
   lint:
@@ -265,7 +272,7 @@ jobs:
         run: >
           pnpm exec firebase deploy
           --only firestore:rules,storage
-          --project anonymous-systems-dev
+          --project ${{ env.DEPLOY_PROJECT }}
           --non-interactive
 
       # Needs `roles/datastore.indexAdmin`, which the rules permissions above do
@@ -274,7 +281,7 @@ jobs:
         run: >
           pnpm exec firebase deploy
           --only firestore:indexes
-          --project anonymous-systems-dev
+          --project ${{ env.DEPLOY_PROJECT }}
           --non-interactive
 
       # Last, and needing the most: functions deploys build and run on Cloud
@@ -293,5 +300,5 @@ jobs:
         run: >
           pnpm exec firebase deploy
           --only functions
-          --project anonymous-systems-dev
+          --project ${{ env.DEPLOY_PROJECT }}
           --non-interactive
