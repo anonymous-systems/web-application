@@ -9,7 +9,8 @@ import Link from 'next/link'
 import { NavLink } from '@workspace/ui/models/interfaces/nav-link'
 import { UserMenu } from '@/components/user-menu'
 import { MainNavigation } from '@/components/main-navigation'
-import { ThemeToggle } from '@workspace/ui/components/theme-toggle'
+import { SiteFooter } from '@/components/site-footer'
+import { CommandBar } from '@/components/command-bar'
 
 interface Props {
   children: ReactNode
@@ -18,13 +19,14 @@ interface Props {
 export const Layout = (props: Props): JSX.Element => {
   const { user } = useAuth()
 
+  // Only destinations a visitor should browse to. Welcome and Onboarding were
+  // here too, but they are steps in the sign-up flow rather than places — and
+  // Profile is reached from the user menu, which is where a signed-in reader
+  // already looks for it.
   const navLinks: NavLink[] = [
     { id: 'home', name: 'Home', href: AppRoutes.home },
     { id: 'stories', name: 'Stories', href: AppRoutes.stories },
     { id: 'portfolio', name: 'Portfolio', href: AppRoutes.portfolio },
-    { id: 'welcome', name: 'Welcome', href: AppRoutes.welcome },
-    { id: 'profile', name: 'Profile', href: AppRoutes.profile },
-    { id: 'onboarding', name: 'Onboarding', href: AppRoutes.onboarding },
   ]
 
   return (
@@ -55,7 +57,12 @@ export const Layout = (props: Props): JSX.Element => {
     >
       <main data-testid={props.dataTestId}>{props.children}</main>
 
-      <ThemeToggle className='fixed bottom-6 right-4' />
+      <SiteFooter />
+
+      {/* The theme toggle used to float here on its own; it now sits in the
+          command bar, so the bottom of the screen holds one control rather
+          than two competing for the same corner. */}
+      <CommandBar />
     </Nav>
   )
 }
