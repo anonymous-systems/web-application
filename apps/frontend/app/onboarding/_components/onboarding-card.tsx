@@ -1,6 +1,7 @@
 'use client'
 
 import { JSX, useState, useTransition } from 'react'
+import { AuthCardShell } from '@workspace/ui/components/auth-card-shell'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { BrandName } from '@workspace/ui/components/brand-name'
@@ -57,13 +58,7 @@ export const OnboardingCard = (): JSX.Element => {
   const transition: Transition = { duration: 0.2, ease: 'easeInOut' }
 
   return (
-    <div
-      className={[
-        'flex flex-col gap-4 bg-card',
-        'text-card-foreground rounded-lg',
-        'outline p-8 max-w-[400px] shadow-sm'
-      ].join(' ')}
-    >
+    <AuthCardShell>
       <Link href={AppRoutes.home}>
         <BrandName className='text-center' />
       </Link>
@@ -107,6 +102,6 @@ export const OnboardingCard = (): JSX.Element => {
               )}
           </AnimatePresence>
         )}
-    </div>
+    </AuthCardShell>
   )
 }

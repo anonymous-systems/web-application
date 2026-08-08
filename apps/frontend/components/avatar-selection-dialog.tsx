@@ -1,4 +1,5 @@
 import { JSX, useEffect, useState } from 'react'
+import { cn } from '@workspace/ui/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -74,10 +75,10 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
 
     return (
       <motion.div
-        className={[
+        className={cn(
           'flex flex-wrap justify-center gap-4',
           'py-4 px-0 max-h-[40vh] overflow-y-auto'
-        ].join(' ')}
+        )}
         variants={avatarListVariants}
         initial='hidden'
         animate='visible'
@@ -86,12 +87,12 @@ export const AvatarSelectionDialog = (props: Props): JSX.Element => {
           {avatars.map((avatar, index) => (
             <motion.picture
               key={index}
-              className={[
+              className={cn(
                 'rounded-full overflow-hidden',
                 selectedAvatar === avatar
                   ? 'outline-4 outline-primary/60 transition-transform scale-110'
                   : 'cursor-pointer'
-              ].join(' ')}
+              )}
               onClick={() => { setSelectedAvatar(avatar) }}
               variants={avatarItemVariants}
               initial='hidden'

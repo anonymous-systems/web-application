@@ -1,5 +1,5 @@
 import { JSX } from 'react'
-import { WelcomeCard } from '@/app/welcome/_components/WelcomeCard'
+import { WelcomeCard } from '@/app/welcome/_components/welcome-card'
 
 export const WelcomePage = (): JSX.Element => {
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import { JSX, useEffect, useState } from 'react'
+import { AuthCardShell } from '@workspace/ui/components/auth-card-shell'
 import Link from 'next/link'
 import { AppRoutes } from '@/lib/app-routes'
 import { Logo } from '@/components/logo'
@@ -14,7 +15,6 @@ export const SignOutCard = (): JSX.Element => {
   const [isSignedOut, setIsSignedOut] = useState(false)
   const router = useRouter()
 
-  /* eslint-disable  react-hooks/exhaustive-deps */
   useEffect(() => {
     setIsLoading(true)
     signOut()
@@ -24,8 +24,10 @@ export const SignOutCard = (): JSX.Element => {
       })
       .catch(() => setIsSignedOut(false))
       .finally(() => setIsLoading(false))
-  }, []) // only run on mount
-  /* eslint-enable  react-hooks/exhaustive-deps */
+    // Signing out is a one-shot action on arrival, not a reaction to a
+    // changing value — re-running it on every render would loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const getSignOutMessage = (isLoading: boolean, isSignedOut: boolean): string => {
     if (isLoading) return 'Signing Out...'
@@ -34,13 +36,7 @@ export const SignOutCard = (): JSX.Element => {
   }
 
   return (
-    <div
-      className={[
-        'flex flex-col gap-4 bg-card',
-        'text-card-foreground rounded-lg',
-        'outline p-8 max-w-[400px] shadow-sm'
-      ].join(' ')}
-    >
+    <AuthCardShell>
       <picture className='flex justify-center'>
         <Link href={AppRoutes.home}>
           <Logo />
@@ -64,6 +60,6 @@ export const SignOutCard = (): JSX.Element => {
           </Button>
         </Link>
       </div>
-    </div>
+    </AuthCardShell>
   )
 }
