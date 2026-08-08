@@ -1,8 +1,14 @@
 import { JSX } from 'react'
-import { TermsAndConditionsPage } from '@/app/_pages/terms-and-conditions'
+import { Layout } from '@/components/layout'
 
 const Page = (): JSX.Element => {
-  return <TermsAndConditionsPage />
+  return (
+    <Layout>
+      <h1 className='text-2xl font-bold text-center mt-8'>
+        Terms and Conditions
+      </h1>
+    </Layout>
+  )
 }
 
 export default Page
