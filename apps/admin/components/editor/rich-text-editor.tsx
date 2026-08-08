@@ -27,7 +27,7 @@ import {
 import 'ckeditor5/ckeditor5.css'
 import './rich-text-editor.css'
 
-interface Props {
+export interface RichTextEditorProps {
   /** Initial HTML; the editor is uncontrolled after mount and reports changes via onChange. */
   initialValue: string
   onChange: (html: string) => void
@@ -44,7 +44,7 @@ export const RichTextEditor = ({
   initialValue,
   onChange,
   dataTestId: testId,
-}: Props): JSX.Element => {
+}: RichTextEditorProps): JSX.Element => {
   // `rich-text-editor` scopes the dark-mode colour fix in rich-text-editor.css.
   return (
     <div
