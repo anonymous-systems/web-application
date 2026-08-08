@@ -24,6 +24,9 @@ export const PrivateRoutes = {
 export const ContentRoutes = {
   storyDetail: (slug: string): string => `${PublicRoutes.stories}/${slug}`,
   portfolioDetail: (slug: string): string => `${PublicRoutes.portfolio}/${slug}`,
+  // Deliberately not under `/profile`, which is the signed-in user's own page
+  // and is treated as private by the middleware.
+  publicProfile: (username: string): string => `/u/${username}`,
 }
 export const AppRoutes = {
   ...AuthRoutes,

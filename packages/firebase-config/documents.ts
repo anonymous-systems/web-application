@@ -79,7 +79,7 @@ const termsOf = (
 const authorOf = (
   data: DocumentFields,
   profiles: Map<string, UserProfileDoc>
-): Pick<Story, 'authorUid' | 'authorName' | 'authorAvatar'> => {
+): Pick<Story, 'authorUid' | 'authorName' | 'authorAvatar' | 'authorUsername'> => {
   const userRef = isReference(data.user) ? data.user : undefined
   const profile = userRef ? profiles.get(userRef.id) : undefined
 
@@ -87,6 +87,7 @@ const authorOf = (
     authorUid: userRef?.id ?? null,
     authorName: resolveAuthorName(profile),
     authorAvatar: profile?.avatar ?? null,
+    authorUsername: profile?.username ?? null,
   }
 }
 

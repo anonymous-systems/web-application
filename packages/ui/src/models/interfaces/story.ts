@@ -34,6 +34,8 @@ export interface Story {
   readTimeMinutes: number | null
   authorUid: string | null
   authorName: string | null
+  /** For linking to their public profile; null before onboarding sets one. */
+  authorUsername: string | null
   authorAvatar: string | null
   createdAt: string | null
   updatedAt: string | null
