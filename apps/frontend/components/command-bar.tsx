@@ -1,7 +1,7 @@
 'use client'
 
 import { JSX, useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   BookOpen,
   Briefcase,
@@ -50,6 +50,7 @@ const destinations: Destination[] = [
  */
 export const CommandBar = (): JSX.Element => {
   const router = useRouter()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [results, setResults] = useState<SearchResult[] | null>(null)
   const [failed, setFailed] = useState(false)
@@ -102,38 +103,57 @@ export const CommandBar = (): JSX.Element => {
       >
         <nav
           aria-label="Quick navigation"
-          // Barely any blur: the pill is small and surrounded by page, so a
-          // heavy one frosts it into a solid lozenge instead of reading as glass.
-          className="glass [--glass-blur:5px] flex items-center gap-1 rounded-full border p-1.5 shadow-lg"
+          /*
+           * Barely any blur: this is a thin lens, not frosted glass. The
+           * reference keeps what is behind it fully legible and saturated, and
+           * a heavier blur turns the pill into an opaque lozenge.
+           */
+          /*
+           * A neutral haze rather than the theme background: `bg-background` is
+           * white in light mode, so tinting with it over a light page turns the
+           * pill opaque. The reference stays legible over everything it crosses.
+           */
+          className="glass-rim glass-sheen relative flex items-center gap-1 rounded-full bg-neutral-500/10 p-1.5 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.35)] backdrop-blur-[6px] backdrop-saturate-[180%]"
           data-testid="commandBar"
         >
-          {destinations.map(({ name, href, Icon }) => (
-            <button
-              key={href}
-              type="button"
-              onClick={() => go(href)}
-              aria-label={name}
-              title={name}
-              className="hover:bg-accent flex size-10 items-center justify-center rounded-full transition-colors"
-            >
-              <Icon className="size-[18px]" aria-hidden />
-            </button>
-          ))}
+          {destinations.map(({ name, href, Icon }) => {
+            const isCurrent = href === pathname
 
-          <span className="bg-border mx-1 h-6 w-px" aria-hidden />
+            return (
+              <button
+                key={href}
+                type="button"
+                onClick={() => go(href)}
+                aria-current={isCurrent ? 'page' : undefined}
+                className={cn(
+                  'flex min-w-[64px] flex-col items-center gap-0.5 rounded-full px-3 py-1.5 transition-colors',
+                  // The current destination gets its own lighter capsule, as in
+                  // the reference — the state is legible without relying on
+                  // colour alone.
+                  isCurrent ? 'bg-foreground/10' : 'hover:bg-foreground/5'
+                )}
+                data-testid="commandBarLink"
+                data-active={isCurrent}
+              >
+                <Icon className="size-[18px]" aria-hidden />
+                <span className="text-[11px] leading-none font-medium">
+                  {name}
+                </span>
+              </button>
+            )
+          })}
+
+          <span className="bg-foreground/15 mx-1 h-8 w-px" aria-hidden />
 
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="hover:bg-accent flex h-10 items-center gap-2 rounded-full px-3 transition-colors"
+            aria-label="Search"
+            className="hover:bg-foreground/5 flex flex-col items-center gap-0.5 rounded-full px-3 py-1.5 transition-colors"
             data-testid="commandBarSearch"
           >
             <Search className="size-[18px]" aria-hidden />
-            <span className="text-muted-foreground text-sm">Search</span>
-            {/* Hidden on touch, where there is no key to press. */}
-            <kbd className="bg-muted text-muted-foreground hidden rounded px-1.5 py-0.5 font-mono text-[10px] sm:inline">
-              ⌘K
-            </kbd>
+            <span className="text-[11px] leading-none font-medium">Search</span>
           </button>
 
           <ThemeToggle />
