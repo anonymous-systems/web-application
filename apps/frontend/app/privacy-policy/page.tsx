@@ -1,8 +1,14 @@
 import { JSX } from 'react'
-import { PrivacyPolicyPage } from '@/app/_pages/privacy-policy'
+import { Layout } from '@/components/layout'
 
 const Page = (): JSX.Element => {
-  return <PrivacyPolicyPage />
+  return (
+    <Layout>
+      <h1 className='text-2xl font-bold text-center mt-8'>
+        Privacy Policy
+      </h1>
+    </Layout>
+  )
 }
 
 export default Page
