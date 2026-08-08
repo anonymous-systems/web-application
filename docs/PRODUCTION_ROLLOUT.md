@@ -147,9 +147,16 @@ So, for any change that alters stored shape:
 
    | Deploy | Required |
    | --- | --- |
-   | Firestore + Storage rules | `roles/firebase.sdkAdminServiceAgent` |
+   | Firestore rules | `roles/firebase.sdkAdminServiceAgent` |
+   | Storage rules | the above **plus** `roles/firebasestorage.admin` |
    | Firestore indexes | `roles/datastore.indexAdmin` |
    | Cloud Functions | `roles/cloudfunctions.admin`, `roles/iam.serviceAccountUser`, `roles/artifactregistry.writer`, `roles/cloudbuild.builds.editor`, `roles/run.admin`, `roles/eventarc.admin` |
+
+   Storage rules are the trap. `roles/storage.admin` looks like it should cover
+   them and does not: that is Cloud Storage (`storage.*`), whereas publishing
+   rules first resolves which bucket to attach them to, which checks
+   `firebasestorage.defaultBucket.get`. Missing it fails the deploy *before* the
+   rules are read, so the error names a bucket lookup rather than the rules.
 
    ```bash
    gcloud projects add-iam-policy-binding <project> \
@@ -166,6 +173,101 @@ So, for any change that alters stored shape:
    this is a lot of authority to hang on a downloadable JSON key, since anyone
    holding it can deploy code. Prefer Workload Identity Federation for prod
    rather than minting another long-lived key.
+
+   ### Verifying permissions without a CI run
+
+   Granting roles by trial and error — merge, watch the job fail, grant the next
+   one — is how the dev setup took three rounds. Every check below runs locally
+   and answers the question before a deploy is attempted.
+
+   **1. Which account does CI actually use?** The secret cannot be read back, but
+   a downloaded JSON key is a *user-managed* key, and normally only one account
+   has any:
+
+   ```bash
+   gcloud iam service-accounts list --project <project> --format="value(email)" \
+     | tr -d '\r' | while read -r sa; do
+       n=$(gcloud iam service-accounts keys list --iam-account="$sa" \
+             --project <project> --format="value(keyType)" \
+           | tr -d '\r' | grep -c USER_MANAGED)
+       echo "$n user-managed  $sa"
+     done
+   ```
+
+   **2. What does it already hold?**
+
+   ```bash
+   gcloud projects get-iam-policy <project> \
+     --flatten="bindings[].members" \
+     --format="value(bindings.members,bindings.role)" \
+     | tr -d '\r' | grep "<service-account>" | awk '{print $2}' | sort
+   ```
+
+   **3. Does a role actually contain the permission an error named?** Role titles
+   mislead — this is how `roles/storage.admin` was mistaken for the one covering
+   Storage rules:
+
+   ```bash
+   gcloud iam roles describe roles/firebasestorage.admin \
+     --format="value(includedPermissions)" \
+     | tr ';' '\n' | grep firebasestorage.defaultBucket.get
+   ```
+
+   **4. Is a 403 really permission, or a resource that does not exist?** Google
+   returns the same 403 for both — the message says "or it may not exist". Call
+   the failing endpoint as an owner: a 200 means the resource is fine and the
+   problem is genuinely IAM.
+
+   ```bash
+   TOKEN=$(gcloud auth print-access-token | tr -d '\r\n')
+   curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $TOKEN" <url>
+   ```
+
+   **5. Test as the service account itself.** Impersonation answers "will CI
+   work" directly, and grants take a minute or two to propagate — so a 403
+   straight after granting is usually not a wrong role:
+
+   ```bash
+   TOKEN=$(gcloud auth print-access-token \
+     --impersonate-service-account=<service-account> | tr -d '\r\n')
+   curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $TOKEN" <url>
+   ```
+
+   **6. Run the real deploy as the service account.** The strongest check: build
+   an impersonated ADC file and point firebase-tools at it, then dry-run every
+   target. This is what proved all three CI steps before re-running the job.
+
+   ```jsonc
+   // impersonated-adc.json — source_credentials is your own ADC, verbatim
+   {
+     "type": "impersonated_service_account",
+     "service_account_impersonation_url":
+       "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/<sa>:generateAccessToken",
+     "source_credentials": { /* contents of application_default_credentials.json */ },
+     "delegates": []
+   }
+   ```
+
+   ```bash
+   export GOOGLE_APPLICATION_CREDENTIALS=/path/to/impersonated-adc.json
+   pnpm exec firebase deploy --only firestore:rules,storage --project <project> \
+     --non-interactive --dry-run
+   pnpm exec firebase deploy --only firestore:indexes --project <project> \
+     --non-interactive --dry-run
+   pnpm exec firebase deploy --only functions --project <project> \
+     --non-interactive --dry-run
+   ```
+
+   **Delete that file afterwards** — it embeds your own refresh token, so it is
+   as sensitive as a downloaded key. `--dry-run` writes nothing but does enable
+   APIs on the target project, which is worth knowing before pointing it at
+   production.
+
+   Two shell traps cost time while working this out, both on Windows:
+   `$(gcloud ... 2>&1)` folds gcloud's impersonation warning into the token and
+   the request 401s, so capture stdout only; and `gcloud` output carries `\r`,
+   which silently breaks `--iam-account="$sa"` in a loop. Hence the `tr -d '\r'`
+   above.
 
 3. **Functions** — `firebase deploy --only functions --project prod`. If a
    function changes trigger type (HTTPS ↔ background), the deploy is rejected;
