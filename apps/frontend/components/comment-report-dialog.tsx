@@ -59,6 +59,10 @@ export const CommentReportDialog = ({
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(reported)
 
+  // "Something else" carries no meaning on its own, so the detail becomes the
+  // report. The schema enforces it; this drives the wording and the a11y hint.
+  const detailRequired = reason === 'other'
+
   const submit = async (): Promise<void> => {
     if (!user || !reason) return
 
@@ -144,7 +148,10 @@ export const CommentReportDialog = ({
                   name="reason"
                   value={value}
                   checked={reason === value}
-                  onChange={() => setReason(value)}
+                  onChange={() => {
+                    setReason(value)
+                    setError(null)
+                  }}
                 />
                 {REPORT_REASON_LABELS[value]}
               </label>
@@ -153,10 +160,18 @@ export const CommentReportDialog = ({
 
           <Textarea
             value={detail}
-            onChange={(event) => setDetail(event.target.value)}
-            placeholder="Anything else we should know? (optional)"
+            onChange={(event) => {
+              setDetail(event.target.value)
+              setError(null)
+            }}
+            placeholder={
+              detailRequired
+                ? 'Tell us what is wrong'
+                : 'Anything else we should know? (optional)'
+            }
             maxLength={REPORT_DETAIL_MAX}
             aria-label="Report details"
+            aria-required={detailRequired}
             rows={3}
           />
 
@@ -166,6 +181,9 @@ export const CommentReportDialog = ({
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={saving}>
               Cancel
             </Button>
+            {/* Disabled only on a missing reason, which the radios make obvious.
+                A missing detail explains itself through the validation message
+                instead — a button that is dead for an unstated reason does not. */}
             <Button onClick={() => void submit()} loading={saving} disabled={!reason}>
               Send report
             </Button>

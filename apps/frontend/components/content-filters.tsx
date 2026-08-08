@@ -1,8 +1,9 @@
 'use client'
 
-import { JSX } from 'react'
+import { JSX, useOptimistic, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
+import { cn } from '@workspace/ui/lib/utils'
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -42,24 +43,41 @@ export const ContentFilters = ({
   paramName,
 }: Props): JSX.Element => {
   const router = useRouter()
+  const [navigating, startNavigation] = useTransition()
+
+  /*
+   * The chips are driven by `value`, which is resolved on the server — so until
+   * the new page arrived nothing moved, and a click looked like it had been
+   * ignored for the second or two the navigation took. The optimistic value
+   * lights the pressed chip at once and is dropped when the real one lands.
+   */
+  const [selected, select] = useOptimistic(value)
 
   // Radix clears the value to '' when the active item is pressed again; that and
   // ALL_FILTER both mean "no filter", so both drop the query parameter.
   const onChange = (next: string): void => {
     const filtered = next && next !== ALL_FILTER
-    router.push(filtered ? `${basePath}?${paramName}=${next}` : basePath)
+
+    startNavigation(() => {
+      select(filtered ? next : ALL_FILTER)
+      router.push(filtered ? `${basePath}?${paramName}=${next}` : basePath)
+    })
   }
 
   return (
     <ToggleGroup
       type="single"
-      value={value}
+      value={selected}
       onValueChange={onChange}
       aria-label="Filter"
+      // Dimming the row says the click landed and results are on the way, which
+      // the chip alone cannot: it looks identical whether the page has arrived.
+      aria-busy={navigating}
+      className={cn('transition-opacity', navigating && 'opacity-60')}
     >
       {options.map((option) => (
         <ToggleGroupItem key={option.value} value={option.value}>
-          {value === option.value && <Check className="size-3" aria-hidden />}
+          {selected === option.value && <Check className="size-3" aria-hidden />}
           {option.label}
         </ToggleGroupItem>
       ))}

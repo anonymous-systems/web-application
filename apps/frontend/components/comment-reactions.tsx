@@ -1,7 +1,6 @@
 'use client'
 
 import { JSX, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { deleteDoc, doc, setDoc } from 'firebase/firestore'
 import { getFirebaseFirestore } from '@workspace/firebase-config/client'
@@ -11,6 +10,7 @@ import { ReactionType } from '@workspace/ui/models/comment-constants'
 import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { useAuth } from '@/hooks/use-auth'
 import { COLLECTION_FOR, CommentParentType } from '@/lib/comment-parents'
+import { displayedReactions } from '@/lib/reaction-display'
 
 interface Props {
   comment: Comment
@@ -32,20 +32,21 @@ export const CommentReactions = ({
   parentType,
   parentId,
 }: Props): JSX.Element => {
-  const router = useRouter()
   const { user, signIn } = useAuth()
   const [pending, setPending] = useState(false)
   const [reaction, setReaction] = useState(comment.viewerReaction)
 
-  const offset = (type: ReactionType): number => {
-    const had = comment.viewerReaction === type
-    const has = reaction === type
-    if (had === has) return 0
-    return has ? 1 : -1
-  }
+  // What the server said before this viewer touched anything, held for the life
+  // of the component. The counts are denormalised by a trigger that runs after
+  // the write, so re-reading the comment mid-flight yields the new reaction
+  // against counts that have not caught up — see lib/reaction-display.ts.
+  const [snapshot] = useState({
+    reaction: comment.viewerReaction,
+    likeCount: comment.likeCount,
+    dislikeCount: comment.dislikeCount,
+  })
 
-  const likes = comment.likeCount + offset('like')
-  const dislikes = comment.dislikeCount + offset('dislike')
+  const { likes, dislikes } = displayedReactions(snapshot, reaction)
 
   const react = async (type: ReactionType): Promise<void> => {
     if (!user) {
@@ -69,11 +70,14 @@ export const CommentReactions = ({
 
     try {
       await (next ? setDoc(path, { type: next }) : deleteDoc(path))
-      // The counter trigger writes the totals, so re-read once it has run.
-      router.refresh()
+      // Deliberately no `router.refresh()`. The totals are written by a trigger
+      // that has not run yet at this point, so refreshing here re-read a comment
+      // that was half updated and made the count snap back to its old value. The
+      // display is already correct from the snapshot; the server totals arrive
+      // on the next load.
     } catch (cause) {
       console.error('Failed to save reaction', cause)
-      setReaction(comment.viewerReaction)
+      setReaction(snapshot.reaction)
     } finally {
       setPending(false)
     }
