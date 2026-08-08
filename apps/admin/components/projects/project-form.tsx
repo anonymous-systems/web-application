@@ -3,12 +3,10 @@
 import { ChangeEvent, JSX, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { toast } from '@workspace/ui/components/sonner'
 import { Input } from '@workspace/ui/components/input'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Label } from '@workspace/ui/components/label'
-import { Checkbox } from '@workspace/ui/components/checkbox'
 import { Button } from '@workspace/ui/components/custom/button'
 import {
   PROJECT_DEVELOPMENT_STATUS_LABELS,
@@ -22,32 +20,16 @@ import { ProjectInput } from '@workspace/ui/models/schemas/project'
 import { Project } from '@workspace/ui/models/interfaces/project'
 import { titleCase } from '@/lib/text'
 import { SelectField } from '@/components/form/select-field'
+import { TermChips } from '@/components/form/term-chips'
+import { CoverImageField } from '@/components/form/cover-image-field'
+import { CheckboxField } from '@/components/form/checkbox-field'
+import { RichTextEditor } from '@/components/form/rich-text-editor'
+import { TermOption } from '@/interfaces/term-option'
 import {
   createProject,
   updateProject,
   uploadProjectCover,
 } from '@/app/(dashboard)/projects/actions'
-
-// CKEditor touches `window`, so it's loaded client-only.
-const RichTextEditor = dynamic(
-  () =>
-    import('../editor/rich-text-editor').then(
-      (module) => module.RichTextEditor
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="text-sm text-muted-foreground">Loading editor…</div>
-    ),
-  }
-)
-
-/** A selectable taxonomy term. `id` is what gets stored; `slug` labels it in tests. */
-interface TermOption {
-  id: string
-  name: string
-  slug: string
-}
 
 interface Props {
   /** Present when editing; omitted when creating. */
@@ -75,47 +57,6 @@ interface FormValues {
   allowComments: boolean
   featured: boolean
 }
-
-const TermChips = ({
-  terms,
-  selected,
-  onToggle,
-  section,
-  groupTestId,
-  toggleTestId,
-}: {
-  terms: TermOption[]
-  selected: string[]
-  onToggle: (id: string) => void
-  section: string
-  groupTestId: string
-  toggleTestId: string
-}): JSX.Element =>
-  terms.length === 0 ? (
-    <p className="text-sm text-muted-foreground">
-      No {section} yet — create some in the {titleCase(section)} section.
-    </p>
-  ) : (
-    <div className="flex flex-wrap gap-2" data-testid={groupTestId}>
-      {terms.map((term) => {
-        const isSelected = selected.includes(term.id)
-        return (
-          <Button
-            key={term.id}
-            type="button"
-            variant={isSelected ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => onToggle(term.id)}
-            data-testid={toggleTestId}
-            data-slug={term.slug}
-            data-selected={isSelected}
-          >
-            {term.name}
-          </Button>
-        )
-      })}
-    </div>
-  )
 
 export const ProjectForm = ({
   project,
@@ -298,49 +239,14 @@ export const ProjectForm = ({
         testId="projectCategorySelect"
       />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="project-cover">Cover image</Label>
-        {values.coverImage && (
-          // eslint-disable-next-line @next/next/no-img-element -- dynamic external cover URL
-          <img
-            src={values.coverImage}
-            alt="Cover preview"
-            className="h-28 w-full max-w-xs rounded-md border object-cover"
-            data-testid="projectCoverPreview"
-          />
-        )}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Input
-            id="project-cover"
-            type="file"
-            accept="image/*"
-            onChange={uploadCover}
-            disabled={isUploading}
-            data-testid="projectCoverFile"
-          />
-          {values.coverImage && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setField('coverImage', '')}
-              data-testid="projectCoverRemove"
-            >
-              Remove
-            </Button>
-          )}
-        </div>
-        <Input
-          type="url"
-          value={values.coverImage}
-          onChange={(event) => setField('coverImage', event.target.value)}
-          placeholder="…or paste an image URL"
-          data-testid="projectCoverUrl"
-        />
-        {isUploading && (
-          <p className="text-xs text-muted-foreground">Uploading…</p>
-        )}
-      </div>
+      <CoverImageField
+        id="project-cover"
+        value={values.coverImage}
+        onChange={(url) => setField('coverImage', url)}
+        onUpload={uploadCover}
+        isUploading={isUploading}
+        testIdPrefix="project"
+      />
 
       <div className="flex flex-col gap-2">
         <Label>Tags</Label>
@@ -403,24 +309,18 @@ export const ProjectForm = ({
       </div>
 
       <div className="flex flex-col gap-3">
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={values.allowComments}
-            onCheckedChange={(checked) =>
-              setField('allowComments', checked === true)
-            }
-            data-testid="projectAllowComments"
-          />
-          Allow comments
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={values.featured}
-            onCheckedChange={(checked) => setField('featured', checked === true)}
-            data-testid="projectFeatured"
-          />
-          Featured
-        </label>
+        <CheckboxField
+          label="Allow comments"
+          checked={values.allowComments}
+          onChange={(checked) => setField('allowComments', checked)}
+          testId="projectAllowComments"
+        />
+        <CheckboxField
+          label="Featured"
+          checked={values.featured}
+          onChange={(checked) => setField('featured', checked)}
+          testId="projectFeatured"
+        />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
