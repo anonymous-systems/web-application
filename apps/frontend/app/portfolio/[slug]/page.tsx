@@ -32,7 +32,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
   if (!project) notFound()
 
   return {
-    title: `${project.title} | Anonymous Systems`,
+    title: project.title,
     description: project.excerpt ?? undefined,
     openGraph: {
       title: project.title,
