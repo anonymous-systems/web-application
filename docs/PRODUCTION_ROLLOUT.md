@@ -151,12 +151,13 @@ So, for any change that alters stored shape:
    | Storage rules | the above **plus** `roles/firebasestorage.admin` |
    | Firestore indexes | `roles/datastore.indexAdmin` |
    | Cloud Functions | `roles/cloudfunctions.admin`, `roles/iam.serviceAccountUser`, `roles/artifactregistry.writer`, `roles/cloudbuild.builds.editor`, `roles/run.admin`, `roles/eventarc.admin` |
+   | Cloud Functions — also | a **custom role** with `firebaseextensions.instances.list` and `.get`, plus the Cloud Billing API enabled |
 
    Deploying rules is two operations, and the permissions to publish do not
    imply the permission to validate. `firebase deploy` first POSTs the sources
    to `firebaserules.googleapis.com/v1/projects/<project>:test` — the
    "checking … for compilation errors" line — which needs
-   `firebaserules.releases.test`. That is in `roles/firebaserules.admin` and in
+   `firebaserules.rulesets.test`. That is in `roles/firebaserules.admin` and in
    **neither** `roles/firebase.sdkAdminServiceAgent` nor
    `roles/firebasestorage.admin`, both of which carry only the create/update
    permissions the publish itself uses. Granting the publish side alone fails at
@@ -176,7 +177,37 @@ So, for any change that alters stored shape:
 
    Functions need the long list because a v2 function is built by Cloud Build,
    stored in Artifact Registry, run on Cloud Run and triggered through Eventarc —
-   deploying one touches all four.
+   deploying one touches all four. They also need two things that are not a role:
+
+   **A custom role, because no predefined one fits.** `firebase deploy --only
+   functions` enumerates Extensions instances first, and
+   `firebaseextensions.instances.list` is in none of the `firebaseextensions.*`
+   roles — those carry only `firebase.clients.*` and `resourcemanager.projects.*`.
+
+   ```bash
+   gcloud iam roles create ciDeployExtensionsRead --project=<project> \
+     --title="CI deploy: read Extensions" \
+     --permissions=firebaseextensions.instances.list,firebaseextensions.instances.get \
+     --stage=GA
+
+   gcloud projects add-iam-policy-binding <project> \
+     --member="serviceAccount:<ci-service-account>" \
+     --role="projects/<project>/roles/ciDeployExtensionsRead"
+   ```
+
+   To undo: remove the binding, then `gcloud iam roles delete
+   ciDeployExtensionsRead --project=<project>`. Deletion is a 7-day soft delete,
+   so `gcloud iam roles undelete` recovers it inside that window.
+
+   **The Cloud Billing API switched on**, which is not an IAM problem and so no
+   grant fixes it. A 2nd-gen function requires a billing account, so the deploy
+   reads `cloudbilling.googleapis.com/v1/projects/<project>/billingInfo`, which
+   answers 403 *"API has not been used in project … before or it is disabled"*
+   while the API is off:
+
+   ```bash
+   gcloud services enable cloudbilling.googleapis.com --project <project>
+   ```
 
    Dev is already granted, on `firebase-adminsdk-1k7kl@anonymous-systems-dev`.
    Production needs the same set on whichever account deploys there — and note
