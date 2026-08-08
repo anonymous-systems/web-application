@@ -1,4 +1,5 @@
 import { JSX } from 'react'
+import { cn } from '../lib/utils'
 
 interface Props {
   orientation?: 'horizontal' | 'vertical'
@@ -14,11 +15,11 @@ export const Divider = (props: Props): JSX.Element => {
     <hr
       role='separator'
       aria-orientation={orientation}
-      className={[
+      className={cn(
         'bg-muted-foreground rounded-xl border-none',
         orientationClass,
         className
-      ].join(' ')}
+      )}
     />
 
   )
