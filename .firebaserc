@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "anonymous-systems-dev"
+    "default": "anonymous-systems-dev",
+    "dev": "anonymous-systems-dev",
+    "prod": "anonymous-systems"
   }
 }
