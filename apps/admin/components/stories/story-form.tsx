@@ -3,12 +3,10 @@
 import { ChangeEvent, JSX, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { toast } from '@workspace/ui/components/sonner'
 import { Input } from '@workspace/ui/components/input'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Label } from '@workspace/ui/components/label'
-import { Checkbox } from '@workspace/ui/components/checkbox'
 import { Button } from '@workspace/ui/components/custom/button'
 import {
   PROBLEM_STATUSES,
@@ -23,32 +21,16 @@ import { StoryInput } from '@workspace/ui/models/schemas/story'
 import { Story } from '@workspace/ui/models/interfaces/story'
 import { titleCase } from '@/lib/text'
 import { SelectField } from '@/components/form/select-field'
+import { TermChips } from '@/components/form/term-chips'
+import { CoverImageField } from '@/components/form/cover-image-field'
+import { CheckboxField } from '@/components/form/checkbox-field'
+import { RichTextEditor } from '@/components/form/rich-text-editor'
+import { TermOption } from '@/interfaces/term-option'
 import {
   createStory,
   updateStory,
   uploadStoryCover,
 } from '@/app/(dashboard)/stories/actions'
-
-// CKEditor touches `window`, so it's loaded client-only.
-const RichTextEditor = dynamic(
-  () =>
-    import('../editor/rich-text-editor').then(
-      (module) => module.RichTextEditor
-    ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="text-sm text-muted-foreground">Loading editor…</div>
-    ),
-  }
-)
-
-/** A selectable taxonomy term. `id` is what gets stored; `slug` labels it in tests. */
-interface TermOption {
-  id: string
-  name: string
-  slug: string
-}
 
 interface Props {
   /** Present when editing; omitted when creating. */
@@ -254,98 +236,40 @@ export const StoryForm = ({ story, categories, tags }: Props): JSX.Element => {
         testId="storyCategorySelect"
       />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="story-cover">Cover image</Label>
-        {values.coverImage && (
-          // eslint-disable-next-line @next/next/no-img-element -- dynamic external cover URL
-          <img
-            src={values.coverImage}
-            alt="Cover preview"
-            className="h-28 w-full max-w-xs rounded-md border object-cover"
-            data-testid="storyCoverPreview"
-          />
-        )}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Input
-            id="story-cover"
-            type="file"
-            accept="image/*"
-            onChange={uploadCover}
-            disabled={isUploading}
-            data-testid="storyCoverFile"
-          />
-          {values.coverImage && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setField('coverImage', '')}
-              data-testid="storyCoverRemove"
-            >
-              Remove
-            </Button>
-          )}
-        </div>
-        <Input
-          type="url"
-          value={values.coverImage}
-          onChange={(event) => setField('coverImage', event.target.value)}
-          placeholder="…or paste an image URL"
-          data-testid="storyCoverUrl"
-        />
-        {isUploading && (
-          <p className="text-xs text-muted-foreground">Uploading…</p>
-        )}
-      </div>
+      <CoverImageField
+        id="story-cover"
+        value={values.coverImage}
+        onChange={(url) => setField('coverImage', url)}
+        onUpload={uploadCover}
+        isUploading={isUploading}
+        testIdPrefix="story"
+      />
 
       <div className="flex flex-col gap-2">
         <Label>Tags</Label>
-        {tags.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No tags yet — create some in the Tags section.
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-2" data-testid="storyTags">
-            {tags.map((tag) => {
-              const selected = values.tags.includes(tag.id)
-              return (
-                <Button
-                  key={tag.id}
-                  type="button"
-                  variant={selected ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => toggleTag(tag.id)}
-                  data-testid="storyTagToggle"
-                  data-slug={tag.slug}
-                  data-selected={selected}
-                >
-                  {tag.name}
-                </Button>
-              )
-            })}
-          </div>
-        )}
+        <TermChips
+          terms={tags}
+          selected={values.tags}
+          onToggle={toggleTag}
+          section="tags"
+          groupTestId="storyTags"
+          toggleTestId="storyTagToggle"
+        />
       </div>
 
       <div className="flex flex-col gap-3">
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={values.allowComments}
-            onCheckedChange={(checked) =>
-              setField('allowComments', checked === true)
-            }
-            data-testid="storyAllowComments"
-          />
-          Allow comments
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={values.featured}
-            onCheckedChange={(checked) => setField('featured', checked === true)}
-            data-testid="storyFeatured"
-          />
-          Featured
-        </label>
+        <CheckboxField
+          label="Allow comments"
+          checked={values.allowComments}
+          onChange={(checked) => setField('allowComments', checked)}
+          testId="storyAllowComments"
+        />
+        <CheckboxField
+          label="Featured"
+          checked={values.featured}
+          onChange={(checked) => setField('featured', checked)}
+          testId="storyFeatured"
+        />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
