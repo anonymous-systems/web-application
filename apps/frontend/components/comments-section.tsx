@@ -1,15 +1,12 @@
 import { JSX } from 'react'
 import { cookies, headers } from 'next/headers'
 import { getTokens } from 'next-firebase-auth-edge'
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Divider } from '@workspace/ui/components/divider'
 import { authConfig } from '@workspace/firebase-config/auth'
-import { initialsFrom } from '@workspace/ui/lib/initials'
 import { Comment } from '@workspace/ui/models/interfaces/comment'
 import { formatRelativeTime } from '@/lib/format-relative-time'
 import { CommentForm } from '@/components/comment-form'
-import { CommentReactions } from '@/components/comment-reactions'
-import { CommentReportDialog } from '@/components/comment-report-dialog'
+import { CommentsList } from '@/components/comments-list'
 import { CommentParentType } from '@/lib/comment-parents'
 import { listComments } from '@/services/comment-service'
 
@@ -17,54 +14,6 @@ interface Props {
   parentType: CommentParentType
   parentId: string
   allowComments: boolean
-}
-
-interface RowProps {
-  comment: Comment
-  parentType: CommentParentType
-  parentId: string
-}
-
-const CommentRow = ({ comment, parentType, parentId }: RowProps): JSX.Element => {
-  const posted = formatRelativeTime(comment.createdAt)
-
-  return (
-    <li className="flex items-start gap-3">
-      <Avatar className="size-8 shrink-0">
-        {comment.authorAvatar && <AvatarImage src={comment.authorAvatar} alt="" />}
-        <AvatarFallback className="text-xs">
-          {initialsFrom(comment.authorName)}
-        </AvatarFallback>
-      </Avatar>
-
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-wrap items-baseline gap-2">
-          <span className="text-sm font-medium">
-            {comment.authorName ?? 'Anonymous'}
-          </span>
-          {posted && (
-            <span className="text-muted-foreground text-xs">{posted}</span>
-          )}
-        </div>
-
-        <p className="text-sm whitespace-pre-line">{comment.content}</p>
-
-        <div className="flex items-center gap-1">
-          <CommentReactions
-            comment={comment}
-            parentType={parentType}
-            parentId={parentId}
-          />
-          <CommentReportDialog
-            commentId={comment.id}
-            parentType={parentType}
-            parentId={parentId}
-            reported={comment.viewerReported}
-          />
-        </div>
-      </div>
-    </li>
-  )
 }
 
 /**
@@ -137,16 +86,16 @@ export const CommentsSection = async ({
       <CommentForm parentType={parentType} parentId={parentId} />
 
       {comments.length > 0 && (
-        <ul className="flex flex-col gap-4">
-          {comments.map((comment) => (
-            <CommentRow
-              key={comment.id}
-              comment={comment}
-              parentType={parentType}
-              parentId={parentId}
-            />
-          ))}
-        </ul>
+        <CommentsList
+          // Timestamps are formatted here, on the server, so the list can be a
+          // client component without the relative time drifting on hydration.
+          rows={comments.map((comment) => ({
+            comment,
+            posted: formatRelativeTime(comment.createdAt),
+          }))}
+          parentType={parentType}
+          parentId={parentId}
+        />
       )}
     </section>
   )
