@@ -5,7 +5,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest'
 
 const PROJECT_ID = 'anonymous-systems-rules-test'
@@ -334,6 +334,45 @@ describe.each([
 
     await assertFails(
       setDoc(doc(signedInAs(OTHER_UID), commentPath), comment(OTHER_UID))
+    )
+  })
+})
+
+/*
+ * The username -> uid index behind public profile URLs. A profile page resolves
+ * one username, so `get` is permitted and `list` is not — the difference
+ * between answering a question and handing over a directory of every username
+ * on the site.
+ */
+describe('usernames index', () => {
+  it('lets anyone resolve a single username', async () => {
+    await seed('usernames/ada', { userId: OWNER_UID })
+
+    await assertSucceeds(getDoc(doc(anonymous(), 'usernames/ada')))
+  })
+
+  it('refuses to list the index', async () => {
+    await seed('usernames/ada', { userId: OWNER_UID })
+
+    await assertFails(getDocs(collection(anonymous(), 'usernames')))
+  })
+
+  // Reserving a username without the profile it points at would make the index
+  // lie, so only the onboarding function writes here — through the Admin SDK.
+  it('refuses client writes, signed in or not', async () => {
+    await assertFails(
+      setDoc(doc(anonymous(), 'usernames/ada'), { userId: OWNER_UID })
+    )
+    await assertFails(
+      setDoc(doc(signedInAs(OWNER_UID), 'usernames/ada'), { userId: OWNER_UID })
+    )
+  })
+
+  it('refuses to overwrite someone else’s username', async () => {
+    await seed('usernames/ada', { userId: OTHER_UID })
+
+    await assertFails(
+      setDoc(doc(signedInAs(OWNER_UID), 'usernames/ada'), { userId: OWNER_UID })
     )
   })
 })
